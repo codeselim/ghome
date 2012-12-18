@@ -1,13 +1,25 @@
 <html>
 <head>
-<title>Home</title>
-<script type="text/javascript" src="./jquery.js"></script>
+	<title>Home</title>
+	<script type="text/javascript" src="./jquery.js"></script>
 </head>
-<a class="getPage2"></a>
-<a class="getPage3"></a>
+<div class="page">
+	<div class="menu">
+		<a class="getPage2"></a>
+		<a class="getPage3"></a>
+	</div>
+	<div id="content">
+
+	</div>
+</div>
 
 <script type="text/javascript">
-
+$(document).ready(function() {
+	$(".getPage2").click(function () {
+		$("#content").load("/")
+		$("#content .title").html("The page 1 has been loaded :)")
+	})
+})
 </script>
 
 </html>
