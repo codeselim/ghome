@@ -24,6 +24,7 @@ db.serialize(function() {
 				db.close();
 			});
 		});
+
 	})
 	// console.log("Current count of rows in the table is : " + JSON.stringify(c))
 
