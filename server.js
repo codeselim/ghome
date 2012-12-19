@@ -7,26 +7,33 @@ URLS = []
 URLS["page2"] = "/page2.html"
 URLS["SSE"] = "/sse.html"
 
+var j = 0
 function sendSSE(req, res) {
+    j += 1
 	res.writeHead(200, {
 		'Content-Type': 'text/event-stream',
 		'Cache-Control': 'no-cache',
 		'Connection': 'keep-alive'
 	});
 
-	var id = (new Date()).toLocaleTimeString();
+	var id = j // (new Date()).toLocaleTimeString();
 
   // Sends a SSE every 1 seconds on a single connection.
-  var i = 0
-  setInterval(function() {
-  	i += 1
-  	// if (i > 20) {
-  	// 	clearInterval(a)
-  	// }
-  	console.log("Sending a new SSE")
-  	constructSSE(res, id, "Message " + i);
+  a = setInterval(function() {
+  	if(typeof this.i == "undefined") {
+  	    this.i = 0
+  	}
+  	this.i += 1
+  	if (this.i > 20) {
+  		clearInterval(a)
+  		res.end()
+  	}
+    t = "Message (j, i)=(" + j + ", " + this.i + ")"
+    // t = "Pouet"
+  	console.log(t)
+  	constructSSE(res, id, t);
   }
-  , 1000);
+  , 200);
 
   constructSSE(res, id, (new Date()).toLocaleTimeString());
 }
@@ -34,7 +41,7 @@ function sendSSE(req, res) {
 
 function constructSSE(res, id, data) {
 	res.write('id: ' + id + '\n');
-	res.end("data: " + data + '\n\n');
+	res.write("data: " + data + '\n\n');
 }
 
 http.createServer(function (req, res) {
@@ -66,6 +73,5 @@ http.createServer(function (req, res) {
 		// answer += "httpVersion=" + req.httpVersion + "\n"
 	} catch(e) {
 		console.log(e);
-
 	}
 }).listen(9615);
