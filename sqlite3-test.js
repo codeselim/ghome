@@ -1,18 +1,30 @@
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(':memory:');
+var db = new sqlite3.Database('test.sqlite');
 
 db.serialize(function() {
-  db.run("CREATE TABLE lorem (info TEXT)");
+	// db.run("DROP TABLE lorem")
+	db.run("CREATE TABLE IF NOT EXISTS lorem (info TEXT)");
 
-  var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
-  for (var i = 0; i < 10; i++) {
-      stmt.run("Ipsum " + i);
-  }
-  stmt.finalize();
+	var c = 0 // Current count of rows in the table...
+	db.get("SELECT COUNT(*) AS c FROM lorem", function (e, r) {
+		c = r.c
+		console.log("Current count of rows in the table is : " + JSON.stringify(r))
 
-  db.each("SELECT rowid AS id, info FROM lorem", function(err, row) {
-      console.log(row.id + ": " + row.info);
-  });
+		var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
+		for (var i = c; i < c+10; i++) {
+			str = "Ipsum " + i
+			console.log("Preparing insertion of: " + str)
+			stmt.run(str);
+		}
+		stmt.finalize();
+
+		db.each("SELECT rowid AS id, info FROM lorem", function(err, row) {
+			console.log(row.id + ": " + row.info);
+		});
+		db.close();
+	})
+	// console.log("Current count of rows in the table is : " + JSON.stringify(c))
+
+	
 });
 
-db.close();
