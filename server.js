@@ -16,7 +16,7 @@ n.on('message', function(m) {
 
 /**
  * frame_processor : Processes a new sensor frame
- * @param {Buffer} frame The Buffer object for the new frame
+ * @param {string} frame The new frame
  * @returns nothing
  */
 function frame_processor (frame) {
@@ -29,4 +29,4 @@ function frame_processor (frame) {
 //@TODO : Fin a way to organize the packages so that they share the data
 // web_serv.start()
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
-sensors_serv.start()
+sensors_serv.start(null, null, 8000)
