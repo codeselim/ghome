@@ -3,13 +3,14 @@
 
 var web_serv = require('./webserver')
 var sensors_serv = require('./sensors_server')
-
+var dbg = require('./debug')
 /**
  * frame_processor : Processes a new sensor frame
  * @param {Buffer} frame The Buffer object for the new frame
  * @returns nothing
  */
 function frame_processor (frame) {
+	dbg.sleep(1500)
 	console.log("A new sensor frame has been completed : ")
 	console.log(frame)
 }

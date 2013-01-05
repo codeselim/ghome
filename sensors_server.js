@@ -26,6 +26,7 @@ function start (db, web_serv) {
 				eventEmitter.emit(SENSOR_FRAME_EVENT, buffer.slice(0, FRAME_SIZE)) //* Sends the new "complete" frame to the event handler
 				buffer = buffer.slice(FRAME_SIZE) //* Crops the current buffer, we don't need the data from the previous frame anymore
 			};
+			console.log("Ending the sensors stream data receiver function") //* Mainly for the purpose of being able to check when the SENSOR_FRAME_EVENT handler function is executed with respect to the current function execution
 		});
 
 		stream.addListener("end", function(){
