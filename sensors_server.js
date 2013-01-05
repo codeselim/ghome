@@ -16,10 +16,17 @@ function start (db, web_serv) {
 
 		var buffer = new Buffer("");
 		stream.addListener("data", function (data) {
-			buffer.concat([new Buffer(data)])
+			console.log("Receiving data from sensors.")
+			buffer = Buffer.concat([buffer, new Buffer(data)])
 			while (buffer.length >= FRAME_SIZE) {//* We have at least complete frame (14 bytes)
+				console.log("A frame is over")
 				frames.push(buffer.slice(0, FRAME_SIZE)) //* Pushes the new "complete" frame with the other ones
 				buffer = buffer.slice(FRAME_SIZE) //* Crops the current buffer 
+				console.log("Now, we have the current frames that are waiting to be processed :")
+				console.log(frames)
+				for (var i = frames.length - 1; i >= 0; i--) {
+					console.log('"' + frames[i].toString() + '"')
+				};
 			};
 		});
 
