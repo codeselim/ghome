@@ -1,10 +1,13 @@
 //* Server that deals with the data from the sensors
 
+
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
+var SENSOR_FRAME_EVENT = "newSensorFrame"
 function start (db, web_serv) {
 	FRAME_SIZE = 14
-	frames = []
-	console.log("Starting Sensors server")
 	var net = require("net");
+	console.log("Starting Sensors server")
 	var server = net.createServer(function(stream) {
 
 		stream.setTimeout(0);
@@ -20,15 +23,8 @@ function start (db, web_serv) {
 			buffer = Buffer.concat([buffer, new Buffer(data)])
 			while (buffer.length >= FRAME_SIZE) {//* We have at least complete frame (14 bytes) (beware, not the same value as string.length)
 				console.log("A frame is over")
-				frames.push(buffer.slice(0, FRAME_SIZE)) //* Pushes the new "complete" frame with the other ones
-				buffer = buffer.slice(FRAME_SIZE) //* Crops the current buffer 
-				//* Debug code :
-				console.log("Now, we have the current frames that are waiting to be processed :")
-				console.log(frames)
-				for (var i = frames.length - 1; i >= 0; i--) {
-					console.log('"' + frames[i].toString() + '"')
-				};
-				//* End of debug code @TODO remove that code later
+				eventEmitter.emit(SENSOR_FRAME_EVENT, buffer.slice(0, FRAME_SIZE)) //* Sends the new "complete" frame to the event handler
+				buffer = buffer.slice(FRAME_SIZE) //* Crops the current buffer, we don't need the data from the previous frame anymore
 			};
 		});
 
@@ -43,3 +39,5 @@ function start (db, web_serv) {
 }
 
 exports.start = start
+exports.events = eventEmitter
+exports.SENSOR_FRAME_EVENT = SENSOR_FRAME_EVENT
