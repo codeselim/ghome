@@ -2,7 +2,9 @@
 
 
 var events = require('events');
-var decode = require('./sensors').decode_frame
+var sensors_utils = require('./sensors')
+var decode = sensors_utils.decode_frame
+var check_checksum = sensors_utils.check_frame_checksum
 var eventEmitter = new events.EventEmitter();
 var SENSOR_FRAME_EVENT = "newSensorFrame"
 var FRAME_SEPARATOR = "A55A"
@@ -42,8 +44,9 @@ function start (db, web_serv, port, allowed_id) {
 				frame_data = decode(frame)
 				console.log(frame_data)
 				console.log("Sensor id=", frame_data.id)
-				if (frame_data.id == allowed_id) {
-					console.log("This sensor is one of ours")
+				if (frame_data.id == allowed_id && check_checksum(frame_data)) {
+					console.log("This sensor is one of ours && the checksum is correct.")
+					// console.log("The checksum is correct ?", check_checksum(frame_data))
 					eventEmitter.emit(SENSOR_FRAME_EVENT, frame_data) //* Sends the new "complete" frame to the event handler
 				}
 			};

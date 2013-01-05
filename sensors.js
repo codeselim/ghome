@@ -20,14 +20,24 @@ function parseIntFromHexSlice(str, start, length) {
 function decode_frame (frame) {
 	var result = {};
 	//* In the order of the documenation table :
-	result["hseq"] = parseIntFromHexSlice(frame, 4, 2)
+	result["hseq_length"] = parseIntFromHexSlice(frame, 4, 2)
 	result["org"] = parseIntFromHexSlice(frame, 6, 2)
 	result["data"] = [parseIntFromHexSlice(frame, 8, 2), parseIntFromHexSlice(frame, 10, 2), parseIntFromHexSlice(frame, 12, 2), parseIntFromHexSlice(frame, 14, 2)];
 	result["id"] = parseIntFromHexSlice(frame, 16, 8)
 	result["status"] = parseIntFromHexSlice(frame, 24, 2)
-	result["checksum"] = frame.substr(26, 2)
+	result["checksum"] = parseIntFromHexSlice(frame, 26, 2)
 	
 	return result;
 }
 
+function check_frame_checksum (frame_data) {
+	//* Note: The checksum is the least significat Byte of the sum of all the values except the sync bytes (the "separator") and the checksum itself
+	s=(frame_data.hseq_length + frame_data.org + frame_data.data[0] + frame_data.data[1] + frame_data.data[2] + frame_data.data[3] + frame_data.id + frame_data.status)
+	console.log("Sum:", s)
+	checksum = s & 0xF 
+	console.log("Computed checksum:", checksum)
+	return (checksum == frame_data.checksum)
+
+}
 exports.decode_frame = decode_frame
+exports.check_frame_checksum = check_frame_checksum
