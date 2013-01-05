@@ -6,8 +6,6 @@ function start (db, web_serv) {
 	console.log("Starting Sensors server")
 	var net = require("net");
 	var server = net.createServer(function(stream) {
-		// var chatter = new Chatter(stream);
-		// chatters.push(chatter);
 
 		stream.setTimeout(0);
 		stream.setEncoding("utf8");
