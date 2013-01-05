@@ -14,9 +14,12 @@ function start (db, web_serv) {
 			stream.write("Hallo, wer bist du?:\n");
 		});
 
+		var buffer = "";
 		stream.addListener("data", function (data) {
 			if(chatter.name == null) {
-				chatter.name = data.match(/\S+/);
+				buffer += data;
+				if (buffer.indexOf('\n') == -1) return;
+				chatter.name = buffer.match(/\S+/);
 				stream.write("....................\n");
 				chatters.forEach(function(c){
 					if (c != chatter) {
