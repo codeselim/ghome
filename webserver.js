@@ -3,7 +3,7 @@
 var http = require('http');
 var fs = require('fs');
 
-function start () {
+function start (db) {
 	
 	var homeTemplate = null;
 
