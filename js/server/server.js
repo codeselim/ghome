@@ -26,7 +26,8 @@ function frame_processor (frame) {
 	console.log(frame)
 }
 
-//@TODO : Fin a way to organize the packages so that they share the data
-// web_serv.start()
+//@TODO : Find a way to organize the packages so that they share the data
+web_serv.start()
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
+sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, web_serv.frameRecieved)
 sensors_serv.start(null, null, 8000, 6)
