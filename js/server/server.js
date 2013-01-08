@@ -30,4 +30,5 @@ function frame_processor (frame) {
 web_serv.start()
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, web_serv.frameRecieved)
-sensors_serv.start(null, null, 8000, 6)
+var allowed_ids = [2214883, 346751]
+sensors_serv.start(null, null, 8000, allowed_ids)

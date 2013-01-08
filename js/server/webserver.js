@@ -51,7 +51,7 @@ function frameRecieved(frame) {
 	if (SSEres) {
 		SSEres.write("data: " + JSON.stringify(frame) + '\n\n')
 	} else {
-		console.log('There is no opened connection')
+		console.log('There is no GUI SSE opened connection')
 	}
 }
 
