@@ -8,30 +8,15 @@
 	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
 </head>
 <body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
-	<!-- Home -->
-	<div data-role="page" id="home">
-		<div data-theme="a" data-role="header" data-position="fixed" data-transition="none">
-			<h3>ghome</h3>
-		</div>
-		<div data-role="content">
-			<div data-role="navbar" data-iconpos="left">
-				<ul>
-					<li><a href="#home" data-icon="home" class="ui-btn-active ui-state-persist" data-transition="none">Home</a></li>
-					<li><a href="#notif" data-icon="info" data-transition="none" >Notifications</a></li>
-				</ul>
-			</div>
-			<p>HOME</p>
-		</div>
-	</div>
 	<!-- Notif -->
-	<div id="notif">
+	<div data-role="page" id="notif">
 		<div data-theme="a" data-role="header" data-position="fixed">
 			<h3>ghome</h3>
 		</div>
 		<div data-role="content">
 			<div data-role="navbar" data-iconpos="left">
 				<ul>
-					<li><a href="#home" data-icon="home" data-transition="none">Home</a></li>
+					<li><a href="home.html" data-icon="home" data-transition="none">Home</a></li>
 					<li><a href="#notif" data-icon="info" class="ui-btn-active  ui-state-persist" data-transition="none">Notifications</a></li>
 				</ul>
 			</div>
@@ -48,7 +33,6 @@
 			</div>
 			<h4>Updates</h4>
 			<div id="sseOutput"></div>
-		</div>
 	</div>
 </body>
 </html>
