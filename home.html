@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>ghome</title>
+	<link rel="stylesheet" href="css/jquery.mobile-1.2.0.min.css" />
+	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
+</head>
+<body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
+	<!-- Home -->
+	<div data-role="page" id="home">
+		<div data-theme="a" data-role="header" data-position="fixed" data-transition="none">
+			<h3>ghome</h3>
+		</div>
+		<div data-role="content">
+			<div data-role="navbar" data-iconpos="left">
+				<ul>
+					<li><a href="#home" data-icon="home" class="ui-btn-active ui-state-persist" data-transition="none">Home</a></li>
+					<li><a href="app.html" data-icon="info" data-transition="none" >Notifications</a></li>
+				</ul>
+			</div>
+			<a data-role="button" id="btn1">
+        Button
+      </a>
+			<ul data-role="listview" data-divider-theme="b" data-inset="true" hidden id="mmc">
+				<li>Far over the misty mountains cold</li>
+				<li>To dungeons deep, and caverns old</li>
+			</ul>
+	</div>
+
+</body>
+</html>

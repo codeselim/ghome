@@ -30,11 +30,15 @@ function decode_frame (frame) {
 	return result;
 }
 
-function check_frame_checksum (frame_data) {
+function check_frame_checksum (frame_data, framestr) {
 	//* Note: The checksum is the least significat Byte of the sum of all the values except the sync bytes (the "separator") and the checksum itself
-	s=(frame_data.hseq_length + frame_data.org + frame_data.data[0] + frame_data.data[1] + frame_data.data[2] + frame_data.data[3] + frame_data.id + frame_data.status)
+	s = 0
+	for (var i = framestr.length - 3; i >= 4; i -= 2) {
+		s += parseIntFromHexSlice(framestr, i-1, 2)
+	};
+	// s = (frame_data.hseq_length + frame_data.org + frame_data.data[0] + frame_data.data[1] + frame_data.data[2] + frame_data.data[3] + frame_data.id + frame_data.status)
 	console.log("Sum:", s)
-	checksum = s & 0xF 
+	checksum = s & 0xFF 
 	console.log("Computed checksum:", checksum)
 	return (checksum == frame_data.checksum)
 

@@ -37,4 +37,5 @@ android_notif_serv.start(5000, "192.168.0.13") // DO NOT CHANGE THIS PORT NUMBER
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, web_serv.frameRecieved)
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
-sensors_serv.start(null, null, 8000, 6)
+var allowed_ids = [2214883, 346751, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
+sensors_serv.start(null, null, 8000, allowed_ids)
