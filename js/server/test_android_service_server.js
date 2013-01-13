@@ -20,6 +20,7 @@ var server = net.createServer(function(stream) {
 
 	stream.on("error", function () {
 		stop = true
+		clearInterval(a)
 	})
 
 	var buffer = ""
