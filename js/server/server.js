@@ -3,6 +3,7 @@
 
 var web_serv = require('./webserver')
 var sensors_serv = require('./sensors_server')
+var android_notif_serv = require('./android_notif_server')
 var dbg = require('./debug')
 
 var cp = require('child_process')
@@ -26,8 +27,14 @@ function frame_processor (frame) {
 	console.log(frame)
 }
 
+function frame_to_android_notif (frame_data) {
+	android_notif_serv.push_android_notif(JSON.stringify(frame_data))
+}
+
 //@TODO : Find a way to organize the packages so that they share the data
 web_serv.start()
+android_notif_serv.start(5000, "192.168.0.13") // DO NOT CHANGE THIS PORT NUMBER (Well, or test after changing it !) I don't know why, but it's working on port 5000 and not on port 3000 for instance....
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, web_serv.frameRecieved)
+sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
 sensors_serv.start(null, null, 8000, 6)

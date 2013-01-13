@@ -54,7 +54,11 @@ public class TrollService extends Service {
 
 	// Handler that receives messages from the thread
 	private final class ServiceHandler extends Handler {
-		private static final long RETRY_CONNECT_DELAY = 5 * 1000;
+		private static final long RETRY_CONNECT_DELAY = 10 * 1000;
+
+		private static final String IP_ADDR = "192.168.0.13";
+
+		private static final int PORT = 5000;
 
 		private int mId;
 
@@ -70,12 +74,12 @@ public class TrollService extends Service {
 
 			InetAddress addr = null;
 			try {
-				addr = InetAddress.getByName("192.168.0.13");
+				addr = InetAddress.getByName(IP_ADDR);
 			} catch (UnknownHostException e1) {
 				stopAndRelaunchConnection();
 				return false;
 			}
-			SocketAddress remoteAddr = new InetSocketAddress(addr, 5000);
+			SocketAddress remoteAddr = new InetSocketAddress(addr, PORT);
 			mSock = new Socket();
 			try {
 				mSock.connect(remoteAddr);
