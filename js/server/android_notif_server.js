@@ -53,8 +53,8 @@ function start (port, ip) {
 }
 
 function push_android_notif (notifText) {
-	for(stream in streams) {
-		stream.write(NOTIF_PREFIX + notifText)
+	for(streamId in streams) {
+		streams[streamId].write(NOTIF_PREFIX + notifText)
 	}
 }
 
