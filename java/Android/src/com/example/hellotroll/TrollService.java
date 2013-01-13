@@ -54,36 +54,54 @@ public class TrollService extends Service {
 
 	// Handler that receives messages from the thread
 	private final class ServiceHandler extends Handler {
+		private static final long RETRY_CONNECT_DELAY = 5 * 1000;
+
 		private int mId;
 
 		public ServiceHandler(Looper looper) {
 			super(looper);
 		}
 
-		@Override
-		public void handleMessage(Message msg) {
-			Socket sock = new Socket();
+		protected boolean connect() {
+			if (mConnected) {// Only one connection has to be established, if
+								// there is already one, then don't do anything
+				return true;
+			}
+
 			InetAddress addr = null;
 			try {
 				addr = InetAddress.getByName("192.168.0.13");
 			} catch (UnknownHostException e1) {
-				// TTextShow("Did manage to get the InetAddr");
-				return;
+				stopAndRelaunchConnection();
+				return false;
 			}
 			SocketAddress remoteAddr = new InetSocketAddress(addr, 5000);
+			mSock = new Socket();
 			try {
-				sock.connect(remoteAddr);
+				mSock.connect(remoteAddr);
 			} catch (IOException e1) {
 				TTextShow("Socket.connect() error");
 				Log.e(LOG_TAG, "Socket connect error\n" + e1.getCause());
-				return;
+				stopAndRelaunchConnection();
+				return false;
 			}
+			postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					readUntilDeath();
+				}
+			}, 100);
+			return true;
+		}
+		
+		protected void readUntilDeath() {
 			Scanner sc = null;
 			try {
-				sc = new Scanner(sock.getInputStream());
+				sc = new Scanner(mSock.getInputStream());
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				stopAndRelaunchConnection();
+				return;
 			}
 			// If we want to do some data sending to the server, the following
 			// code might help:
@@ -126,13 +144,33 @@ public class TrollService extends Service {
 					TTextShow(str);
 				}
 			} catch (Exception e1) {
-				try {
-					sock.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				stopAndRelaunchConnection();
+				return;
 			}
+		}
+
+		boolean mConnected = false;
+
+		Socket mSock = new Socket();
+
+		@Override
+		public void handleMessage(Message msg) {
+			if(!mConnected) {
+				connect();
+			}
+		}
+
+		private void stopAndRelaunchConnection() {
+			try {
+				mSock.close();
+			} catch(Exception e) {}//don't care
+			mConnected = false;
+			postDelayed(new Runnable() {
+				public void run() {
+					connect();
+				}
+			}, RETRY_CONNECT_DELAY);
+
 		}
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
