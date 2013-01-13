@@ -24,27 +24,23 @@ function start (port, ip) {
 			a = setInterval(function () {
 				console.log("Sending a new notif", i++, "to Android device number", myStreamId)
 				try {
-					stream.write(NOTIF_PREFIX + "Hi!\r\n")
+					stream.write(NOTIF_PREFIX + "Hi Android device "+ myStreamId + "!\r\n")
 				} catch(e) {
-					clearInterval(a)
-					return
+					shutdown()
 				}
 			}, 3000)
 		});
 
 		function shutdown () {
+			console.log("Closing connection to Android device number", myStreamId)
 			stop = true
 			clearInterval(a)
 			delete streams[myStreamId]
 		}
 
-		stream.on("error", function () {
-			shutdown()
-		})
-
-		stream.on("close", function () {
-			shutdown()
-		})
+		stream.on("error", shutdown)
+		stream.on("close", shutdown)
+		stream.on("end", shutdown)
 
 		var buffer = ""
 		stream.addListener("data", function (data) {
