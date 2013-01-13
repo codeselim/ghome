@@ -19,16 +19,17 @@ function start (port, ip) {
 		stream.setEncoding("utf8");
 
 		stream.addListener("connect", function(){
-			console.log("New server connection established.")
-			var i = 0
-			a = setInterval(function () {
-				console.log("Sending a new notif", i++, "to Android device number", myStreamId)
-				try {
-					stream.write(NOTIF_PREFIX + "Hi Android device "+ myStreamId + "!\r\n")
-				} catch(e) {
-					shutdown()
-				}
-			}, 3000)
+			console.log("New server connection established (device number", myStreamId, ").")
+		// Debug purpose : If you want to debug the notifications, uncomment that code
+		// 	var i = 0
+		// 	a = setInterval(function () {
+		// 		console.log("Sending a new notif", i++, "to Android device number", myStreamId)
+		// 		try {
+		// 			stream.write(NOTIF_PREFIX + "Hi Android device "+ myStreamId + "!\r\n")
+		// 		} catch(e) {
+		// 			shutdown()
+		// 		}
+		// 	}, 3000)
 		});
 
 		function shutdown () {
