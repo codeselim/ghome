@@ -11,6 +11,7 @@ var server = net.createServer(function(stream) {
 	var buffer = ""
 	stream.addListener("data", function (data) {
 		console.log(new Date(), "New data packet came in:", data)
+		stream.write(new Date().toString() + ": ACK\r\n")
 	});
 })
 
