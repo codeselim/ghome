@@ -25,7 +25,7 @@ function start (db) {
 					break
 
 				case "/":
-					urlFile = webdir + "/app.html"
+					urlFile = webdir + "/home.html"
 					break
 
 				default:

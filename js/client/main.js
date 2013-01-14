@@ -9,8 +9,9 @@ require.config({
 })
 
 
-require(["jquery", "sseListener", "jquerymobile"], function($,sseListener) {
+require(["jquery", "sseListener", "device_management", "jquerymobile"], function($,sseListener, devMgmt) {
 	$(function() {
+		//* Hides the body until JQM finishes applying styles
 		$('body').css('visibility', 'visible')
 
 		$( '#home' ).live( 'pageinit',function(event){
@@ -22,42 +23,42 @@ require(["jquery", "sseListener", "jquerymobile"], function($,sseListener) {
 
 		var homePI = function() {
 			console.log('pageinit home!')
-			$('#btn1').click(function(){
-				console.log('btn1')
-				$('#mmc').removeAttr('hidden')
-			})} 
+		}
 
-			var notifPI = function() {
-				console.log('pageinit notif!')
-				var onSSERecieved = function(e) {
-					$('#sseOutput').append("<br />" + e.data)
+		var notifPI = function() {
+			console.log('pageinit notif!')
+			var onSSERecieved = function(e) {
+				$('#sseOutput').append("<br />" + e.data)
+			}
+
+			$('#sseToggle').change(function() { 
+				console.log('toggled!')
+				if ($(this).val() == 'on') {
+					sseListener.enableSSE(onSSERecieved)
+				} else {
+					sseListener.disableSSE()
+					$('#sseOutput').html('')
 				}
+			})
+		}
 
-				$('#sseToggle').change(function() { 
-					console.log('toggled!')
-					if ($(this).val() == 'on') {
-						sseListener.enableSSE(onSSERecieved)
-					} else {
-						sseListener.disableSSE()
-						$('#sseOutput').html('')
-					}
-				})
-			}
+		//* Registering the page inits
+		pageinits = {
+			"home" : homePI
+			, "notif" : notifPI
+			, "devMgmt" : devMgmt.pageInit
+		}
 
-			//* Registering the page inits
-			pageinits = {
-				"home" : homePI,
-				"notif" : notifPI
-			}
+		for( id in pageinits) {
+			console.log('applying pageinit for ' + id)
+			$(document).delegate("#" + id, "pageinit", pageinits[id])	
+		}
 
-			for( id in pageinits) {
-				$(document).delegate("#" + id, "pageinit", pageinits[id])	
-			}
+		//* When the page is loaded from non AJAX request, pageinit event
+		//* is fired before the functions are bound. It has to be called
+		//* here.
+		console.log($('[data-role="page"]:first').attr('id'))
+		pageinits[$('[data-role="page"]:first').attr('id')]()
 
-			//* When the page is loaded from non AJAX request, pageinit event
-			//* is fired before the functions are bound. It has to be called
-			//* here.
-			pageinits[$('[data-role="page"]:first').attr('id')]()
-
-		})
+	})
 })
