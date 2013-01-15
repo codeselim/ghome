@@ -30,6 +30,29 @@ function decode_frame (frame) {
 	return result;
 }
 
+/**
+ * Function the type of the sensor and the detected value
+ * @param {array} Array of the data inside the frame
+ * @returns {array} Array containig the type of the sensor (temperature or light sensor)
+ * and the value detected by the sensor
+*/
+function decode_data_byte (frame_data) {
+	func = frame_data.data [3] >> 2 ; //shift right the bytes of data_byte3 by 2 to obtain func
+	if (frame_data.org == 0X7 ){
+		switch (func) {
+			case 0X02 :
+				value = frame_data.data[2] * 40 /255 ;
+				return [0,value];
+			case 0X06 :
+				value = frame_data.data[1] * 510 / 255;
+				return [1,value];
+			default:
+				return [-1,0];
+		}
+	}
+	
+}
+
 function check_frame_checksum (frame_data, framestr) {
 	//* Note: The checksum is the least significat Byte of the sum of all the values except the sync bytes (the "separator") and the checksum itself
 	s = 0
