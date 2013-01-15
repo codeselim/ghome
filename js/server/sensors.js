@@ -68,3 +68,4 @@ function check_frame_checksum (frame_data, framestr) {
 }
 exports.decode_frame = decode_frame
 exports.check_frame_checksum = check_frame_checksum
+exports.decode_data_byte = decode_data_byte
