@@ -34,9 +34,13 @@ function get_template_file (template_name) {
 		if (template_name in TPL_ENGINE_cache) {
 			content = TPL_ENGINE_cache[template_name]
 		} else {
-			content = fs.readFileSync(TPL_ENGINE_views_dir + "template_name")
+			TPL_ENGINE_cache[template_name] = fs.readFileSync(TPL_ENGINE_views_dir + template_name).toString()
+			content = TPL_ENGINE_cache[template_name]
 		}
+	} else {
+		content = fs.readFileSync(TPL_ENGINE_views_dir + template_name).toString()
 	}
+	return content
 }
 
 exports.get_template_result = template_engine
