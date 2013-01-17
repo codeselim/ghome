@@ -3,6 +3,13 @@ var fs   = require('fs')
 var mime = require('mime')
 
 var webdir = '../..'
+var viewsdir = '../../views/'
+var URLS = {}
+URLS['home'] = viewsdir + 'home.html'
+URLS['device_management'] = viewsdir + 'device_management.html'
+URLS['app'] = viewsdir + 'app.html'
+
+
 var SSEres = null
 
 function start (db) {
@@ -48,39 +55,31 @@ function start (db) {
 				})
 				break
 
-				case 'home':
-				urlFile = webdir + '/home.html'
-				break
-
-				case 'device_management':
-				urlFile = webdir + '/device_management.html'
-				break
-
-				case 'app':
-				urlFile = webdir + '/app.html'
-				break
-
 				case 'nonHTML':
 					urlFile = req.url.replace(/([^\?]+)\?(.*)/, '$1')
 					urlFile = webdir + urlFile
 					break
 
 				default:
-					console.error('module not found')
-					// todo error page
+					if (-1 == URLS.indexOf(urlParams.module)) {// Module was not found
+						console.error('module not found')
+						// @TODO error page
+					} else {// Module found, returns its view
+						urlFile = URLS[urlParams.module]
+					}
 					break 
-				}
-
-				if (!specialURL && urlFile) {
-					console.log('Asked file=' + urlFile)
-					res.writeHead(200, {'Content-Type': mime.lookup(urlFile)})
-					res.end(fs.readFileSync(urlFile))
-				}
-
-			} catch(e) {
-				console.log(e)
 			}
-		}).listen(9615)
+
+			if (!specialURL && urlFile) {
+				console.log('Asked file=' + urlFile)
+				res.writeHead(200, {'Content-Type': mime.lookup(urlFile)})
+				res.end(fs.readFileSync(urlFile))
+			}
+
+		} catch(e) {
+			console.log(e)
+		}
+	}).listen(9615)
 }
 
 function frameRecieved(frame) {
