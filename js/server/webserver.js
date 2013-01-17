@@ -1,6 +1,7 @@
 var http = require('http')
 var fs   = require('fs')
 var mime = require('mime')
+var tpl = require('./template_engine')
 
 var webdir = '../..'
 var viewsdir = '../../views/'
@@ -43,6 +44,8 @@ function start (db) {
 				}
 			}
 
+			var template_data = {} // Will contain the data to be dynamically injected inside the templates files
+			var nonHTML = false
 			switch (urlParams.module) {
 				case 'sse':
 				specialURL = true
@@ -58,14 +61,20 @@ function start (db) {
 				case 'nonHTML':
 					urlFile = req.url.replace(/([^\?]+)\?(.*)/, '$1')
 					urlFile = webdir + urlFile
+					nonHTML = true
 					break
 
+				case 'home': // No break for this case, this is intended
+					template_data['IN_TEMP'] = 'POUET'
+					template_data['COLOR_TEMP_IN'] = 'green1'
+					template_data['COLOR_TEMP_OUT'] = 'red'
+					// no break
 				default:
-					if (-1 == URLS.indexOf(urlParams.module)) {// Module was not found
+					if (urlParams.module in URLS) {// Module found, returns its view
+						urlFile = URLS[urlParams.module]
+					} else {// Module was not found
 						console.error('module not found')
 						// @TODO error page
-					} else {// Module found, returns its view
-						urlFile = URLS[urlParams.module]
 					}
 					break 
 			}
@@ -73,7 +82,16 @@ function start (db) {
 			if (!specialURL && urlFile) {
 				console.log('Asked file=' + urlFile)
 				res.writeHead(200, {'Content-Type': mime.lookup(urlFile)})
-				res.end(fs.readFileSync(urlFile))
+				if (nonHTML) {
+					fs.readFile(urlFile, 'utf-8', function (err, data) {
+						if (err) {
+							console.error(err)
+						}
+						res.end(data)
+					})
+				} else {
+					res.end(tpl.get_template_result(urlFile, template_data))
+				}
 			}
 
 		} catch(e) {
