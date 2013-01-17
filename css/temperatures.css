@@ -1,7 +1,30 @@
+.bold {
+	font-weight: bold;
+}
+
 .green1-temp {
 	color: #43b100;
 }
 
-.red-temp {
+.green2-temp {
+	color: #26ab03;
+}
+
+.green3-temp {
+	color: #39cf10;
+}
+
+.blue1-temp {
+	color: #0091b0;
+}
+
+.blue2-temp {
+	color: #2eabc6;
+}
+.blue3-temp {
+	color: #b2eaf6;
+}
+
+.red1-temp {
 	color: #ff0000;
 }

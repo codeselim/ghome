@@ -2,6 +2,9 @@ var http = require('http')
 var fs   = require('fs')
 var mime = require('mime')
 var tpl = require('./template_engine')
+var shared = require('./shared_data')
+var get_shared_data = shared.get_shared_data
+var set_shared_data = shared.set_shared_data
 
 var webdir = '../..'
 var viewsdir = '../../views/'
@@ -9,8 +12,6 @@ var URLS = {}
 URLS['home'] = viewsdir + 'home.html'
 URLS['device_management'] = viewsdir + 'device_management.html'
 URLS['app'] = viewsdir + 'app.html'
-
-
 var SSEres = null
 
 function start (db) {
@@ -65,9 +66,10 @@ function start (db) {
 					break
 
 				case 'home': // No break for this case, this is intended
-					template_data['IN_TEMP'] = 'POUET'
-					template_data['COLOR_TEMP_IN'] = 'green1'
-					template_data['COLOR_TEMP_OUT'] = 'red'
+					template_data['IN_TEMP'] = get_shared_data('IN_TEMP')
+					template_data['OUT_TEMP'] = get_shared_data('OUT_TEMP')
+					template_data['COLOR_TEMP_IN'] = temp2color(template_data['IN_TEMP'])
+					template_data['COLOR_TEMP_OUT'] = temp2color(template_data['OUT_TEMP'])
 					// no break
 				default:
 					if (urlParams.module in URLS) {// Module found, returns its view
@@ -106,6 +108,34 @@ function frameRecieved(frame) {
 	} else {
 		console.log('There is no GUI SSE opened connection')
 	}
+}
+
+/**  This function returns the CSS temperature color to be applied to a given
+ * temperature depending on its value
+ * For instance, -2 would be blue, 25 would be green, 32 would be red...
+ * @param{int} temperature_value The temperature value (signed integer)
+ * @return{string} Color name to be used in the CSS class ("{COLOR}-temp")
+*/
+function temp2color(temperature_value) {
+	color = ''
+	if (temperature_value >= 32) {
+		color = 'red1'
+	} else if (temperature_value >= 25) {
+		color = 'green3'
+	} else if (temperature_value >= 19) {
+		color = 'green2'
+	} else if (temperature_value >= 10) {
+		color = 'green1'
+	} else if (temperature_value >= 5) {
+		color = 'blue1'
+	} else if (temperature_value >= 0) {
+		color = 'blue2'
+	} else if (temperature_value >= -5) {
+		color = 'blue3'
+	} else if (temperature_value <= -10) {
+		color = 'blue4'
+	}
+	return color
 }
 
 exports.start = start

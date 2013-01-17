@@ -6,6 +6,7 @@
 	<title>ghome</title>
 	<link rel="stylesheet" href="css/jquery.mobile.min.css" />
 	<link rel="stylesheet" href="css/temperatures.css" />
+	<link rel="stylesheet" href="css/home.css" />
 	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
 </head>
 <body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
@@ -18,9 +19,9 @@
 		<p>&nbsp;Faits/en cours en gris, pas touchés en jaune.</p>
 		<div data-role="content">
 			<div id="quick-dashboard">
-				<span id="temp-in" class="{$COLOR_TEMP_IN}-temp">{$IN_TEMP} &deg;C</span> | 
-				<span id="temp-out" class="{$COLOR_TEMP_OUT}-temp">{$OUT_TEMP} &deg;C</span> | 
-				<span id="heating" class="mode-{$HEATING_STATE}">{$HEATING_STATE}</span> |
+				<span id="temp-in" class="{$COLOR_TEMP_IN}-temp bold">{$IN_TEMP} &deg;C</span> | 
+				<span id="temp-out" class="{$COLOR_TEMP_OUT}-temp bold">{$OUT_TEMP} &deg;C</span> | 
+				<span id="heating" class="mode-{$HEATING_STATE} bold">{$HEATING_STATE}</span> |
 				<span id="consumtion">{$CONSUMTION} kWh</span>
 				<div id="weather">{$WEATHER_PIC}</div>
 			</div>
