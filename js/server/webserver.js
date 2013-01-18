@@ -1,29 +1,63 @@
-var http = require('http')
-var fs   = require('fs')
-var mime = require('mime')
-var tpl = require('./template_engine')
-var shared = require('./shared_data')
-var get_shared_data = shared.get_shared_data
-var set_shared_data = shared.set_shared_data
+var http      = require('http')
+var fs        = require('fs')
+var mime      = require('mime')
+var tpl       = require('./template_engine')
+var shared    = require('./shared_data')
+var sseSender = require('./sse_sender')
 
 var webdir = '../..'
 /**
- * ==== Templates data structure ==== 
- * How to fill this data structure:
- * {
- *  'module_name' : {'file': 'name_of_the_template_or_view_file', 'relatedData': function_that_will_return_the_data_object}
- *  'module_name2' : {'file': 'another_filename'} // no related data for this module 
- * }
+ * Request handlers
+ * Prototype: function(req, res, params, response_sender)
+ * This function is called when there is a module param in the URL
+ * Each module MUST be declared with a handler. Else the server won't be able to serve the file
  */
 var requestHandlers = {
-	'home' : homeReqHandler
-	, 'device_management' : dmReqHandler
-	, 'app' : appReqHandler
-	, 'default' : defaultReqHandler
+	  'home'              : homeReqHandler
+	, 'device_management' : defaultHtmlRequestHandler
+	, 'new_device'        : defaultHtmlRequestHandler
+	, 'app'               : defaultHtmlRequestHandler
+	, 'default'           : defaultReqHandler
 }
 
-var SSEres = null
+/* Same format as the request handles dict. Exceptions for the default request handler*/
+var exceptions = {
+	'/sse' : sseSender.requestHandler
+}
 
+
+/** Appends '.html' to the module name and uses it as fileName */
+function defaultHtmlRequestHandler(req, res, params, response_sender) {
+	params['fileUrl'] = '../../views/' + params.query.module + '.html'
+	defaultResponseSender(req, res, params, fs.readFileSync(params.fileUrl))
+}
+
+/** Kept for great justice 
+ * Shortcut to for a request handler that allows to specify a file name
+ * Can be used as: 
+ * function(){sendPlainHTML('my_file.html', arguments)}
+ */
+function sendPlainHTML(fileName, args, path) {
+	//* args: {0: req, 1: res, 2: params, 3: requestHandler}
+	if (!path) path = '../../views/'
+	args[2]['fileUrl'] = path + fileName
+	args[3](args[0], args[1], args[2], fs.readFileSync(args[2]['fileUrl']))
+
+}
+
+// @TODO: MOVE IN ANOTHER FILE BEGIN ///////////////////////////////////////////////////////////////
+function homeReqHandler(req, res, params, response_sender) {
+	var templateData = {
+		'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
+		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
+		, 'COLOR_TEMP_IN'  : temp2color(get_shared_data('IN_TEMP'))
+		, 'COLOR_TEMP_OUT' : temp2color(get_shared_data('OUT_TEMP'))
+	}
+	var data = tpl.get_template_result("home.html", templateData)
+	console.log(params['pathname'])
+	params['fileUrl'] = 'home.html'
+	response_sender(req, res, params, data)
+}
 
 /**  This function returns the CSS temperature color to be applied to a given
  * temperature depending on its value
@@ -52,54 +86,8 @@ var temp2color = function(temperature_value) {
 	}
 	return color
 }
+// @TODO: MOVE IN ANOTHER FILE END /////////////////////////////////////////////////////////////////
 
-
-function appReqHandler(req, res, params, response_sender) {
-	console.log("appRH")
-	var templateData = {
-	}
-	var data = tpl.get_template_result("app.html", templateData)
-	params['fileUrl'] = 'app.html'
-	response_sender(req, res, params, data)
-}
-
-
-
-function dmReqHandler(req, res, params, response_sender) {
-
-	var templateData = {
-	}
-	var data = tpl.get_template_result("device_management.html", templateData)
-	params['fileUrl'] = 'device_management.html'
-	response_sender(req, res, params, data)
-}
-
-
-
-function homeReqHandler(req, res, params, response_sender) {
-	console.log("homeReqHandler")
-	var templateData = {
-		'IN_TEMP'		: get_shared_data('IN_TEMP')
-		, 'OUT_TEMP'	   : get_shared_data('OUT_TEMP')
-		, 'COLOR_TEMP_IN'  : temp2color(get_shared_data('IN_TEMP'))
-		, 'COLOR_TEMP_OUT' : temp2color(get_shared_data('OUT_TEMP'))
-	}
-	var data = tpl.get_template_result("home.html", templateData)
-	console.log(params['pathname'])
-	params['fileUrl'] = 'home.html'
-	response_sender(req, res, params, data)
-}
-
-function SSEReqHandler(req, res, params, response_sender) {
-	specialURL = true
-	console.log('New SSE connection')
-	SSEres = res
-	SSEres.writeHead(200, {
-		'Content-Type': 'text/event-stream',
-		'Cache-Control': 'no-cache',
-		'Connection': 'keep-alive'
-	})
-}
 
 /**
  * responseSender is going to be the default callback of every requestHandler
@@ -112,22 +100,24 @@ function SSEReqHandler(req, res, params, response_sender) {
  * @param{string or Buffer} data to be send to the browser client using res.end()
  * @return{undefined} undefined
 */
-function responseSender(req, res, params, data) {
+function defaultResponseSender(req, res, params, data) {
 	res.writeHead(200, {'Content-Type': mime.lookup(params.fileUrl)})
 	res.end(data)
 }
 
 /** @TODO to be documented */
-function defaultReqHandler(req, res, params, response_sender) {
-	console.log("defaultReqHandler")
-	fs.readFile(webdir + params['pathname'], null, function (err, data) {
-		if (err) {
-			console.error(err)
-		}
-		console.log(params['pathname'])
-		params['fileUrl'] = params['pathname']
-		responseSender(req, res, params, data)
-	})
+function defaultReqHandler(req, res, params, responseSender) {
+	if (params.pathname in exceptions) {
+		exceptions[params.pathname](req,res,params, responseSender)
+	} else {
+		fs.readFile(webdir + params.pathname, null, function (err, data) {
+			if (err) {
+				console.error(err)
+			}
+			params.fileUrl = params.pathname
+			responseSender(req, res, params, data)
+		})
+	}
 }
 
 
@@ -136,9 +126,7 @@ function start (db, port) {
 	http.createServer(function (req, res) {
 		//* Note : req is an instance of http.ServerRequest and res is an instance of http.ServerResponse
 		try {
-			var specialURL = false
 			var urlParams = require('url').parse(req.url, true)
-			var fileUrl
 			
 			if (!urlParams.query.module) {
 				if (urlParams['pathname'] == '/' || urlParams['pathname'].split('.').pop() == 'html') {
@@ -147,18 +135,14 @@ function start (db, port) {
 					urlParams.query.module = 'default'
 				}
 			}
+
 			req.addListener("end", function() {
 				if(urlParams.query.module in requestHandlers) {
-					requestHandlers[urlParams.query.module](req, res, urlParams, responseSender)
+					requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender)
+				} else {
+					//@TODO 404 error
 				}
-				else {
-		  	// 404 
-			//@TODO 404 error
-		}
-	});
-
-
-
+			});
 
 		} catch(e) {
 			console.log(e)
@@ -166,13 +150,4 @@ function start (db, port) {
 	}).listen(port)
 }
 
-function frameRecieved(frame) {
-	if (SSEres) {
-		SSEres.write('data: ' + JSON.stringify(frame) + '\n\n')
-	} else {
-		console.log('There is no GUI SSE opened connection')
-	}
-}
-
 exports.start = start
-exports.frameRecieved = frameRecieved

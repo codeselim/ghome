@@ -6,6 +6,7 @@ var sensors_serv = require('./sensors_server')
 var android_notif_serv = require('./android_notif_server')
 var dbg = require('./debug')
 var shared = require('./shared_data')
+var sse_sender = require('./sse_sender')
 var get_shared_data = shared.get_shared_data
 var set_shared_data = shared.set_shared_data
 
@@ -49,7 +50,7 @@ GLOBAL_INIT()
 web_serv.start(null, 9615)
 android_notif_serv.start(5000, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Well, or test after changing it !) I don't know why, but it's working on port 5000 and not on port 3000 for instance....
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
-sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, web_serv.frameRecieved)
+sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
 var allowed_ids = [2214883, 346751, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 sensors_serv.start(null, null, 8000, allowed_ids)
