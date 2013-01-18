@@ -14,131 +14,24 @@ var webdir = '../..'
  *  'module_name' : {'file': 'name_of_the_template_or_view_file', 'relatedData': function_that_will_return_the_data_object}
  *  'module_name2' : {'file': 'another_filename'} // no related data for this module 
  * }
-*/
-var modules = {
-	  'home'              : {'file': 'home.html', 'relatedData' : homeModuleData}
-	, 'device_management' : {'file': 'device_management.html'}
-	, 'app'               : {'file': 'app.html'}
-	, 'new_device'        : {'file': 'new_device.html'}
+ */
+var requestHandlers = {
+	'home' : homeReqHandler
+	, 'device_management' : dmReqHandler
+	, 'app' : appReqHandler
+	, 'default' : defaultReqHandler
 }
+
 var SSEres = null
 
-/** Example of function that returns the "data object" **/
-function homeModuleData() {
-	var templateData = {
-		  'IN_TEMP'        : get_shared_data('IN_TEMP')
-		, 'OUT_TEMP'       : get_shared_data('OUT_TEMP')
-		, 'COLOR_TEMP_IN'  : temp2color(get_shared_data('IN_TEMP'))
-		, 'COLOR_TEMP_OUT' : temp2color(get_shared_data('OUT_TEMP'))
-	}
-	return templateData
-}
-
-
-function start (db) {
-	console.log('Starting webserver')
-	var parseParams = function (url) {
-		var urlParams = {}
-		var match,
-				pl     = /\+/g,  // Regex for replacing addition symbol with a space
-				search = /([^&=]+)=?([^&]*)/g,
-				decode = function (s) { return decodeURIComponent(s.replace(pl, " ")) },
-				query  = url
-				console.log('query: ' + query)
-
-				while (match = search.exec(query))
-					urlParams[decode(match[1])] = decode(match[2])
-				return urlParams
-			}
-
-			http.createServer(function (req, res) {
-		//* Note : req is an instance of http.ServerRequest and res is an instance of http.ServerResponse
-		try {
-			var url = req.url.split('?')
-			var specialURL = false
-			var urlParams = parseParams(url[1])
-			var fileUrl, templateData
-
-			if (!urlParams.module) {
-				if (url == '/' || url[0].split('.').pop() == 'html') {
-					urlParams.module = 'home'
-				} else {
-					urlParams.module = 'nonHTML'
-				}
-			}
-
-			var template_data = {} // Will contain the data to be dynamically injected inside the templates files
-			var nonHTML = false
-			switch (urlParams.module) {
-				case 'sse':
-				specialURL = true
-				console.log('New SSE connection')
-				SSEres = res
-				SSEres.writeHead(200, {
-					'Content-Type': 'text/event-stream',
-					'Cache-Control': 'no-cache',
-					'Connection': 'keep-alive'
-				})
-				break
-
-				case 'nonHTML':
-					fileUrl = req.url.replace(/([^\?]+)\?(.*)/, '$1')
-					fileUrl = webdir + fileUrl
-					nonHTML = true
-					break
-
-				default:
-					if (urlParams.module in modules) {// Module found, returns its view
-						fileUrl = modules[urlParams.module].file
-						if (modules[urlParams.module].relatedData) {
-							templateData = modules[urlParams.module].relatedData()
-						} else {
-							templateData = {}
-						}
-						
-					} else {// Module was not found
-						console.error('module not found')
-						// @TODO error page
-					}
-					break 
-			}
-
-			if (!specialURL && fileUrl) {
-				console.log('Asked file=' + fileUrl)
-				res.writeHead(200, {'Content-Type': mime.lookup(fileUrl)})
-				if (nonHTML) {
-					fs.readFile(fileUrl, null, function (err, data) {
-						if (err) {
-							console.error(err)
-						}
-						res.end(data)
-					})
-				} else {
-					res.end(tpl.get_template_result(fileUrl, templateData))
-				}
-			}
-
-		} catch(e) {
-			console.log(e)
-		}
-	}).listen(9615)
-}
-
-function frameRecieved(frame) {
-	if (SSEres) {
-		SSEres.write('data: ' + JSON.stringify(frame) + '\n\n')
-	} else {
-		console.log('There is no GUI SSE opened connection')
-	}
-}
 
 /**  This function returns the CSS temperature color to be applied to a given
  * temperature depending on its value
  * For instance, -2 would be blue, 25 would be green, 32 would be red...
  * @param{int} temperature_value The temperature value (signed integer)
  * @return{string} Color name to be used in the CSS class ("{COLOR}-temp")
-*/
-function temp2color(temperature_value) {
+ */
+var temp2color = function(temperature_value) {
 	var color = ''
 	if (temperature_value >= 32) {
 		color = 'red1'
@@ -158,6 +51,127 @@ function temp2color(temperature_value) {
 		color = 'blue4'
 	}
 	return color
+}
+
+
+function appReqHandler(req, res, params, response_sender) {
+	console.log("appRH")
+	var templateData = {
+	}
+	var data = tpl.get_template_result("app.html", templateData)
+	params['fileUrl'] = 'app.html'
+	response_sender(req, res, params, data)
+}
+
+
+
+function dmReqHandler(req, res, params, response_sender) {
+
+	var templateData = {
+	}
+	var data = tpl.get_template_result("device_management.html", templateData)
+	params['fileUrl'] = 'device_management.html'
+	response_sender(req, res, params, data)
+}
+
+
+
+function homeReqHandler(req, res, params, response_sender) {
+	console.log("homeReqHandler")
+	var templateData = {
+		'IN_TEMP'		: get_shared_data('IN_TEMP')
+		, 'OUT_TEMP'	   : get_shared_data('OUT_TEMP')
+		, 'COLOR_TEMP_IN'  : temp2color(get_shared_data('IN_TEMP'))
+		, 'COLOR_TEMP_OUT' : temp2color(get_shared_data('OUT_TEMP'))
+	}
+	var data = tpl.get_template_result("home.html", templateData)
+	console.log(params['pathname'])
+	params['fileUrl'] = 'home.html'
+	response_sender(req, res, params, data)
+}
+
+function SSEReqHandler(req, res, params, response_sender) {
+	specialURL = true
+	console.log('New SSE connection')
+	SSEres = res
+	SSEres.writeHead(200, {
+		'Content-Type': 'text/event-stream',
+		'Cache-Control': 'no-cache',
+		'Connection': 'keep-alive'
+	})
+}
+
+/**
+ * responseSender is going to be the default callback of every requestHandler
+ * It sets the HTTP status to OK 200 and sends the content to be returned to the browser client
+ * using the default mime type found using the file extension
+ * IF YOU WANT TO WRITE YOUR OWN Content-Type HEADER THEN JUST DON'T CALL THE CALLBACK...
+ * @param{http.ServerRequest} original request from the browser client
+ * @param{http.ServerResponse} response object to send to the browser client
+ * @param{???} parameters defined by the webserver
+ * @param{string or Buffer} data to be send to the browser client using res.end()
+ * @return{undefined} undefined
+*/
+function responseSender(req, res, params, data) {
+	res.writeHead(200, {'Content-Type': mime.lookup(params.fileUrl)})
+	res.end(data)
+}
+
+/** @TODO to be documented */
+function defaultReqHandler(req, res, params, response_sender) {
+	console.log("defaultReqHandler")
+	fs.readFile(webdir + params['pathname'], null, function (err, data) {
+		if (err) {
+			console.error(err)
+		}
+		console.log(params['pathname'])
+		params['fileUrl'] = params['pathname']
+		responseSender(req, res, params, data)
+	})
+}
+
+
+function start (db, port) {
+	console.log('Starting webserver')
+	http.createServer(function (req, res) {
+		//* Note : req is an instance of http.ServerRequest and res is an instance of http.ServerResponse
+		try {
+			var specialURL = false
+			var urlParams = require('url').parse(req.url, true)
+			var fileUrl
+			
+			if (!urlParams.query.module) {
+				if (urlParams['pathname'] == '/' || urlParams['pathname'].split('.').pop() == 'html') {
+					urlParams.query.module = 'home'
+				} else {
+					urlParams.query.module = 'default'
+				}
+			}
+			req.addListener("end", function() {
+				if(urlParams.query.module in requestHandlers) {
+					requestHandlers[urlParams.query.module](req, res, urlParams, responseSender)
+				}
+				else {
+		  	// 404 
+			//@TODO 404 error
+		}
+	});
+
+
+
+
+		} catch(e) {
+			console.log(e)
+		}
+	}).listen(port)
+}
+
+function frameRecieved(frame) {
+	if (SSEres) {
+		SSEres.write('data: ' + JSON.stringify(frame) + '\n\n')
+	} else {
+		console.log('There is no GUI SSE opened connection')
+	}
 }
 
 exports.start = start
