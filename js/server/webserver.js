@@ -11,6 +11,7 @@ var modules = {
 	  'home'              : {'file': 'home.html', 'relatedData' : homeModuleData}
 	, 'device_management' : {'file': 'device_management.html'}
 	, 'app'               : {'file': 'app.html'}
+	, 'new_device'        : {'file': 'new_device.html'}
 }
 var SSEres = null
 

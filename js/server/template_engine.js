@@ -5,8 +5,6 @@ var fs = require('fs')
 var Mustache = require('mustache')
 
 // those variables are global in order not to compile the regexp every time we execute the tpl engine...
-// var TPL_ENGINE_regexp = new RegExp("\\{\\$([A-Z_]+)\\}", "g")
-// var TPL_ENGINE_regexp2 = new RegExp("\\{\\$([A-Z_]+)\\}", "")
 var TPL_ENGINE_cache = {}
 var TPL_ENGINE_views_dir = "../../views/"
 
@@ -24,19 +22,15 @@ function template_engine(template_name, data) {
 	} else {
 		//* Precompilation of the template and caching
 		var compiled_template = get_compiled_template(template_name)
-		console.log('compiled_template: ' + compiled_template)
 		return compiled_template(data)
 	}
 }
 
 function get_compiled_template (template_name) {
 	if (! TPL_ENGINE_cache[template_name]) {
-		console.log('file to cache: ' + TPL_ENGINE_views_dir + template_name)
 		//* toString after readFileSync is required, compile doesn't work on buffers
 		TPL_ENGINE_cache[template_name] = Mustache.compile(fs.readFileSync(TPL_ENGINE_views_dir + template_name).toString());
-		console.log(TPL_ENGINE_cache[template_name])
 	}
-	console.log(TPL_ENGINE_cache[template_name])
 	return TPL_ENGINE_cache[template_name]
 }
 
