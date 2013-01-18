@@ -7,12 +7,23 @@ var get_shared_data = shared.get_shared_data
 var set_shared_data = shared.set_shared_data
 
 var webdir = '../..'
-var viewsdir = '../../views/'
-var URLS = {}
-URLS['home'] = viewsdir + 'home.html'
-URLS['device_management'] = viewsdir + 'device_management.html'
-URLS['app'] = viewsdir + 'app.html'
+var modules = {
+	  'home'              : {'file': 'home.html', 'relatedData' : homeModuleData}
+	, 'device_management' : {'file': 'device_management.html'}
+	, 'app'               : {'file': 'app.html'}
+}
 var SSEres = null
+
+function homeModuleData() {
+	var templateData = {
+		  'IN_TEMP'        : get_shared_data('IN_TEMP')
+		, 'OUT_TEMP'       : get_shared_data('OUT_TEMP')
+		, 'COLOR_TEMP_IN'  : temp2color(get_shared_data('IN_TEMP'))
+		, 'COLOR_TEMP_OUT' : temp2color(get_shared_data('OUT_TEMP'))
+	}
+	return templateData
+}
+
 
 function start (db) {
 	console.log('Starting webserver')
@@ -23,7 +34,7 @@ function start (db) {
 				search = /([^&=]+)=?([^&]*)/g,
 				decode = function (s) { return decodeURIComponent(s.replace(pl, " ")) },
 				query  = url
-				console.log(query)
+				console.log('query: ' + query)
 
 				while (match = search.exec(query))
 					urlParams[decode(match[1])] = decode(match[2])
@@ -36,6 +47,7 @@ function start (db) {
 			var url = req.url.split('?')
 			var specialURL = false
 			var urlParams = parseParams(url[1])
+			var fileUrl, templateData
 
 			if (!urlParams.module) {
 				if (url == '/' || url[0].split('.').pop() == 'html') {
@@ -60,20 +72,20 @@ function start (db) {
 				break
 
 				case 'nonHTML':
-					urlFile = req.url.replace(/([^\?]+)\?(.*)/, '$1')
-					urlFile = webdir + urlFile
+					fileUrl = req.url.replace(/([^\?]+)\?(.*)/, '$1')
+					fileUrl = webdir + fileUrl
 					nonHTML = true
 					break
 
-				case 'home': // No break for this case, this is intended
-					template_data['IN_TEMP'] = get_shared_data('IN_TEMP')
-					template_data['OUT_TEMP'] = get_shared_data('OUT_TEMP')
-					template_data['COLOR_TEMP_IN'] = temp2color(template_data['IN_TEMP'])
-					template_data['COLOR_TEMP_OUT'] = temp2color(template_data['OUT_TEMP'])
-					// no break
 				default:
-					if (urlParams.module in URLS) {// Module found, returns its view
-						urlFile = URLS[urlParams.module]
+					if (urlParams.module in modules) {// Module found, returns its view
+						fileUrl = modules[urlParams.module].file
+						if (modules[urlParams.module].relatedData) {
+							templateData = modules[urlParams.module].relatedData()
+						} else {
+							templateData = {}
+						}
+						
 					} else {// Module was not found
 						console.error('module not found')
 						// @TODO error page
@@ -81,18 +93,18 @@ function start (db) {
 					break 
 			}
 
-			if (!specialURL && urlFile) {
-				console.log('Asked file=' + urlFile)
-				res.writeHead(200, {'Content-Type': mime.lookup(urlFile)})
+			if (!specialURL && fileUrl) {
+				console.log('Asked file=' + fileUrl)
+				res.writeHead(200, {'Content-Type': mime.lookup(fileUrl)})
 				if (nonHTML) {
-					fs.readFile(urlFile, 'utf-8', function (err, data) {
+					fs.readFile(fileUrl, null, function (err, data) {
 						if (err) {
 							console.error(err)
 						}
 						res.end(data)
 					})
 				} else {
-					res.end(tpl.get_template_result(urlFile, template_data))
+					res.end(tpl.get_template_result(fileUrl, templateData))
 				}
 			}
 
@@ -117,7 +129,7 @@ function frameRecieved(frame) {
  * @return{string} Color name to be used in the CSS class ("{COLOR}-temp")
 */
 function temp2color(temperature_value) {
-	color = ''
+	var color = ''
 	if (temperature_value >= 32) {
 		color = 'red1'
 	} else if (temperature_value >= 25) {

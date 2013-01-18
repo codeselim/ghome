@@ -19,11 +19,11 @@
 		<p>&nbsp;Faits/en cours en gris, pas touchés en jaune.</p>
 		<div data-role="content">
 			<div id="quick-dashboard">
-				<span id="temp-in" class="{$COLOR_TEMP_IN}-temp bold">{$IN_TEMP} &deg;C</span> | 
-				<span id="temp-out" class="{$COLOR_TEMP_OUT}-temp bold">{$OUT_TEMP} &deg;C</span> | 
-				<span id="heating" class="mode-{$HEATING_STATE} bold">{$HEATING_STATE}</span> |
-				<span id="consumtion">{$CONSUMTION} kWh</span>
-				<div id="weather">{$WEATHER_PIC}</div>
+				<span id="temp-in" class="{{COLOR_TEMP_IN}}-temp bold">{{IN_TEMP}} &deg;C</span> | 
+				<span id="temp-out" class="{{COLOR_TEMP_OUT}}-temp bold">{{OUT_TEMP}} &deg;C</span> | 
+				<span id="heating" class="mode-{{HEATING_STATE}} bold">{{HEATING_STATE}}</span> |
+				<span id="consumtion">{{CONSUMTION}} kWh</span>
+				<div id="weather">{{WEATHER_PIC}}</div>
 			</div>
 			<ul data-role="listview" data-divider-theme="b" data-inset="true" >
 				<li><a data-transition="slide" href="/?module=app">Test notifs</a></li>

@@ -2,12 +2,13 @@
 
 var DBG = true // Use this variable when developping, will disable cache (and maybe other things... !)
 var fs = require('fs')
+var Mustache = require('mustache')
 
 // those variables are global in order not to compile the regexp every time we execute the tpl engine...
-var TPL_ENGINE_regexp = new RegExp("\\{\\$([A-Z_]+)\\}", "g")
-var TPL_ENGINE_regexp2 = new RegExp("\\{\\$([A-Z_]+)\\}", "")
+// var TPL_ENGINE_regexp = new RegExp("\\{\\$([A-Z_]+)\\}", "g")
+// var TPL_ENGINE_regexp2 = new RegExp("\\{\\$([A-Z_]+)\\}", "")
 var TPL_ENGINE_cache = {}
-var TPL_ENGINE_views_dir = ""
+var TPL_ENGINE_views_dir = "../../views/"
 
 function init_views_dir (views_dir) {
 	TPL_ENGINE_views_dir = views_dir
@@ -16,31 +17,27 @@ function init_views_dir (views_dir) {
 //* @param data dictionary of the form {'VAR_NAME_IN_TEMPLATE': 'Value to be put in place of the template variable', etc... }
 //* @param template_name is the name of the template we wanna read and parse
 function template_engine(template_name, data) {
-	// somehow gets the content of the file "template_name.html" in the templates/views folder
-	template_content = get_template_file(template_name)
-	
-	m = template_content.match(TPL_ENGINE_regexp)
-	result = template_content
-	for(i = 0; i<m.length; i++) {
-		result = result.replace(m[i], data[m[i].replace(TPL_ENGINE_regexp2, "$1")])
+	// somehow gets the content of the file "template_name.html" in the views_dir folder
+	if (DBG) {
+		//* No cache
+		return Mustache.to_html(fs.readFileSync(TPL_ENGINE_views_dir + template_name, "utf8"), data)
+	} else {
+		//* Precompilation of the template and caching
+		var compiled_template = get_compiled_template(template_name)
+		console.log('compiled_template: ' + compiled_template)
+		return compiled_template(data)
 	}
-
-	return result
 }
 
-function get_template_file (template_name) {
-	
-	if (false == DBG) {
-		if (template_name in TPL_ENGINE_cache) {
-			content = TPL_ENGINE_cache[template_name]
-		} else {
-			TPL_ENGINE_cache[template_name] = fs.readFileSync(TPL_ENGINE_views_dir + template_name).toString()
-			content = TPL_ENGINE_cache[template_name]
-		}
-	} else {
-		content = fs.readFileSync(TPL_ENGINE_views_dir + template_name).toString()
+function get_compiled_template (template_name) {
+	if (! TPL_ENGINE_cache[template_name]) {
+		console.log('file to cache: ' + TPL_ENGINE_views_dir + template_name)
+		//* toString after readFileSync is required, compile doesn't work on buffers
+		TPL_ENGINE_cache[template_name] = Mustache.compile(fs.readFileSync(TPL_ENGINE_views_dir + template_name).toString());
+		console.log(TPL_ENGINE_cache[template_name])
 	}
-	return content
+	console.log(TPL_ENGINE_cache[template_name])
+	return TPL_ENGINE_cache[template_name]
 }
 
 exports.get_template_result = template_engine
