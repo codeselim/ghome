@@ -7,6 +7,14 @@ var get_shared_data = shared.get_shared_data
 var set_shared_data = shared.set_shared_data
 
 var webdir = '../..'
+/**
+ * ==== Templates data structure ==== 
+ * How to fill this data structure:
+ * {
+ *  'module_name' : {'file': 'name_of_the_template_or_view_file', 'relatedData': function_that_will_return_the_data_object}
+ *  'module_name2' : {'file': 'another_filename'} // no related data for this module 
+ * }
+*/
 var modules = {
 	  'home'              : {'file': 'home.html', 'relatedData' : homeModuleData}
 	, 'device_management' : {'file': 'device_management.html'}
@@ -14,6 +22,7 @@ var modules = {
 }
 var SSEres = null
 
+/** Example of function that returns the "data object" **/
 function homeModuleData() {
 	var templateData = {
 		  'IN_TEMP'        : get_shared_data('IN_TEMP')
