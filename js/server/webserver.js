@@ -4,6 +4,7 @@ var mime      = require('mime')
 var tpl       = require('./template_engine')
 var shared    = require('./shared_data')
 var sseSender = require('./sse_sender')
+var qs 		  = require('querystring');
 
 var webdir = '../..'
 /**
@@ -18,6 +19,7 @@ var requestHandlers = {
 	, 'new_device'        : defaultHtmlRequestHandler
 	, 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
+	, 'postform'		  : postformHandler //test post implementation selim 	
 }
 
 /* Same format as the request handles dict. Exceptions for the default request handler*/
@@ -25,6 +27,20 @@ var exceptions = {
 	'/sse' : sseSender.requestHandler
 }
 
+
+function postformHandler(req, res, params, response_sender, postData){
+		var templateData = {
+		'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
+		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
+		, 'TEST_DATA'		 : postData
+		//, 'COLOR_TEMP_IN'  : temp2color(get_shared_data('IN_TEMP'))
+		//, 'COLOR_TEMP_OUT' : temp2color(get_shared_data('OUT_TEMP'))
+	}
+	var data = tpl.get_template_result("postform.html", templateData)
+	console.log(params['pathname'])
+	params['fileUrl'] = 'postform.html'
+	response_sender(req, res, params, data)
+}
 
 /** Appends '.html' to the module name and uses it as fileName */
 function defaultHtmlRequestHandler(req, res, params, response_sender) {
@@ -50,8 +66,8 @@ function homeReqHandler(req, res, params, response_sender) {
 	var templateData = {
 		'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
 		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
-		, 'COLOR_TEMP_IN'  : temp2color(get_shared_data('IN_TEMP'))
-		, 'COLOR_TEMP_OUT' : temp2color(get_shared_data('OUT_TEMP'))
+		//, 'COLOR_TEMP_IN'  : temp2color(get_shared_data('IN_TEMP')) //@TODO the below two lines are crashing the server, please recheck
+		//, 'COLOR_TEMP_OUT' : temp2color(get_shared_data('OUT_TEMP'))
 	}
 	var data = tpl.get_template_result("home.html", templateData)
 	console.log(params['pathname'])
@@ -124,6 +140,10 @@ function defaultReqHandler(req, res, params, responseSender) {
 function start (db, port) {
 	console.log('Starting webserver')
 	http.createServer(function (req, res) {
+
+		var postData = "";
+		req.setEncoding("utf8"); 
+
 		//* Note : req is an instance of http.ServerRequest and res is an instance of http.ServerResponse
 		try {
 			var urlParams = require('url').parse(req.url, true)
@@ -131,14 +151,24 @@ function start (db, port) {
 			if (!urlParams.query.module) {
 				if (urlParams['pathname'] == '/' || urlParams['pathname'].split('.').pop() == 'html') {
 					urlParams.query.module = 'home'
-				} else {
+					} else {
 					urlParams.query.module = 'default'
+					}
 				}
+
+			//handlig POST data	
+			if(req.method === "POST"){
+				req.addListener("data", function(postDataChunk) {
+				postData += postDataChunk;
+				//console.log("Received POST data chunk '"+ postDataChunk + "'.");
+				var json = qs.parse(postData);
+				console.log(json);
+				});
 			}
 
 			req.addListener("end", function() {
 				if(urlParams.query.module in requestHandlers) {
-					requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender)
+					requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender, postData)
 				} else {
 					//@TODO 404 error
 				}
