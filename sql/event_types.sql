@@ -1,6 +1,6 @@
 CREATE TABLE `event_types` (
   `id` INTEGER PRIMARY KEY,
-  `name` VARCHAR(255) NOT NULL,
+  `name` VARCHAR(255) NOT NULL
 );
 
 INSERT INTO event_types VALUES (null, "exceeding of temperature");
