@@ -1,4 +1,4 @@
-CREATE TABLE `event_types` (
+CREATE TABLE `tasks` (
   `id` INTEGER PRIMARY KEY,
   `name` VARCHAR(255) NOT NULL,
   `action_type_id` INTEGER,
