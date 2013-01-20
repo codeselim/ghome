@@ -4,18 +4,19 @@ var mime      = require('mime')
 var tpl       = require('./template_engine')
 var shared    = require('./shared_data')
 var sseSender = require('./sse_sender')
+var device    = require('./device_module')
 
 var webdir = '../..'
 /**
  * Request handlers
- * Prototype: function(req, res, params, response_sender)
+ * Prototype: function(req, res, params, responseSender)
  * This function is called when there is a module param in the URL
  * Each module MUST be declared with a handler. Else the server won't be able to serve the file
  */
 var requestHandlers = {
 	  'home'              : homeReqHandler
 	, 'device_management' : defaultHtmlRequestHandler
-	, 'new_device'        : defaultHtmlRequestHandler
+	, 'new_device'        : device.newDeviceRequestHandler
 	, 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
 }
@@ -27,9 +28,9 @@ var exceptions = {
 
 
 /** Appends '.html' to the module name and uses it as fileName */
-function defaultHtmlRequestHandler(req, res, params, response_sender) {
+function defaultHtmlRequestHandler(req, res, params, responseSender) {
 	params['fileUrl'] = '../../views/' + params.query.module + '.html'
-	defaultResponseSender(req, res, params, fs.readFileSync(params.fileUrl))
+	responseSender(req, res, params, fs.readFileSync(params.fileUrl))
 }
 
 /** Kept for great justice 
@@ -46,17 +47,17 @@ function sendPlainHTML(fileName, args, path) {
 }
 
 // @TODO: MOVE IN ANOTHER FILE BEGIN ///////////////////////////////////////////////////////////////
-function homeReqHandler(req, res, params, response_sender) {
+function homeReqHandler(req, res, params, responseSender) {
 	var templateData = {
 		'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
 		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
-		, 'COLOR_TEMP_IN'  : temp2color(get_shared_data('IN_TEMP'))
-		, 'COLOR_TEMP_OUT' : temp2color(get_shared_data('OUT_TEMP'))
+		, 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
+		, 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
 	}
 	var data = tpl.get_template_result("home.html", templateData)
 	console.log(params['pathname'])
 	params['fileUrl'] = 'home.html'
-	response_sender(req, res, params, data)
+	responseSender(req, res, params, data)
 }
 
 /**  This function returns the CSS temperature color to be applied to a given
@@ -140,6 +141,7 @@ function start (db, port) {
 				if(urlParams.query.module in requestHandlers) {
 					requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender)
 				} else {
+					console.error(404)
 					//@TODO 404 error
 				}
 			});
