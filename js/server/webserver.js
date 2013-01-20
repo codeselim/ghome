@@ -55,7 +55,6 @@ function homeReqHandler(req, res, params, responseSender) {
 		, 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
 	}
 	var data = tpl.get_template_result("home.html", templateData)
-	console.log(params['pathname'])
 	params['fileUrl'] = 'home.html'
 	responseSender(req, res, params, data)
 }

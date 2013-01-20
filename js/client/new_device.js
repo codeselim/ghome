@@ -3,7 +3,7 @@ define(['jquery'], function($){
 	var pageInit = function() {
 		console.log('new device pageInit')
 		$(":submit").on('click',function () { $("#action").val(this.name) })
-		$("#test").on('click',testDevice)
+		$("[name=test]").on('click',testDevice)
 	}
 
 	var testDevice = function() {
