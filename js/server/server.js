@@ -38,10 +38,10 @@ function frame_to_android_notif (frame_data) {
 
 // @TODO : Put that logic somewhere else, like in the EventMonitor...
 function update_main_temperatures (frame_data) {
-	if (frame_data.id == get_shared_data('IN_TEMP_SENSOR_ID')) {
+	if (frame_data.id == get_shared_data('OUT_TEMP_SENSOR_ID')) {
 		console.log('The sensor id of the received frame is the one of the main INSIDE temperature sensor. Updating the server in-memory value.')
 		temp = require('./sensors').decode_data_byte(frame_data)[1].toFixed(1)
-		set_shared_data('IN_TEMP', temp)
+		set_shared_data('OUT_TEMP', temp)
 		
 	};
 	// set_shared_data('OUT_TEMP', temp)
