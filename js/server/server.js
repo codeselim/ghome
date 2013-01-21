@@ -45,6 +45,8 @@ function GLOBAL_INIT () {
 	set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
 	set_shared_data('MAIN_SERVER_IP', '134.214.105.28')
 	set_shared_data('MAIN_SERVER_PORT', 5000)
+	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
+	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
 }
 
 //@TODO : Find a way to organize the packages so that they share the data
@@ -54,5 +56,5 @@ android_notif_serv.start(5000, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Wel
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
-var allowed_ids = [2214883, 346751, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
+var allowed_ids = [2214883, 346751, 8991608/*temp sensor*/, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 sensors_serv.start(null, null, 8000, allowed_ids)
