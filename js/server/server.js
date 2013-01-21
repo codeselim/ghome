@@ -36,6 +36,13 @@ function frame_to_android_notif (frame_data) {
 	android_notif_serv.push_android_notif(JSON.stringify(frame_data))
 }
 
+// @TODO : Put that logic somewhere else, like in the EventMonitor...
+function update_main_temperatures (frame_data) {
+	temp = require('./sensors').decode_data_byte(frame_data)
+	set_shared_data('IN_TEMP', temp)
+	set_shared_data('OUT_TEMP', temp)
+}
+
 /** GLOBAL_INIT : Initialization function at the startup of the global server (server.js file) 
  * It will for instance get the last inside/outised temperatures and push them into memory, etc. .. 
  * It will, among other things, bring the server to the state it was when it was shutdown (either gracefully or suddenly..)
