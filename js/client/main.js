@@ -14,13 +14,6 @@ require(['jquery', 'sseListener', 'device_management', 'new_device', 'jquerymobi
 		//* Hides the body until JQM finishes applying styles
 		$('body').css('visibility', 'visible')
 
-		// $( '#home' ).live( 'pageinit',function(event){
-		// 	console.log('home live')
-		// });
-		// $( '#notif' ).live( 'pageinit',function(event){
-		// 	console.log('notif live')
-		// });
-
 		var homePI = function() {
 			console.log('pageinit home!')
 		}
