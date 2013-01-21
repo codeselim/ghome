@@ -1,5 +1,5 @@
 var fs = require('fs')
-
+var ss = require('./sensors_server')
 var newDeviceRH = function (req, res, params, responseSender) {
 	var actions = {
 		'default' : function (){
@@ -8,9 +8,11 @@ var newDeviceRH = function (req, res, params, responseSender) {
 		},
 
 		'test' : function () {
-			setTimeout (function(){
-				res.end(JSON.stringify({'test': 'test'}))	
-			}, 2000)
+			// setTimeout (function(){
+			// 	res.end(JSON.stringify({'test': 'test'}))
+			// }, 2000)
+			ss.sendToSensor(params.query.deviceid, ss.PLUG_SWITCH_FRAME)
+			res.end(JSON.stringify({msg: "Test sent to plug"}))
 		},
 
 		'submit': function() {

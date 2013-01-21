@@ -43,6 +43,8 @@ function frame_to_android_notif (frame_data) {
 function GLOBAL_INIT () {
 	set_shared_data('IN_TEMP', 0) // @TODO : Get the value from the database instead !
 	set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
+	set_shared_data('MAIN_SERVER_IP', '134.214.105.28')
+	set_shared_data('MAIN_SERVER_PORT', 5000)
 }
 
 //@TODO : Find a way to organize the packages so that they share the data
