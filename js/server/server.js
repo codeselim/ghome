@@ -38,9 +38,13 @@ function frame_to_android_notif (frame_data) {
 
 // @TODO : Put that logic somewhere else, like in the EventMonitor...
 function update_main_temperatures (frame_data) {
-	temp = require('./sensors').decode_data_byte(frame_data)
-	set_shared_data('IN_TEMP', temp)
-	set_shared_data('OUT_TEMP', temp)
+	if (frame_data.id == get_shared_data('IN_TEMP_SENSOR_ID')) {
+		console.log('The sensor id of the received frame is the one of the main INSIDE temperature sensor. Updating the server in-memory value.')
+		temp = require('./sensors').decode_data_byte(frame_data)[1].toFixed(1)
+		set_shared_data('IN_TEMP', temp)
+		
+	};
+	// set_shared_data('OUT_TEMP', temp)
 }
 
 /** GLOBAL_INIT : Initialization function at the startup of the global server (server.js file) 
@@ -63,5 +67,6 @@ android_notif_serv.start(5000, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Wel
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
 sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
+sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)
 var allowed_ids = [2214883, 346751, 8991608/*temp sensor*/, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 sensors_serv.start(null, null, 8000, allowed_ids)
