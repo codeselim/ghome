@@ -142,13 +142,12 @@ function start (db, port) {
 	console.log('Starting webserver')
 	http.createServer(function (req, res) {
 
-		params['postData'] = '';
 		req.setEncoding("utf8"); 
 
 		//* Note : req is an instance of http.ServerRequest and res is an instance of http.ServerResponse
 		try {
 			var urlParams = require('url').parse(req.url, true)
-			
+			urlParams['postData']
 			if (!urlParams.query.module) {
 				if (urlParams['pathname'] == '/' || urlParams['pathname'].split('.').pop() == 'html') {
 					urlParams.query.module = 'home'
@@ -160,9 +159,9 @@ function start (db, port) {
 			//handling POST data	
 			if(req.method === "POST") {
 				req.addListener("data", function(postDataChunk) {
-				params['postData'] += postDataChunk;
+				urlParams['postData'] += postDataChunk;
 				//console.log("Received POST data chunk '"+ postDataChunk + "'.");
-				var json = qs.parse(params.postData);
+				var json = qs.parse(urlParams.postData);
 				console.log(json);
 				});
 			}
