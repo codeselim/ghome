@@ -30,11 +30,11 @@ var exceptions = {
 }
 
 
-function postformHandler(req, res, params, response_sender, postData){
+function postformHandler(req, res, params, responseSender){
 		var templateData = {
 		'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
 		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
-		, 'TEST_DATA'		 : postData
+		, 'TEST_DATA'		 : params.postData
 		//, 'COLOR_TEMP_IN'  : temp2color(get_shared_data('IN_TEMP'))
 		//, 'COLOR_TEMP_OUT' : temp2color(get_shared_data('OUT_TEMP'))
 	}
@@ -142,7 +142,7 @@ function start (db, port) {
 	console.log('Starting webserver')
 	http.createServer(function (req, res) {
 
-		var postData = "";
+		params['postData'] = '';
 		req.setEncoding("utf8"); 
 
 		//* Note : req is an instance of http.ServerRequest and res is an instance of http.ServerResponse
@@ -158,18 +158,18 @@ function start (db, port) {
 				}
 
 			//handling POST data	
-			if(req.method === "POST"){
+			if(req.method === "POST") {
 				req.addListener("data", function(postDataChunk) {
-				postData += postDataChunk;
+				params['postData'] += postDataChunk;
 				//console.log("Received POST data chunk '"+ postDataChunk + "'.");
-				var json = qs.parse(postData);
+				var json = qs.parse(params.postData);
 				console.log(json);
 				});
 			}
 
 			req.addListener("end", function() {
 				if(urlParams.query.module in requestHandlers) {
-					requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender, postData)
+					requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender)
 				} else {
 					console.error(404)
 					//@TODO 404 error
