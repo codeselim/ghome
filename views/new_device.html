@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>ghome</title>
+	<link rel="stylesheet/less" type="text/css" href="css/ghome.less" />
+	<script src="js/vendor/less.min.js" type="text/javascript"></script>
+	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
+</head>
+<body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
+	<div data-role="page" id="newDevice">
+		<div data-theme="a" data-role="header" data-position="fixed">
+			<h3>Nouvel équipement</h3>
+			<a href="/?module=home" data-icon="home" data-iconpos="notext" >Accueil</a>
+			<a href="/?module=device_management" data-icon="back" data-iconpos="notext" data-rel="back" >Retour</a>
+		</div>
+		<div data-role="content">
+			<!-- Content-Begin -->
+			<form action="/" method="GET" id="form">
+				<input type="hidden" name="module" value="new_device" />
+				<input type="hidden" name="action" id="action" />
+				<div data-role="fieldcontain">
+					<label for="equip_type">Type </label>
+					<select name="equip_type" id="equip_type">
+						<option value="">-- Choisir --</option>
+						{{#devices}}
+						    <option value="{{value}}">{{label}}</option>
+						{{/devices}}
+					</select>
+				</div>
+				<div data-role="fieldcontain">
+					<fieldset data-role="controlgroup">
+						<label for="equip_label"> Label </label>
+						<input name="equip_label" id="equip_label" placeholder="" value="" type="text" />
+					</fieldset>
+				</div>
+				<div data-role="fieldcontain">
+					<fieldset data-role="controlgroup">
+						<label for="equip_id"> Identifiant </label>
+						<input name="equip_id" id="equip_id" placeholder="" value="" type="text" />
+					</fieldset>
+				</div>
+				<!-- The name will be used as action GET parameter -->
+				<input type="button" value="Tester" id="test" name="test"/>
+				<input type="submit" value="Valider" name="submit"/>
+			</form>
+
+			<div data-role="popup" id="popup">
+				<a href="#" data-rel="back" data-role="button" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<p id="popupContent">Oops</p>
+			</div>
+
+			<!-- Content-End -->
+		</div>
+	</div>
+</body>
+</html>

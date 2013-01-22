@@ -1,25 +1,18 @@
 require.config({ 
-	baseUrl: "js/client"
+	baseUrl: 'js/client'
 	, paths: {  
-		"jquerymobile": "../vendor/jquery.mobile-1.2.0.min"
+		'jquerymobile': '../vendor/jquery.mobile-1.2.0.min'
 	}
 	, shim : {
-		"jquerymobile" : ['jquery']
+		'jquerymobile' : ['jquery']
 	}
 })
 
 
-require(["jquery", "sseListener", "device_management", "jquerymobile"], function($,sseListener, devMgmt) {
+require(['jquery', 'sseListener', 'device_management', 'new_device', 'jquerymobile'], function($,sseListener, devMgmt, new_device) {
 	$(function() {
 		//* Hides the body until JQM finishes applying styles
 		$('body').css('visibility', 'visible')
-
-		$( '#home' ).live( 'pageinit',function(event){
-			console.log('home live')
-		});
-		$( '#notif' ).live( 'pageinit',function(event){
-			console.log('notif live')
-		});
 
 		var homePI = function() {
 			console.log('pageinit home!')
@@ -28,7 +21,7 @@ require(["jquery", "sseListener", "device_management", "jquerymobile"], function
 		var notifPI = function() {
 			console.log('pageinit notif!')
 			var onSSERecieved = function(e) {
-				$('#sseOutput').append("<br />" + e.data)
+				$('#sseOutput').append('<br />' + e.data)
 			}
 
 			$('#sseToggle').change(function() { 
@@ -44,14 +37,15 @@ require(["jquery", "sseListener", "device_management", "jquerymobile"], function
 
 		//* Registering the page inits
 		pageinits = {
-			"home" : homePI
-			, "notif" : notifPI
-			, "devMgmt" : devMgmt.pageInit
+			  'home' : homePI
+			, 'notif' : notifPI
+			, 'devMgmt' : devMgmt.pageInit
+			, 'newDevice' : new_device.pageInit 
 		}
 
 		for( id in pageinits) {
 			console.log('applying pageinit for ' + id)
-			$(document).delegate("#" + id, "pageinit", pageinits[id])	
+			$(document).delegate('#' + id, 'pageinit', pageinits[id])	
 		}
 
 		//* When the page is loaded from non AJAX request, pageinit event

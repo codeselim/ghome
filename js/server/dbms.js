@@ -3,6 +3,7 @@ var sqlite3 = require('sqlite3').verbose();
 var db;
 var dName;
 
+
 function cbSuccess(msg) {
 	console.log("TEST");
 	console.log(msg);
@@ -16,6 +17,7 @@ function connect(dbName) {
 }
 
 function query(query_str, parameters, callback_func) {
+
 	db.serialize(function() {
 	var statement = db.prepare(query_str);
 	statement.all(parameters, callback_func);
@@ -28,6 +30,7 @@ function disconnect() {
 	db.close();
 	console.log("Database " + dName + " closed");
 }
+
 
 function test(err, rows) {
 console.log("Callback called");

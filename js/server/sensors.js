@@ -41,11 +41,16 @@ function decode_data_byte (frame_data) {
 	if (frame_data.org == 0X7 ){
 		switch (func) {
 			case 0X02 :
-				value = frame_data.data[2] * 40 /255 ;
-				return [0,value];
+				value = frame_data.data[2] * 40 /255 ;//temperature sensor
+				return [0,value]; // 0 indicates that it is a temperature
 			case 0X06 :
-				value = frame_data.data[1] * 510 / 255;
-				return [1,value];
+				value = frame_data.data[1] * 510 / 255;//luminosity value
+				return [1,value]; // 1 indicates that it's a luminosity
+			case 0X12 : //this func doesn't exist in the documentation
+				   // we added it for our consumption module
+				value = parseFloat (frame_data.data[1]+"."+frame_data.data[0]);
+				   //value of power consumption in a minute in Wh
+				return [2,value]; //2 indicates that it is a power consumption
 			default:
 				return [-1,0];
 		}

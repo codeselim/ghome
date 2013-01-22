@@ -2,15 +2,17 @@
 
 
 var events = require('events');
+var net = require("net");
 var sensors_utils = require('./sensors')
+var get_shared_data = require('./shared_data').get_shared_data
 var decode = sensors_utils.decode_frame
 var check_checksum = sensors_utils.check_frame_checksum
 var eventEmitter = new events.EventEmitter();
 var SENSOR_FRAME_EVENT = "newSensorFrame"
 var FRAME_SEPARATOR = "A55A"
+var PLUG_SWITCH_FRAME = 'A55A6B0577000000FF9F1E063072'//* Frame to be sent to toggle the swtich plug state (specific to our given switch power plug)
 function start (db, web_serv, port, allowed_ids) {
 	FRAME_SIZE = 28
-	var net = require("net");
 	console.log(new Date(), "Starting Sensors server")
 	var server = net.createServer(function(stream) {
 
@@ -66,6 +68,19 @@ function start (db, web_serv, port, allowed_ids) {
 	server.listen(port);
 }
 
+function send_to_sensor (sensor_id, message) {
+	var sock = new net.Socket()
+	sock.connect(get_shared_data('MAIN_SERVER_PORT'), get_shared_data('MAIN_SERVER_IP'), function () { 
+		console.log('Connection to main server established, going to send a message for a sensor')
+		sock.write(PLUG_SWITCH_FRAME, null, function () {
+			console.log('Data sent to main server, disconnecting.')
+			sock.close()
+		})
+	})
+}
+
 exports.start = start
 exports.events = eventEmitter
 exports.SENSOR_FRAME_EVENT = SENSOR_FRAME_EVENT
+exports.PLUG_SWITCH_FRAME = PLUG_SWITCH_FRAME
+exports.sendToSensor = send_to_sensor

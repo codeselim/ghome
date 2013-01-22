@@ -35,7 +35,7 @@ function start (port, ip) {
 		function shutdown () {
 			console.log("Closing connection to Android device number", myStreamId)
 			stop = true
-			clearInterval(a)
+			// clearInterval(a)
 			delete streams[myStreamId]
 		}
 

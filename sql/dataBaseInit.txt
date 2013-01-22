@@ -1,0 +1,8 @@
+.read sensors_types.sql
+.read event_types.sql
+.read condition_types.sql
+.read modes.sql
+.read sensors.sql
+.read tasks.sql
+.read conditions.sql
+.read logs.sql
