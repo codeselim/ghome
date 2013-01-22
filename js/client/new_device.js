@@ -10,6 +10,7 @@ define(['jquery'], function($){
 		$.mobile.loading('show')
 		$.ajax({
 			  url: "/"
+			, timeout : 1000
 			, data: {
 				  module : 'new_device'
 				, action : 'test'
@@ -24,8 +25,8 @@ define(['jquery'], function($){
 			$('#popupContent').html(JSON.stringify(data))
 			$('#popup').popup('open')
 		}) 
-		.fail(function() {
-			$('#popupContent').html('error')
+		.fail(function(jqXHR, textStatus,) {
+			$('#popupContent').html(textStatus)
 			$('#popup').popup('open')
 		})
 	}
