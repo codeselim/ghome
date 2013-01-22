@@ -2,7 +2,7 @@ CREATE TABLE `tasks` (
   `id` INTEGER PRIMARY KEY,
   `name` VARCHAR(255) NOT NULL,
   `action_type_id` INTEGER NOT NULL,
-  `target_id` INTEGER NOT NULL,
+  `target_id` INTEGER,
   `mode_id` INTEGER NOT NULL, -- still work to be done on that : do we allow multiple modes? Thus pushing that into the `conditions` table?
   `max_date` CHAR(5) NOT NULL, -- Value of type 'MM-DD'
   `min_date` CHAR(5) NOT NULL, -- Value of type 'MM-DD'
