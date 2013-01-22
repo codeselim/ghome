@@ -41,7 +41,7 @@ function decode_data_byte (frame_data) {
 	if (frame_data.org == 0X7 ){
 		switch (func) {
 			case 0X02 :
-				value = frame_data.data[2] * 40 /255 ;//temperature sensor
+				value = Math.abs((frame_data.data[2] * 40 /255) - 40 ) ;//temperature sensor
 				return [0,value]; // 0 indicates that it is a temperature
 			case 0X06 :
 				value = frame_data.data[1] * 510 / 255;//luminosity value
