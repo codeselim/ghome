@@ -7,6 +7,7 @@ var sseSender = require('./sse_sender')
 var device    = require('./device_module')
 var qs 		  = require('querystring');
 
+
 var webdir = '../..'
 /**
  * Request handlers
@@ -29,11 +30,11 @@ var exceptions = {
 }
 
 
-function postformHandler(req, res, params, response_sender, postData){
+function postformHandler(req, res, params, responseSender){
 		var templateData = {
 		'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
 		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
-		, 'TEST_DATA'		 : postData
+		, 'TEST_DATA'		 : params.postData
 		, 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
 		, 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
 	}
@@ -141,13 +142,12 @@ function start (db, port) {
 	console.log('Starting webserver')
 	http.createServer(function (req, res) {
 
-		var postData = "";
 		req.setEncoding("utf8"); 
 
 		//* Note : req is an instance of http.ServerRequest and res is an instance of http.ServerResponse
 		try {
 			var urlParams = require('url').parse(req.url, true)
-			
+			urlParams['postData'] = ''
 			if (!urlParams.query.module) {
 				if (urlParams['pathname'] == '/' || urlParams['pathname'].split('.').pop() == 'html') {
 					urlParams.query.module = 'home'
@@ -156,19 +156,19 @@ function start (db, port) {
 					}
 				}
 
-			//handlig POST data	
-			if(req.method === "POST"){
+			//handling POST data	
+			if(req.method === "POST") {
 				req.addListener("data", function(postDataChunk) {
-				postData += postDataChunk;
+				urlParams['postData'] += postDataChunk;
 				//console.log("Received POST data chunk '"+ postDataChunk + "'.");
-				var json = qs.parse(postData);
+				var json = qs.parse(urlParams.postData);
 				console.log(json);
 				});
 			}
 
 			req.addListener("end", function() {
 				if(urlParams.query.module in requestHandlers) {
-					requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender, postData)
+					requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender)
 				} else {
 					console.error(404)
 					//@TODO 404 error
