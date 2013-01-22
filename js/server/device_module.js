@@ -1,5 +1,6 @@
 var fs = require('fs')
 var ss = require('./sensors_server')
+			var off = true;
 var newDeviceRH = function (req, res, params, responseSender) {
 	var actions = {
 		'default' : function (){
@@ -11,8 +12,16 @@ var newDeviceRH = function (req, res, params, responseSender) {
 			// setTimeout (function(){
 			// 	res.end(JSON.stringify({'test': 'test'}))
 			// }, 2000)
-			ss.sendToSensor(params.query.deviceid, ss.PLUG_SWITCH_FRAME)
-			res.end(JSON.stringify({msg: "Test sent to plug"}))
+			if (off)
+			{
+			ss.sendToSensor(params.query.deviceid, ss.PLUG_SWITCH_ON_FRAME)
+			res.end(JSON.stringify({msg: "Test sent on to plug"}))
+			off = !off;
+			}else{
+			ss.sendToSensor(params.query.deviceid, ss.PLUG_SWITCH_OFF_FRAME)
+			res.end(JSON.stringify({msg: "Test sent off to plug"}))
+			off = !off;
+			}
 		},
 
 		'submit': function() {
