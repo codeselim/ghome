@@ -6,3 +6,7 @@
 .read tasks.sql
 .read conditions.sql
 .read logs.sql
+.read stats_type.sql
+.read daily_stats.sql
+.read monthly_stats.sql
+.read annaul_stats.sql
