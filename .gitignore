@@ -1,1 +1,3 @@
 *.sublime-*
+sqlite3/
+sql/dat.db
