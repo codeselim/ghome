@@ -5,3 +5,4 @@ CREATE TABLE `daily_stats` (
   `day` DATE NOT NULL
   FOREIGN KEY(type_stats) REFERENCES stats_type(id),
 );
+

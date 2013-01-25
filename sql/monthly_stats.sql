@@ -5,3 +5,4 @@ CREATE TABLE `monthly_stats` (
   `month` INTEGER NOT NULL
   FOREIGN KEY(type_stats) REFERENCES stats_type(id),
 );
+

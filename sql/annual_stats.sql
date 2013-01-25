@@ -5,3 +5,4 @@ CREATE TABLE `annual_stats` (
   `year` INTEGER NOT NULL
   FOREIGN KEY(type_stats) REFERENCES stats_type(id),
 );
+
