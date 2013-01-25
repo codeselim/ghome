@@ -58,7 +58,6 @@ function GLOBAL_INIT () {
 	set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
 	set_shared_data('MAIN_SERVER_IP', '134.214.105.28')
 	set_shared_data('MAIN_SERVER_PORT', 5000)
-<<<<<<< HEAD
 	db = new dbms.Database()
 	db.connect('dat', start)
 }
@@ -70,23 +69,11 @@ function start () {
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
+	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)
 	var allowed_ids = [2214883, 346751, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 	sensors_serv.start(db, web_serv, 8000, allowed_ids)
-=======
 	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
 	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
->>>>>>> 26cb930fa82d70a71490cc87cda97b22a2336518
 }
 
 GLOBAL_INIT()
-<<<<<<< HEAD
-=======
-web_serv.start(null, 80)
-android_notif_serv.start(5000, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Well, or test after changing it !) I don't know why, but it's working on port 5000 and not on port 3000 for instance....
-sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
-sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
-sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
-sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)
-var allowed_ids = [2214883, 346751, 8991608/*temp sensor*/, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
-sensors_serv.start(null, null, 8000, allowed_ids)
->>>>>>> 26cb930fa82d70a71490cc87cda97b22a2336518

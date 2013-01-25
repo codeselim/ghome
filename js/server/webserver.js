@@ -4,8 +4,8 @@ var mime      = require('mime')
 var tpl       = require('./template_engine')
 var shared    = require('./shared_data')
 var sseSender = require('./sse_sender')
-var qs 		  = require('querystring');
 var device    = require('./device_module')
+var qs 		  = require('querystring');
 
 
 var webdir = '../..'
@@ -35,8 +35,8 @@ function postformHandler(req, res, params, responseSender){
 		'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
 		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
 		, 'TEST_DATA'		 : params.postData
-		//, 'COLOR_TEMP_IN'  : temp2color(get_shared_data('IN_TEMP'))
-		//, 'COLOR_TEMP_OUT' : temp2color(get_shared_data('OUT_TEMP'))
+		, 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
+		, 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
 	}
 	var data = tpl.get_template_result("postform.html", templateData)
 	console.log(params['pathname'])
@@ -147,7 +147,7 @@ function start (db, port) {
 		//* Note : req is an instance of http.ServerRequest and res is an instance of http.ServerResponse
 		try {
 			var urlParams = require('url').parse(req.url, true)
-			urlParams['postData']
+			urlParams['postData'] = ''
 			if (!urlParams.query.module) {
 				if (urlParams['pathname'] == '/' || urlParams['pathname'].split('.').pop() == 'html') {
 					urlParams.query.module = 'home'
