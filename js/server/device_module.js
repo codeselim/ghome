@@ -1,17 +1,28 @@
 var fs = require('fs')
+var tpl = require('./template_engine')
 var ss = require('./sensors_server')
 var off = true
 
 //* Only used to test the device testing methods
 var nbrq = 0
 
-var newDeviceRH = function (req, res, params, responseSender) {
 
+
+var newDeviceRH = function (req, res, params, responseSender) {
+	//* Loads required data and sends the filled template
+	var initNewDevicePage = function() {
+		var data = tpl.get_template_result("new_device.html", {
+			'devices' : [
+				  {'value': 1, 'label': 'Prise'}
+				, {'value': 2, 'label': 'Thermomètre'}
+			]
+		})
+		params.fileUrl = 'new_device.html'
+		responseSender(req, res, params, data)
+	}
+	
 	var actions = {
-		'default' : function (){
-			params['fileUrl'] = '../../views/new_device.html'
-			responseSender(req, res, params, fs.readFileSync(params.fileUrl))
-		},
+		'default' : initNewDevicePage,
 
 		//* Test functions . return 'ok' after 3 requests
 		'teststart' : function() {
@@ -55,8 +66,7 @@ var newDeviceRH = function (req, res, params, responseSender) {
 
 		'submit': function() {
 			console.log('TODO: save the new device')
-			params['fileUrl'] = '../../views/new_device.html'
-			responseSender(req, res, params, fs.readFileSync(params.fileUrl))
+			initNewDevicePage()
 		}	
 	}
 

@@ -1,7 +1,8 @@
 require.config({ 
 	baseUrl: 'js/client'
 	, paths: {  
-		'jquerymobile': '../vendor/jquery.mobile-1.2.0.min'
+		  'jquerymobile': '../vendor/jquery.mobile-1.2.0.min'
+		, 'jqvalidate': '../vendor/jquery.validate.min'
 	}
 	, shim : {
 		'jquerymobile' : ['jquery']
