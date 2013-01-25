@@ -48,6 +48,11 @@ function update_main_temperatures (frame_data) {
 	// set_shared_data('OUT_TEMP', temp)
 }
 
+function log_event_in_db(frame_data){
+	console.log('**********######*********'+frame_data);
+}
+
+
 /** GLOBAL_INIT : Initialization function at the startup of the global server (server.js file) 
  * It will for instance get the last inside/outised temperatures and push them into memory, etc. .. 
  * It will, among other things, bring the server to the state it was when it was shutdown (either gracefully or suddenly..)
@@ -70,6 +75,15 @@ function start () {
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)
+	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, log_event_in_db)
+	
+	/** 
+	*
+	*/
+	// var database = new Database;
+	// database.query()
+
+
 	var allowed_ids = [2214883, 346751, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 	sensors_serv.start(db, web_serv, 8000, allowed_ids)
 	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
