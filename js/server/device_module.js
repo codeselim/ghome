@@ -6,8 +6,6 @@ var off = true
 //* Only used to test the device testing methods
 var nbrq = 0
 
-
-
 var newDeviceRH = function (req, res, params, responseSender) {
 	//* Loads required data and sends the filled template
 	var initNewDevicePage = function() {
@@ -20,7 +18,7 @@ var newDeviceRH = function (req, res, params, responseSender) {
 		params.fileUrl = 'new_device.html'
 		responseSender(req, res, params, data)
 	}
-	
+
 	var actions = {
 		'default' : initNewDevicePage,
 
@@ -76,5 +74,28 @@ var newDeviceRH = function (req, res, params, responseSender) {
 	actions[params.query.action]()
 }
 
+var deviceManagementRH  = function (req, res, params, responseSender) {
+	var data = tpl.get_template_result("device_management.html", {
+		'device_types' : [
+			  {'name' : 'Prises', 'devices' : [
+					  {'id': 'p1', 'label': 'Prise1'}
+					, {'id': 'p2', 'label': 'Prise2'}
+			  ]}
+			, {'name' : 'Capteurs de température', 'devices' : [
+					  {'id': 'ct1', 'label': 'Temp1'}
+					, {'id': 'ct2', 'label': 'Temp2'}
+			  ]}
+		  , {'name' : 'Interrupteurs', 'devices' : [
+				  {'id': 'i1', 'label': 'Interrupteur1'}
+				, {'id': 'i2', 'label': 'Interrupteur2'}
+		  ]}
+		]
+	})
+	params.fileUrl = 'device_management.html'
+	responseSender(req, res, params, data)
+}
+
+
 
 exports.newDeviceRequestHandler = newDeviceRH
+exports.devMgmtRequestHandler = deviceManagementRH
