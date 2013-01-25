@@ -14,6 +14,12 @@ var dbms = require('./dbms')
 var cp = require('child_process')
 var n = cp.fork(__dirname + '/background_worker.js')
 
+//*************** Constants **************
+var SENSORS_SERVER_PORT = 8000
+var WEB_SERVER_PORT = 80
+var ANDROID_NOTIF_SERVER_PORT = 5000
+//****************************************
+
 //* Handling messages FROM the child
 n.on('message', function(m) {
   console.log('PARENT got message:', m)
@@ -58,22 +64,22 @@ function GLOBAL_INIT () {
 	set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
 	set_shared_data('MAIN_SERVER_IP', '134.214.105.28')
 	set_shared_data('MAIN_SERVER_PORT', 5000)
+	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
+	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
 	db = new dbms.Database()
 	db.connect('dat', start)
 }
 
 function start () {
 	console.log('Database connected, starting server components.')
-	web_serv.start(db, 9615)
-	android_notif_serv.start(5000, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Well, or test after changing it !) I don't know why, but it's working on port 5000 and not on port 3000 for instance....
+	web_serv.start(db, WEB_SERVER_PORT)
+	android_notif_serv.start(ANDROID_NOTIF_SERVER_PORT, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Well, or test after changing it !) I don't know why, but it's working on port 5000 and not on port 3000 for instance....
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)
 	var allowed_ids = [2214883, 346751, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
-	sensors_serv.start(db, web_serv, 8000, allowed_ids)
-	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
-	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
+	sensors_serv.start(db, web_serv, SENSORS_SERVER_PORT, allowed_ids)
 }
 
 GLOBAL_INIT()
