@@ -43,7 +43,7 @@ function start (db, web_serv, port, allowed_ids) {
 					continue;
 				}
 				frame = buffer.substr(0, FRAME_SIZE) //* We know we have a complete frame (>= FRAME_SIZE and pos == 0) so just cut it off by its length
-				buffer = buffer.substr(FRAME_SIZE-1, buffer.length) //* Crops the current buffer, we don't need the data from the previous frame anymore
+				buffer = buffer.substr(FRAME_SIZE, buffer.length) //* Crops the current buffer, we don't need the data from the previous frame anymore
 				frame_data = decode(frame)
 				console.log("Sensor id=", frame_data.id)
 				if (-1 != allowed_ids.indexOf(frame_data.id)) {
