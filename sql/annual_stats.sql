@@ -1,4 +1,5 @@
 CREATE TABLE `annual_stats` (
+  `id` INTEGER PRIMARY KEY,
   `type_stats` INTEGER NOT NULL,
   `value` INTEGER NOT NULL,
   `year` INTEGER NOT NULL
