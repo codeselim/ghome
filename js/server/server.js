@@ -10,6 +10,7 @@ var sse_sender = require('./sse_sender')
 var get_shared_data = shared.get_shared_data
 var set_shared_data = shared.set_shared_data
 var dbms = require('./dbms')
+var logger = require('./logger.js')
 
 var cp = require('child_process')
 var n = cp.fork(__dirname + '/background_worker.js')
@@ -55,7 +56,18 @@ function update_main_temperatures (frame_data) {
 }
 
 function log_event_in_db(frame_data){
-	console.log('**********######*********'+frame_data);
+	console.log('**********###### Log event in db launched ! #####*********');
+	db.query("INSERT INTO logs values (? , ? , ? , ?)", ["NULL", "123132", "1233", "datetime()"], mycallback);
+	//console.log('DB object: '+db)
+	//console.debug(frame_data);
+}
+
+function mycallback(err, rows){
+	//console.debug(rows)
+		 // for (var r in rows) {
+   //    	console.log(r.id + " > " + r.sensor_id);
+   //    	console.log("INSIDE logs");
+	}
 }
 
 
@@ -92,7 +104,7 @@ function start () {
 	// database.query()
 
 
-	var allowed_ids = [2214883, 346751, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
+	var allowed_ids = [2214883, 346751, 8991608, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 	sensors_serv.start(db, web_serv, SENSORS_SERVER_PORT, allowed_ids)
 }
 
