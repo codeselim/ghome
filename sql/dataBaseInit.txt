@@ -9,4 +9,4 @@
 .read stats_type.sql
 .read daily_stats.sql
 .read monthly_stats.sql
-.read annaul_stats.sql
+.read annual_stats.sql
