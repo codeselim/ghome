@@ -2,33 +2,45 @@
 
 # echo "a="$a"blorg"
 origin=`pwd` # saving current dir
-b="blorg"
+reset="blorg"
+m="blorg"
+r="blorg"
 while [ "$1" != "" ]; do
 	case $1 in
 		noreset)
-			b="blerg"
+			reset="OK"
 			shift;;
 		m)
-			if [ "blorg" = $b ]; then
-				echo "Resetting DB..." 
-				cd ../../sql/ && rm -vf dat.db && sqlite3 dat.db < dataBaseInit.txt && sqlite3 dat.db < sql_test_data.txt &&
-				cd $origin 
-			fi
-			echo "Launching main server as root..." 
-			sudo echo "Fuck sudo" > /dev/null   # Does not do anything, necessary to get sudo OK
-			sudo su -c 'node server.js & echo $! > ./main_server.pid && chmod 0777 -v ./main_server.pid'
+			m="OK"
 			shift;;
 		r)
-			echo "Launching redirect server..."
-			node redirect.js & echo $! > ./redirect.pid
+			r="OK"
 			shift;;
 		all)
-			./launch.sh m
-			./launch.sh r
+			m="OK"
+			r="OK"
 			shift;;
 		*)
 			echo "No parameters passed, considering parameter \"all\" "
-			./launch.sh all
+			m="OK"
+			r="OK"
 			shift;;
 	esac
 done
+
+if [ "blorg" = $reset ]; then
+	echo "Resetting DB..." 
+	cd ../../sql/ && rm -vf dat.db && sqlite3 dat.db < dataBaseInit.txt && sqlite3 dat.db < sql_test_data.txt &&
+	cd $origin 
+fi
+
+if [ "OK" = $m ]; then
+	echo "Launching main server as root..." 
+	sudo echo "Fuck sudo" > /dev/null   # Does not do anything, necessary to get sudo OK
+	sudo su -c 'node server.js & echo $! > ./main_server.pid && chmod 0777 -v ./main_server.pid'
+fi
+
+if [ "OK" = $r ]; then
+	echo "Launching redirect server..."
+	node redirect.js & echo $! > ./redirect.pid
+fi
