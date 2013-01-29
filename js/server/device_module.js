@@ -11,8 +11,8 @@ var nbrq = 0
  * Gets the list of the devices types from the DB and passes it as a parameter to the callback
  * Object passed ; [{'value': type_id, 'label': type_name}]
 */
-function getDevicesTypesList (callback) {
-	params.db.query("SELECT * FROM " + t['st'] + "ORDER BY name ASC", function (rows, err) { // Dictionary of the SQL tables names
+function getDevicesTypesList (db, callback) {
+	db.query("SELECT * FROM " + t['st'] + "ORDER BY name ASC", function (err, rows) { // Dictionary of the SQL tables names
 		var data = []
 		for(i in rows) {
 			data.push({'value': rows[i]['id'], 'label': rows[i]['name']})
@@ -24,14 +24,14 @@ function getDevicesTypesList (callback) {
 var newDeviceRH = function (req, res, params, responseSender) {
 	//* Loads required data and sends the filled template
 	var initNewDevicePage = function() {
-		get_devices_types_list(function (devices_types) {
+		getDevicesTypesList(params.db, function (devices_types) {
 			var data = tpl.get_template_result("new_device.html", { 'devices_types' : device_types })
 			params.fileUrl = 'new_device.html'
 			responseSender(req, res, params, data)
 		})
 	}
 
-	var actions = {
+	var actions = {// lol, this is a hidden switch // new JS way huhu
 		'default' : initNewDevicePage,
 
 		//* Test functions . return 'ok' after 3 requests

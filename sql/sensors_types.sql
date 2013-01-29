@@ -3,7 +3,7 @@ CREATE TABLE `sensors_types` (
   `name` VARCHAR(255) NOT NULL
 );
 
-INSERT INTO sensors_types VALUES (null, "temperature");
-INSERT INTO sensors_types VALUES (null, "light");
-INSERT INTO sensors_types VALUES (null, "presence");
-INSERT INTO sensors_types VALUES (null, "contact");
+INSERT INTO sensors_types VALUES (null, "Température");
+INSERT INTO sensors_types VALUES (null, "Lumière");
+INSERT INTO sensors_types VALUES (null, "Présence");
+INSERT INTO sensors_types VALUES (null, "Contact");
