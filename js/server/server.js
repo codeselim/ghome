@@ -1,6 +1,6 @@
 //* Server of the GHome application
 //* Will be launching the network sensors server as well as the web server that deals with the different GUIs
-
+var sensors_utils = require('./sensors')
 var web_serv = require('./webserver')
 var sensors_serv = require('./sensors_server')
 var android_notif_serv = require('./android_notif_server')
@@ -10,7 +10,7 @@ var sse_sender = require('./sse_sender')
 var get_shared_data = shared.get_shared_data
 var set_shared_data = shared.set_shared_data
 var dbms = require('./dbms')
-var logger = require('./logger.js')
+var logger = require('./logger')
 
 var cp = require('child_process')
 var n = cp.fork(__dirname + '/background_worker.js')
@@ -57,18 +57,17 @@ function update_main_temperatures (frame_data) {
 
 function log_event_in_db(frame_data){
 	console.log('**********###### Log event in db launched ! #####*********');
-	db.query("INSERT INTO logs values (? , ? , ? , ?)", ["NULL", "123132", "1233", "datetime()"], mycallback);
-	//console.log('DB object: '+db)
-	//console.debug(frame_data);
+	logger.start(db);
+	data = { "sensor_id"  :  frame_data.id //the sensor id (decimal) ex. 8991608 
+			,"value"	  :  sensors_utils.decode_data_byte(frame_data)[1]  //the value  extracted from the array [type, value]
+		   }
+	logger.insertLog(data);
 }
 
-function mycallback(err, rows){
-	//console.debug(rows)
-		 // for (var r in rows) {
-   //    	console.log(r.id + " > " + r.sensor_id);
-   //    	console.log("INSIDE logs");
-	}
-}
+// function mycallback(err, rows){
+// 		console.log(err);
+// 	}
+
 
 
 /** GLOBAL_INIT : Initialization function at the startup of the global server (server.js file) 
@@ -104,7 +103,7 @@ function start () {
 	// database.query()
 
 
-	var allowed_ids = [2214883, 346751, 8991608, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
+	var allowed_ids = [2214883, 346751, 8991608, 112022, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 	sensors_serv.start(db, web_serv, SENSORS_SERVER_PORT, allowed_ids)
 }
 
