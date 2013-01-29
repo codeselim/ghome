@@ -36,7 +36,7 @@ function sendTimeEvent() {
 	db.query("SELECT id FROM event_types WHERE name = ?", "minute", sendEvent);
 	tasks_executor.execute_task(eventTypeId, currentTime.getMinutes());
 
-	if (currentTime.getMinutes == 0) {
+	if (currentTime.getMinutes() == 0) {
 		console.log("Hour changed = " + currentTime.getHours());
 	}
 	if (currentTime.getHours() == 0) {
@@ -49,7 +49,7 @@ function start(database) {
 	console.log("Starting events_monitor");
 	db = database;
 	//getData(36, 48);
-	idTimer = setInterval(sendTimeEvent, 60000);
+	idTimer = setInterval(sendTimeEvent, 15000);
 }
 
 function createEvent() {
