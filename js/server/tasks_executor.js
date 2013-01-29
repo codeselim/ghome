@@ -3,7 +3,7 @@ var db;
 function make_action(err, rows) {
 	console.log("rentrée dans callback")
 	 for (var r in rows) {
-      console.log(rows[r]["action_type_id"]);
+      console.log(rows[r]);
   } 
 }
 

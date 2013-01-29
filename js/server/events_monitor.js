@@ -34,7 +34,7 @@ function sendTimeEvent() {
 	var currentTime = new Date();
 	console.log("Minute changed = " + currentTime.getMinutes());
 	db.query("SELECT id FROM event_types WHERE name = '?'", "minute", sendEvent);
-	//tasks_executor.execute_task(eventTypeId, currentTime.getMinutes());
+	tasks_executor.execute_task(eventTypeId, currentTime.getMinutes());
 
 	if (currentTime.getMinutes() == 0) {
 		console.log("Hour changed = " + currentTime.getHours());
