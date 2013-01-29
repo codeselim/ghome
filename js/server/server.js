@@ -66,6 +66,7 @@ function GLOBAL_INIT () {
 	set_shared_data('MAIN_SERVER_PORT', 5000)
 	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
 	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
+	set_shared_data('SQL_TABLES', {'st': 'sensors_types', 'et':'event_types', 'at':'actions_types', 'l': 'logs', 'c':'conditions', 'ct':'condition_types', 'm':'modes', 's':'sensors', 't':'tasks'})
 	db = new dbms.Database()
 	db.connect('dat', start)
 }
