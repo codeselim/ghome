@@ -33,8 +33,8 @@ var dictEvents = {"temperature":setTempEvent,
 function sendTimeEvent() {
 	var currentTime = new Date();
 	console.log("Minute changed = " + currentTime.getMinutes());
-	db.query("SELECT id FROM event_types WHERE name = ?", "minute", sendEvent);
-	tasks_executor.execute_task(eventTypeId, currentTime.getMinutes());
+	db.query("SELECT id FROM event_types WHERE name = '?'", "minute", sendEvent);
+	//tasks_executor.execute_task(eventTypeId, currentTime.getMinutes());
 
 	if (currentTime.getMinutes() == 0) {
 		console.log("Hour changed = " + currentTime.getHours());
@@ -57,7 +57,9 @@ function createEvent() {
 }
 
 function sendEvent(err, rows) {
+	console.log("SEND EVENT");
 	for (var r in rows) {
+		console.log[r];
 			eventTypeId = rows[r]["id"];
 	}
 	/*createEvent();
