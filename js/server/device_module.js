@@ -1,28 +1,34 @@
 var fs = require('fs')
 var tpl = require('./template_engine')
 var ss = require('./sensors_server')
-var tables = require('./shared_data').get_shared_data('SQL_TABLES')
+var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
 var off = true
 
 //* Only used to test the device testing methods
 var nbrq = 0
 
-function get_devices_types (callback) {
-	params.db.query("SELECT * FROM ")
+/**
+ * Gets the list of the devices types from the DB and passes it as a parameter to the callback
+ * Object passed ; [{'value': type_id, 'label': type_name}]
+*/
+function getDevicesTypesList (callback) {
+	params.db.query("SELECT * FROM " + t['st'] + "ORDER BY name ASC", function (rows, err) { // Dictionary of the SQL tables names
+		var data = []
+		for(i in rows) {
+			data.push({'value': rows[i]['id'], 'label': rows[i]['name']})
+		}
+		callback(data)
+	})
 }
 
 var newDeviceRH = function (req, res, params, responseSender) {
 	//* Loads required data and sends the filled template
 	var initNewDevicePage = function() {
-
-		var data = tpl.get_template_result("new_device.html", {
-			'devices_types' : [
-				  {'value': 1, 'label': 'Prise'}
-				, {'value': 2, 'label': 'Thermomètre'}
-			]
+		get_devices_types_list(function (devices_types) {
+			var data = tpl.get_template_result("new_device.html", { 'devices_types' : device_types })
+			params.fileUrl = 'new_device.html'
+			responseSender(req, res, params, data)
 		})
-		params.fileUrl = 'new_device.html'
-		responseSender(req, res, params, data)
 	}
 
 	var actions = {
