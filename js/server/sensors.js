@@ -58,13 +58,14 @@ function decode_data_byte (frame_data) {
 	else if (frame_data.org == 0X2){
 		if (func == 2) {
 			db3_bit0 = frame_data_byte[3] & 1;
-			switch (db3_bit0) :
+			switch (db3_bit0) {
 				case 0 :
 					return [4,0]; //contact opened
 				case 1 :
 					return [4,1]; //contact closed
 				default:
 					return [-1,0];
+			}
 		}
 
 	}
