@@ -10,7 +10,8 @@ var check_checksum = sensors_utils.check_frame_checksum
 var eventEmitter = new events.EventEmitter();
 var SENSOR_FRAME_EVENT = "newSensorFrame"
 var FRAME_SEPARATOR = "A55A"
-var PLUG_SWITCH_FRAME = 'A55A6B0577000000FF9F1E063072'//* Frame to be sent to toggle the swtich plug state (specific to our given switch power plug)
+var PLUG_SWITCH_ON_FRAME = 'A55A6B0555000000FF9F1E063072'//* Frame to be sent to toggle the switch on plug state (specific to our given switch power plug)
+var PLUG_SWITCH_OFF_FRAME = 'A55A6B0577000000FF9F1E063072'//* Frame to be sent to toggle the switch off plug state (specific to our given switch power plug)
 function start (db, web_serv, port, allowed_ids) {
 	FRAME_SIZE = 28
 	console.log(new Date(), "Starting Sensors server")
@@ -42,7 +43,7 @@ function start (db, web_serv, port, allowed_ids) {
 					continue;
 				}
 				frame = buffer.substr(0, FRAME_SIZE) //* We know we have a complete frame (>= FRAME_SIZE and pos == 0) so just cut it off by its length
-				buffer = buffer.substr(FRAME_SIZE-1, buffer.length) //* Crops the current buffer, we don't need the data from the previous frame anymore
+				buffer = buffer.substr(FRAME_SIZE, buffer.length) //* Crops the current buffer, we don't need the data from the previous frame anymore
 				frame_data = decode(frame)
 				console.log("Sensor id=", frame_data.id)
 				if (-1 != allowed_ids.indexOf(frame_data.id)) {
@@ -71,8 +72,8 @@ function start (db, web_serv, port, allowed_ids) {
 function send_to_sensor (sensor_id, message) {
 	var sock = new net.Socket()
 	sock.connect(get_shared_data('MAIN_SERVER_PORT'), get_shared_data('MAIN_SERVER_IP'), function () { 
-		console.log('Connection to main server established, going to send a message for a sensor')
-		sock.write(PLUG_SWITCH_FRAME, null, function () {
+		console.log('Connection to main server established, going to send a message for a sensor', message)
+		sock.write(message, null, function () {
 			console.log('Data sent to main server, disconnecting.')
 			sock.close()
 		})
@@ -82,5 +83,6 @@ function send_to_sensor (sensor_id, message) {
 exports.start = start
 exports.events = eventEmitter
 exports.SENSOR_FRAME_EVENT = SENSOR_FRAME_EVENT
-exports.PLUG_SWITCH_FRAME = PLUG_SWITCH_FRAME
+exports.PLUG_SWITCH_ON_FRAME = PLUG_SWITCH_ON_FRAME
+exports.PLUG_SWITCH_OFF_FRAME = PLUG_SWITCH_OFF_FRAME
 exports.sendToSensor = send_to_sensor
