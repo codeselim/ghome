@@ -1,15 +1,20 @@
 //* Server of the GHome application
 //* Will be launching the network sensors server as well as the web server that deals with the different GUIs
 
+// ************ WARNING : KEEP THOSE LINES AT THE TOP, OR SOME DATA WILL BE UNDEFINED ! ***************
+var get_shared_data = shared.get_shared_data
+var set_shared_data = shared.set_shared_data
+set_shared_data('SQL_TABLES', {'st': 'sensors_types', 'et':'event_types', 'at':'actions_types', 'l': 'logs', 'c':'conditions', 'ct':'condition_types', 'm':'modes', 's':'sensors', 't':'tasks'})
+//******************************************************************
+
 var web_serv = require('./webserver')
 var sensors_serv = require('./sensors_server')
 var android_notif_serv = require('./android_notif_server')
 var dbg = require('./debug')
 var shared = require('./shared_data')
 var sse_sender = require('./sse_sender')
-var get_shared_data = shared.get_shared_data
-var set_shared_data = shared.set_shared_data
 var dbms = require('./dbms')
+var events_monitor = require('./events_monitor')
 
 var cp = require('child_process')
 var n = cp.fork(__dirname + '/background_worker.js')
@@ -79,7 +84,11 @@ function start () {
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)
 	var allowed_ids = [2214883, 346751, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
-	sensors_serv.start(db, web_serv, SENSORS_SERVER_PORT, allowed_ids)
+
+	sensors_serv.start(db, web_serv, 8000, allowed_ids)
+	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
+	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
+	events_monitor.start(db);
 }
 
 GLOBAL_INIT()
