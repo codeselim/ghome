@@ -42,18 +42,31 @@ function decode_data_byte (frame_data) {
 		switch (func) {
 			case 0X02 :
 				value = Math.abs((frame_data.data[2] * 40 /255) - 40 ) ;//temperature sensor
-				return [0,value]; // 0 indicates that it is a temperature
-			case 0X06 :
+				return [1,value]; // 0 indicates that it is a temperature
+			case 0X03 :
 				value = frame_data.data[1] * 510 / 255;//luminosity value
-				return [1,value]; // 1 indicates that it's a luminosity
+				return [2,value]; // 1 indicates that it's a luminosity
 			case 0X12 : //this func doesn't exist in the documentation
 				   // we added it for our consumption module
 				value = parseFloat (frame_data.data[1]+"."+frame_data.data[0]);
 				   //value of power consumption in a minute in Wh
-				return [2,value]; //2 indicates that it is a power consumption
+				return [5,value]; //2 indicates that it is a power consumption
 			default:
 				return [-1,0];
 		}
+	}
+	else if (frame_data.org == 0X2){
+		if (func == 2) {
+			db3_bit0 = frame_data_byte[3] & 1;
+			switch (db3_bit0) :
+				case 0 :
+					return [4,0]; //contact opened
+				case 1 :
+					return [4,1]; //contact closed
+				default:
+					return [-1,0];
+		}
+
 	}
 	
 }
