@@ -64,7 +64,7 @@ function sendEvent(err, rows) {
 		console.log(rows[r]);
 			eventTypeId = rows[r]["id"];
 	}
-	tasks_executor.execute_task(eventTypeId, currentTime.getMinutes());
+	tasks_executor.execute_task(eventTypeId, 234525);
 	/*createEvent();
 	console.log(eventToSend);*/
 	//Function to call from task monitor
