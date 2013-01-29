@@ -12,10 +12,16 @@ var nbrq = 0
  * Object passed ; [{'value': type_id, 'label': type_name}]
 */
 function getDevicesTypesList (db, callback) {
-	db.query("SELECT * FROM " + t['st'] + "ORDER BY name ASC", function (err, rows) { // Dictionary of the SQL tables names
-		var data = []
-		for(i in rows) {
-			data.push({'value': rows[i]['id'], 'label': rows[i]['name']})
+	q = "SELECT * FROM " + t['st'] + " ORDER BY name ASC"
+	var data = []
+	db.query(q, null, function (err, rows) { // Dictionary of the SQL tables names
+		if (null != err) {
+			console.error("SQL Query [1] " + q + " went wrong. Error objet: " + JSON.stringify(err))
+			// SQL Query went wrong, don't crash, just don't reply anything
+		} else {
+			for(i in rows) {
+				data.push({'value': rows[i]['id'], 'label': rows[i]['name']})
+			}
 		}
 		callback(data)
 	})
@@ -25,7 +31,7 @@ var newDeviceRH = function (req, res, params, responseSender) {
 	//* Loads required data and sends the filled template
 	var initNewDevicePage = function() {
 		getDevicesTypesList(params.db, function (devices_types) {
-			var data = tpl.get_template_result("new_device.html", { 'devices_types' : device_types })
+			var data = tpl.get_template_result("new_device.html", { 'devices_types' : devices_types })
 			params.fileUrl = 'new_device.html'
 			responseSender(req, res, params, data)
 		})
