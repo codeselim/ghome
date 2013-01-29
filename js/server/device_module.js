@@ -1,16 +1,22 @@
 var fs = require('fs')
 var tpl = require('./template_engine')
 var ss = require('./sensors_server')
+var tables = require('./shared_data').get_shared_data('SQL_TABLES')
 var off = true
 
 //* Only used to test the device testing methods
 var nbrq = 0
 
+function get_devices_types (callback) {
+	params.db.query("SELECT * FROM ")
+}
+
 var newDeviceRH = function (req, res, params, responseSender) {
 	//* Loads required data and sends the filled template
 	var initNewDevicePage = function() {
+
 		var data = tpl.get_template_result("new_device.html", {
-			'devices' : [
+			'devices_types' : [
 				  {'value': 1, 'label': 'Prise'}
 				, {'value': 2, 'label': 'Thermomètre'}
 			]
