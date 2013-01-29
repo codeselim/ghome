@@ -17,11 +17,11 @@ var webdir = '../..'
  */
 var requestHandlers = {
 	  'home'              : homeReqHandler
-	, 'device_management' : defaultHtmlRequestHandler
+	, 'device_management' : device.devMgmtRequestHandler
 	, 'new_device'        : device.newDeviceRequestHandler
 	, 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
-	, 'postform'		  : postformHandler //test post implementation selim 	
+	, 'postform'		      : postformHandler //test post implementation selim 	
 }
 
 /* Same format as the request handles dict. Exceptions for the default request handler*/

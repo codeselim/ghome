@@ -15,12 +15,16 @@
 			<a href="/?module=home" data-icon="home" data-iconpos="notext" data-rel="back" >Accueil</a>
 		</div>
 		<div data-role="content">
-			<a href="#" data-role="button" id="test">Test</a>
 			<ul data-role="listview" data-divider-theme="b" data-inset="true" id="deviceList">
 				<li data-icon="plus">
 					<a data-transition="fade" href="/?module=new_device"> Nouvel équipement </a>
 				</li>
-				<li data-role="list-divider"></li>
+				{{#device_types}}
+					<li data-role="list-divider">{{name}}</li>
+					{{#devices}}
+					<li><a data-transition="fade" href="/?module=device&amp;action=display&amp;id={{id}}">{{label}}</a></li>
+					{{/devices}}
+				{{/device_types}}
 			</ul>
 		</div>
 	</div>
