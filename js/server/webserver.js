@@ -17,11 +17,11 @@ var webdir = '../..'
  */
 var requestHandlers = {
 	  'home'              : homeReqHandler
-	, 'device_management' : defaultHtmlRequestHandler
+	, 'device_management' : device.devMgmtRequestHandler
 	, 'new_device'        : device.newDeviceRequestHandler
 	, 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
-	, 'postform'		  : postformHandler //test post implementation selim 	
+	, 'postform'		      : postformHandler //test post implementation selim 	
 }
 
 /* Same format as the request handles dict. Exceptions for the default request handler*/
@@ -168,6 +168,7 @@ function start (db, port) {
 
 			req.addListener("end", function() {
 				if(urlParams.query.module in requestHandlers) {
+					urlParams['db'] = db; // Quick fix, the RH needs access to db but no parameter has been though for that, so inject it there, with urls params, does matter if it's not that clean
 					requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender)
 				} else {
 					console.error(404)

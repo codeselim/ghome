@@ -1,17 +1,32 @@
 var fs = require('fs')
+var tpl = require('./template_engine')
 var ss = require('./sensors_server')
+var tables = require('./shared_data').get_shared_data('SQL_TABLES')
 var off = true
 
 //* Only used to test the device testing methods
 var nbrq = 0
 
+function get_devices_types (callback) {
+	params.db.query("SELECT * FROM ")
+}
+
 var newDeviceRH = function (req, res, params, responseSender) {
+	//* Loads required data and sends the filled template
+	var initNewDevicePage = function() {
+
+		var data = tpl.get_template_result("new_device.html", {
+			'devices_types' : [
+				  {'value': 1, 'label': 'Prise'}
+				, {'value': 2, 'label': 'Thermomètre'}
+			]
+		})
+		params.fileUrl = 'new_device.html'
+		responseSender(req, res, params, data)
+	}
 
 	var actions = {
-		'default' : function (){
-			params['fileUrl'] = '../../views/new_device.html'
-			responseSender(req, res, params, fs.readFileSync(params.fileUrl))
-		},
+		'default' : initNewDevicePage,
 
 		//* Test functions . return 'ok' after 3 requests
 		'teststart' : function() {
@@ -55,8 +70,7 @@ var newDeviceRH = function (req, res, params, responseSender) {
 
 		'submit': function() {
 			console.log('TODO: save the new device')
-			params['fileUrl'] = '../../views/new_device.html'
-			responseSender(req, res, params, fs.readFileSync(params.fileUrl))
+			initNewDevicePage()
 		}	
 	}
 
@@ -66,5 +80,28 @@ var newDeviceRH = function (req, res, params, responseSender) {
 	actions[params.query.action]()
 }
 
+var deviceManagementRH  = function (req, res, params, responseSender) {
+	var data = tpl.get_template_result("device_management.html", {
+		'device_types' : [
+			  {'name' : 'Prises', 'devices' : [
+					  {'id': 'p1', 'label': 'Prise1'}
+					, {'id': 'p2', 'label': 'Prise2'}
+			  ]}
+			, {'name' : 'Capteurs de température', 'devices' : [
+					  {'id': 'ct1', 'label': 'Temp1'}
+					, {'id': 'ct2', 'label': 'Temp2'}
+			  ]}
+		  , {'name' : 'Interrupteurs', 'devices' : [
+				  {'id': 'i1', 'label': 'Interrupteur1'}
+				, {'id': 'i2', 'label': 'Interrupteur2'}
+		  ]}
+		]
+	})
+	params.fileUrl = 'device_management.html'
+	responseSender(req, res, params, data)
+}
+
+
 
 exports.newDeviceRequestHandler = newDeviceRH
+exports.devMgmtRequestHandler = deviceManagementRH
