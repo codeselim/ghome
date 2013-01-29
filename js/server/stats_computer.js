@@ -3,7 +3,7 @@ var db ;
 
 
 /**
- *Function that compute the average of temperature each hour and write the result in the table hour_stats
+ *Function that computes the average of temperature each hour and writes the result in the table hour_stats
  *it will be called at the begining of every hour
  *@param
  *@returns
@@ -12,7 +12,7 @@ var db ;
  	var date = new Date();
 	var previous_hour = date.getHours() - 1;
 	//insert the average of temperature of the previous hour in the table hour_stats
-	query_str = "insert into hour_stats (sensor_type_id,value,time)
+	var query_str = "insert into hour_stats (sensor_type_id,value,time)
 				Select  sensors_types.id, avg(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)
 				from logs,sensors_types,sensors
 				where sensors.sensor_type_id = sensors_types.id and 
@@ -23,7 +23,7 @@ var db ;
 
 
 /**
- *Function that compute the sum of electric consumption each hour and write the result in the table hour_stats
+ *Function that computes the sum of electric consumption each hour and writes the result in the table hour_stats
  *it will be called at the begining of every hour
  *@param
  *@returns
@@ -32,7 +32,7 @@ var db ;
  	var date = new Date();
 	var previous_hour = date.getHours() - 1;
 	//insert the average of temperature of the previous hour in the table hour_stats
-	query_str = "insert into hour_stats (sensor_type_id,value,time)
+	var query_str = "insert into hour_stats (sensor_type_id,value,time)
 				Select  sensors_types.id, sum(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)
 				from logs,sensors_types,sensors
 				where sensors.sensor_type_id = sensors_types.id and 
@@ -42,7 +42,7 @@ var db ;
  }
 
  /**
- *Function that compute the average of temperature each day and write the result in the table daily_stats
+ *Function that computes the average of temperature each day and writes the result in the table daily_stats
  *it will be called at the begining of everyday
  *@param
  *@returns
@@ -50,7 +50,7 @@ var db ;
  function temperature_d ( ) {
  	
 	//insert the average of temperature of the previous day in the table daily_stats
-	query_str = "insert into daily_stats (sensor_type_id,value,day)
+	var query_str = "insert into daily_stats (sensor_type_id,value,day)
 				Select  sensors_types.id, avg(hour_stats.value),  strftime('%Y-%m-%d', hour_stats.time)
 				from hour_stats,sensors_types,sensors
 				where sensors.sensor_type_id = sensors_types.id and 
@@ -61,7 +61,7 @@ var db ;
 
 
 /**
- *Function that compute the sum of electric consumption each day and write the result in the table daily_stats
+ *Function that computes the sum of electric consumption each day and writes the result in the table daily_stats
  *it will be called at the begining of everyday
  *@param
  *@returns
@@ -69,7 +69,7 @@ var db ;
  function consumption_d ( ) {
  	
 	//insert the average of temperature of the previous day in the table daily_stats
-	query_str = "insert into daily_stats (sensor_type_id,value,day)
+	var query_str = "insert into daily_stats (sensor_type_id,value,day)
 				Select  sensors_types.id, sum(hour_stats.value),  strftime('%Y-%m-%d', hour_stats.time)
 				from hour_stats,sensors_types,sensors
 				where sensors.sensor_type_id = sensors_types.id and 
@@ -79,42 +79,63 @@ var db ;
  }
 
   /**
- *Function that compute the average of temperature each day and write the result in the table monthly_stats
- *it will be called at the begining of everyday
+ *Function that computess the average of temperature each day and writes the result in the table monthly_stats
+ *it will be called at the begining of the month
  *@param
  *@returns
 */
  function temperature_m ( ) {
  	
 	//insert the average of temperature of the previous month in the table monthly_stats
-	query_str = "insert into daily_stats (sensor_type_id,value,day)
-				Select  sensors_types.id, avg(hour_stats.value),  strftime('%Y-%m-%d', hour_stats.time)
-				from hour_stats,sensors_types,sensors
+	var query_str = "insert into monthly_stats (sensor_type_id,value,date)
+				Select  sensors_types.id, avg(daily_stats.value),  strftime('%Y-%m-%d', daily_stats.day,'start of month')
+				from daily_stats,sensors_types,sensors
 				where sensors.sensor_type_id = sensors_types.id and 
-				sensors.sensor_type_id = hour_stats.sensor_type_id and sensors_types.id = 1 and
-				strftime('%Y-%m-%d', hour_stats.time) =  strftime('%Y-%m-%d','now', '-1 day');"
+				sensors.sensor_type_id = daily_stats.sensor_type_id and sensors_types.id = 1 and
+				strftime('%Y-%m-%d', daily_stats.day) =  strftime('%Y-%m-%d','now', '-1 day');"
 	db.query (query_str, NULL,NULL)
  }
 
 
 /**
- *Function that compute the sum of electric consumption each month and write the result in the table monthly_stats
- *it will be called at the begining of everyday
+ *Function that computess the sum of electric consumption each month and writes the result in the table monthly_stats
+ *it will be called at the begining of the month
  *@param
  *@returns
 */
  function consumption_m ( ) {
  	
-	//insert the average of temperature of the previous day in the table monthly_stats
-	query_str = "insert into daily_stats (sensor_type_id,value,day)
-				Select  sensors_types.id, sum(hour_stats.value),  strftime('%Y-%m-%d', hour_stats.time)
-				from hour_stats,sensors_types,sensors
+	//insert the average of temperature of the previous month in the table monthly_stats
+	var query_str = "insert into monthly_stats (sensor_type_id,value,date)
+				Select  sensors_types.id, sum(daily_stats.value),  strftime('%Y-%m-%d', daily_stats.day,'start of month')
+				from daily_stats,sensors_types,sensors
 				where sensors.sensor_type_id = sensors_types.id and 
-				sensors.sensor_type_id = hour_stats.sensor_type_id and sensors_types.id = 5 and
-				strftime('%Y-%m-%d', hour_stats.time) =  strftime('%Y-%m-%d','now', '-1 day');"
+				sensors.sensor_type_id = daily_stats.sensor_type_id and sensors_types.id = 5 and
+				strftime('%Y-%m-%d', daily_stats.day) =  strftime('%Y-%m-%d','now', '-1 day');"
 	db.query (query_str, NULL,NULL)
  }
 
+
+/**
+ * Gets stats for a certain type of sensor in [date1,date2]
+ * dates must be in the following format : YYYY-MM-DD HH:MM:SS
+ *@params {string} type_sensor, date1, date2
+ *@returns
+*/
+ function get_stats_hour (type_sensor, date1, date2) {
+ 	var query_str = " select value 
+					from hour_stats
+					where time between '?' and '?'
+					and sensor_type_id = ?; "	
+	db.query (query_str, [date1,date2,type_sensor], testcallback)
+ }
+
+function testcallback ( err, rows){
+
+	for (var r in rows) {
+    	console.log(r.value);
+    }
+}
 
 
 function start ( ) {
