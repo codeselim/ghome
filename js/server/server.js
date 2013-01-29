@@ -11,6 +11,8 @@ var get_shared_data = shared.get_shared_data
 var set_shared_data = shared.set_shared_data
 var dbms = require('./dbms')
 var logger = require('./logger')
+var events_monitor = require('./events_monitor')
+
 
 var cp = require('child_process')
 var n = cp.fork(__dirname + '/background_worker.js')
@@ -82,6 +84,7 @@ function GLOBAL_INIT () {
 	set_shared_data('MAIN_SERVER_PORT', 5000)
 	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
 	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
+	set_shared_data('SQL_TABLES', {'st': 'sensors_types', 'et':'event_types', 'at':'actions_types', 'l': 'logs', 'c':'conditions', 'ct':'condition_types', 'm':'modes', 's':'sensors', 't':'tasks'})
 	db = new dbms.Database()
 	db.connect('dat', start)
 }
@@ -105,6 +108,9 @@ function start () {
 
 	var allowed_ids = [2214883, 346751, 8991608, 112022, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 	sensors_serv.start(db, web_serv, SENSORS_SERVER_PORT, allowed_ids)
+	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
+	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
+	events_monitor.start(db);
 }
 
 GLOBAL_INIT()
