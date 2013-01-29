@@ -11,6 +11,7 @@ var get_shared_data = shared.get_shared_data
 var set_shared_data = shared.set_shared_data
 var dbms = require('./dbms')
 var events_monitor = require('./events_monitor')
+var tasks_executor = require ('./tasks_executor')
 
 var cp = require('child_process')
 var n = cp.fork(__dirname + '/background_worker.js')
@@ -85,6 +86,7 @@ function start () {
 	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
 	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
 	events_monitor.start(db);
+	tasks_executor.start(db);
 }
 
 GLOBAL_INIT()
