@@ -1,4 +1,4 @@
-define(['jquery'], function($){
+define(['jquery', 'jqvalidate'], function($){
 	// var progressbardiv = "<div style='width: 200px; opacity: .75' class='meter'><span style='width: 25%'></span></div>"
 
 	//*** Server Polling *****************************************************************************
@@ -6,7 +6,7 @@ define(['jquery'], function($){
 	var deviceInfoRequest = function deviceInfoRequest(ajaxData, interval, countdown, finalCallback) {
 		ajaxData.action = 'testpoll'
 		$.ajax({
-			  'url'      : "/"
+				'url'      : "/"
 			, 'dataType' : 'json'
 			, 'data'     : ajaxData
 		})
@@ -39,7 +39,7 @@ define(['jquery'], function($){
 		//* We tell the server that the test is over
 		ajaxData.action = 'testend'
 		$.ajax({
-			  'url': "/"
+				'url': "/"
 			, 'data': ajaxData
 		})
 
@@ -60,19 +60,19 @@ define(['jquery'], function($){
 		var deviceType = $('#equip_type').val()
 		//* frame to send at each request. only the action will be changed.
 		var ajaxData = {
-			  'module'     : 'new_device'
+				'module'     : 'new_device'
 			, 'action'     : 'teststart'
 			, 'deviceId'   : deviceId
 			, 'deviceType' : deviceType
 		}
 
 		$.mobile.loading( 'show', {
-			  text: "Test de l'équipement en cours. Cela peut prendre quelques minutes..."
+				text: "Test de l'équipement en cours. Cela peut prendre quelques minutes..."
 			, textVisible: true
 		})
 		// $.mobile.loading( 'show', {html: progressbardiv})
 		$.ajax({
-					  'url': "/"
+						'url': "/"
 					, 'data': ajaxData
 					, 'dataType' : 'json'
 		})
@@ -89,10 +89,34 @@ define(['jquery'], function($){
 	//*** Returned functions *************************************************************************
 	var pageInit = function pageInit() {
 		console.log('new device pageInit')
+		
+		$("#form").validate({
+			  rules: { 
+					  equip_id: "required"
+					, equip_type: "required"
+				} 
+			, messages: { 
+					  equip_id: "Entrez l'identifiant de l'équipemement à ajouter"
+					, equip_type: "Sélectionnez le type d'équipement"
+				}
+			, errorPlacement: function(error, element) {
+				//* Needed to place the error message out of the select menu.
+				if (element.is('select')) {
+					error.insertAfter($(element).parent())
+				} else {
+					error.insertAfter(element)
+				}
+			}
+		})
+		
 		$(":submit").on('click',function () { $("#action").val(this.name) })
-		$("[name=test]").on('click',testDevice)
+		$("#test").on('click',function(){
+			$("#form").validate()
+			if ( $("#form").valid() ) {
+				testDevice()
+			}
+		})
 	}
-
 
 	return {
 			'pageInit' : pageInit
