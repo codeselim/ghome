@@ -1,0 +1,13 @@
+INSERT INTO condition_types VALUES (1, "égalité", 1);
+INSERT INTO condition_types VALUES (null, "inférieur", 2);
+INSERT INTO condition_types VALUES (null, "supérieur", 3);
+INSERT INTO condition_types VALUES (null, "inférieur ou égal", 4);
+INSERT INTO condition_types VALUES (null, "supérieur ou égal", 5);
+INSERT INTO condition_types VALUES (null, "passage de seuil haut", 6);
+INSERT INTO condition_types VALUES (null, "passage de seuil bas", 7);
+
+INSERT INTO actions_types VALUES (1, "Allumer prise");
+INSERT INTO actions_types VALUES (null, "Eteindre prise");
+INSERT INTO actions_types VALUES (null, "Ouvrir volets");
+INSERT INTO actions_types VALUES (null, "Fermer Volets");
+
