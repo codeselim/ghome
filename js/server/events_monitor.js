@@ -24,8 +24,8 @@ function setPreEvent(value, threshold) {
 function setTimeEvent(value, threshold) {
 	return "hour";
 }
-var dictEvents = {"temperature":setTempEvent,
-	"luminosity": setLumEvent,
+var dictEvents = {"temperature":tempEvent,
+	"luminosity": lumEvent,
 	"contact": setContEvent,
 	"presence": setPreEvent,
 	"time": setTimeEvent};
@@ -64,7 +64,7 @@ function sendEvent(err, rows) {
 		console.log(rows[r]);
 			eventTypeId = rows[r]["id"];
 	}
-	tasks_executor.execute_task(eventTypeId, 234525);
+	tasks_executor.execute_task(eventTypeId, 234525,sensor_id);
 	/*createEvent();
 	console.log(eventToSend);*/
 	//Function to call from task monitor
@@ -86,7 +86,7 @@ function sendEventHardwareSensor(err, rows) {
       console.log(rows[r]["sensors_types.name"]);
       var sensor_type = rows[r]["sensors_types.name"];
       var sensor_type_id = rows[r]["sensors_types.id"];
-      db.query("SELECT value FROM thresholds WHERE sensor_type_id = ?", [sensor_type_id], d =getThresholds);
+      db.query("SELECT value FROM thresholds WHERE sensor_type_id = ?", [sensor_type_id], getThresholds);
       /*var eventStr = dictEvents[sensor_type](2,5);
       db.query("SELECT id FROM event_types WHERE name = ?", eventStr, sendEvent);*/
   } 
