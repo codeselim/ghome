@@ -7,23 +7,50 @@ var data;
 var eventToSend;
 var idTimer;
 var tasks_executor = require("./tasks_executor.js");
+var shared_data = require("./shared_data.js");
+// Map with last values of each sensor {id : value, ...}
+var lastValues;
 
 
-function tempEvent(value, threshold) {
-	return "temperature";
+function checkThresholds(idSensor, sensor_type_id, value) {
+
+	db.query("SELECT value FROM thresholds WHERE sensor_type_id = ?", [sensor_type_id], function(err, rows) {
+		var thresholds = [];
+		for (var r in rows) {
+			thresholds.push(rows[r]["thresholds.value"]);
+		}
+
+		for (t in thresholds) {
+			if (lastValues[idSensor] < threshold && value > threshold) {
+		tasks_executor.execute_task(1, value, idSensor);
+	}    
+	if (lastValues[idSensor] > threshold && value < threshold) {
+		tasks_executor.execute_task(2, value, idSensor);
+	}
+
+	}
+	});
+
 }
-function lumEvent(value, threshold) {
-	return "luminosity";
+
+
+function tempEvent(idSensor, sensor_type_id, value) {
+	checkThresholds(idSensor, sensor_type_id, value);
 }
-function contEvent(value, threshold) {
-	return "contact";
+function lumEvent(idSensor, sensor_type_id, value) {
+	checkThresholds(idSensor, sensor_type_id, value);
 }
-function preEvent(value, threshold) {
-	return "presence";
+function contEvent(idSensor, sensor_type_id, value) {
+	// Contact performed
+	tasks_executor.execute_task(3, value, idSensor);
+
+	// Contact removed
+	//tasks_executor.execute_task(4, value, idSensor);
 }
-function timeEvent(value, threshold) {
-	return "hour";
+function preEvent(idSensor, sensor_type_id, value) {
+	//return "presence";
 }
+
 var dictSensorEvent = { 1 : tempEvent,
 	2 : lumEvent,
 	4 : contEvent,
@@ -50,8 +77,10 @@ function sendTimeEvent() {
 
 function start(database) {
 	console.log("Starting events_monitor");
+	lastValues = shared_data.get_shared_data("SENSOR_VALUES");
 	db = database;
-	//getData(36, 48);
+	getData(36, 48);
+	getData(36, 50);
 	idTimer = setInterval(sendTimeEvent, 15000);
 }
 
@@ -82,29 +111,32 @@ function getThresholds(err, rows) {
 }
 
 
-function sendEventHardwareSensor(err, rows) {
+function getData(idSensor, dataSensor) {
 
-	var d;
-	// For every type of the sensor (a sensor can have many types)
+data = dataSensor;
+console.log("Data received : " + dataSensor + "\nHardware ID sensor : " + idSensor);
+db.query("SELECT sensors_types.name FROM (SELECT * FROM sensors WHERE sensors.hardware_id = ?) JOIN sensors_types ON sensor_type_id = sensors_types.id", idSensor, function(err, rows) {
+// For every type of the sensor (a sensor can have many types)
 	 for (var r in rows) {
       console.log(rows[r]["sensors_types.name"]);
       var sensor_type = rows[r]["sensors_types.name"];
       var sensor_type_id = rows[r]["sensors_types.id"];
       // If sensor_type_id is associated with a function in dictSensorEvent
       if (sensor_type_id in Object.keys(dictSensorEvent)) {
-      	dictSensorEvent[sensor_type_id]();
+      	db.query("SELECT id FROM sensors WHERE hardware_id = ? AND sensor_type_id = ?", [idSensor, sensor_type_id], function(err, rows) {
+      		for (var r in rows) {
+      			var sensor_id = rows[r]["id"];
+      			dictSensorEvent[sensor_type_id](sensor_id, sensor_type_id, dataSensor);
+      		}
+
+      	})
+      	
       }
-      db.query("SELECT value FROM thresholds WHERE sensor_type_id = ?", [sensor_type_id], getThresholds);
+      
       /*var eventStr = dictEvents[sensor_type](2,5);
       db.query("SELECT id FROM event_types WHERE name = ?", eventStr, sendEvent);*/
-  } 
-}
-
-function getData(idSensor, dataSensor) {
-
-data = dataSensor;
-
-db.query("SELECT sensors_types.name FROM (SELECT * FROM sensors WHERE sensors.hardware_id = ?) JOIN sensors_types ON sensor_type_id = sensors_types.id", idSensor, sendEventHardwareSensor);
+  }
+});
 
 }
 

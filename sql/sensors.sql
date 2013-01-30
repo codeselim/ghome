@@ -5,3 +5,5 @@ CREATE TABLE `sensors` (
   `sensor_type_id` INTEGER NOT NULL,
    FOREIGN KEY(sensor_type_id) REFERENCES sensors_types(id)
 );
+
+--INSERT INTO sensors VALUES (1, null, "Capteur logiciel temps", 5);
