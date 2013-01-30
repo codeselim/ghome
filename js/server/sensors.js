@@ -54,6 +54,9 @@ function decode_data_byte (frame_data) {
 			default:
 				return [-1,0];
 		}
+	} else {
+		console.error("An invalid data_byte frame was sent to decode_data_byte(). The ORG field was " + frame_data.org + " instead of 0x7")
+		return [-1, null]
 	}
 	
 }
