@@ -5,7 +5,8 @@ var tpl       = require('./template_engine')
 var shared    = require('./shared_data')
 var sseSender = require('./sse_sender')
 var device    = require('./device_module')
-var qs 		  = require('querystring');
+var scheduler = require('./scheduler_module')
+var qs 		    = require('querystring');
 
 
 var webdir = '../..'
@@ -19,6 +20,8 @@ var requestHandlers = {
 	  'home'              : homeReqHandler
 	, 'device_management' : device.devMgmtRequestHandler
 	, 'new_device'        : device.newDeviceRequestHandler
+	, 'scheduler'         : scheduler.schedulerRequestHandler
+	, 'new_task'          : scheduler.newTaskRequestHandler
 	, 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
 	, 'postform'		      : postformHandler //test post implementation selim 	
