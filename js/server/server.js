@@ -6,7 +6,16 @@
 var shared = require('./shared_data')
 var get_shared_data = shared.get_shared_data
 var set_shared_data = shared.set_shared_data
-set_shared_data('SQL_TABLES', {'st': 'sensors_types', 'et':'event_types', 'at':'actions_types', 'l': 'logs', 'c':'conditions', 'ct':'condition_types', 'm':'modes', 's':'sensors', 't':'tasks'})
+set_shared_data('SQL_TABLES', {'st': 'sensors_types',
+								'et':'event_types',
+								'at':'actions_types',
+								'l': 'logs',
+								'c':'conditions',
+								'ct':'condition_types',
+								'm':'modes',
+								's':'sensors',
+								't':'tasks'})
+var t = get_shared_data('SQL_TABLES')
 //******************************************************************
 
 var sensors_utils = require('./sensors')
@@ -82,20 +91,36 @@ function log_event_in_db(frame_data){
  * It will for instance get the last inside/outised temperatures and push them into memory, etc. .. 
  * It will, among other things, bring the server to the state it was when it was shutdown (either gracefully or suddenly..)
  */
- var db = null
+var db = null
+var sensors_values = {}
 function GLOBAL_INIT () {
-	set_shared_data('IN_TEMP', 0) // @TODO : Get the value from the database instead !
-	set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
+	console.log("Starting Initializing data...")
 	set_shared_data('MAIN_SERVER_IP', '134.214.105.28')
 	set_shared_data('MAIN_SERVER_PORT', 5000)
 	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
 	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
 	db = new dbms.Database()
-	db.connect('dat', start)
+	console.log("Connecting to db...")
+	db.connect('dat', function () {
+		set_shared_data('IN_TEMP', 0) // @TODO : Get the value from the database instead !
+		set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
+		db.query("
+		SELECT s.id AS sid, l.value 
+		FROM `" + t['s'] + "` s 
+		INNER JOIN `" + t['l'] + "` AS l ON(l.sensor_id = s.id) 
+		ORDER BY l.time DESC 
+		LIMIT 0, 1", 
+		function (err, rows) {
+			for(i in rows) {
+				sensors_values[rows[i].sid] = rows[i].value
+			}
+			set_shared_data('SENSORS_VALUES', sensors_values)
+		})
+	})
 }
 
 function start () {
-	console.log('Database connected, starting server components.')
+	console.log('Data initialized... Starting server components.')
 	web_serv.start(db, WEB_SERVER_PORT)
 	android_notif_serv.start(ANDROID_NOTIF_SERVER_PORT, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Well, or test after changing it !) I don't know why, but it's working on port 5000 and not on port 3000 for instance....
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
