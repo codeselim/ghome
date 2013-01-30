@@ -2,9 +2,11 @@
 
 # echo "a="$a"blorg"
 origin=`pwd` # saving current dir
-reset="blorg"
-m="blorg"
-r="blorg"
+defaultValue="blorg"
+reset=$defaultValue
+m=$defaultValue
+r=$defaultValue
+
 while [ "$1" != "" ]; do
 	case $1 in
 		noreset)
@@ -21,14 +23,19 @@ while [ "$1" != "" ]; do
 			r="OK"
 			shift;;
 		*)
-			echo "No parameters passed, considering parameter \"all\" "
-			m="OK"
-			r="OK"
 			shift;;
 	esac
 done
 
-if [ "blorg" = $reset ]; then
+if [ "$m" = $defaultValue ]; then
+	if [ "$r" = $defaultValue ]; then
+		echo "No valid parameters passed, considering parameter \"all\" "
+		m="OK"
+		r="OK"
+	fi
+fi
+
+if [ "$defaultValue" = $reset ]; then
 	echo "Resetting DB..." 
 	cd ../../sql/ && rm -vf dat.db && sqlite3 dat.db < dataBaseInit.txt && sqlite3 dat.db < sql_test_data.txt &&
 	cd $origin 
