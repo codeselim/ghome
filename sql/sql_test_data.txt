@@ -13,4 +13,4 @@ INSERT INTO actions_types VALUES (null, "Fermer Volets");
 
 INSERT INTO tasks VALUES (1, "changer minuteuh", 1, null, 1, 11, 0, 6, 0, 24, 0);
 
-INSERT INTO conditions VALUES (1, "10", 7, 1, 1, null);
+INSERT INTO conditions VALUES (1, "10", 7, 1, 1, 99);

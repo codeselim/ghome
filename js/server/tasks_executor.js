@@ -13,23 +13,23 @@ function switch_off_plug(){
 function make_action(results) { //this function will make the actions of results
 	 for (var r in results) {
       switch(results[r]){
-      	case 1 :
+      	case 1 :      //if command is "allumer prise"
       	switch_on_plug();
       	sse_sender.sendSSE({"msg" : "Prise allumée"});
       	break;
-      	case 2 :
+      	case 2 :     //if command is "eteindre prise"
       	switch_off_plug();
       	sse_sender.sendSSE({"msg" : "Prise éteinte"});
       	break;
-      	case 3 :
+      	case 3 :     //if commande is "ouvrir volets"
       	switch_off_plug();
       	sse_sender.sendSSE({"msg" : "Volets ouverts"});
       	break;
-      	case 4 :
+      	case 4 :     //if command is "fermer volets"
       	switch_off_plug();
       	sse_sender.sendSSE({"msg" : "Volets fermés"});
       	break;
-      	default :
+      	default :     //if not in the results (very very improbable)
       	sse_sender.sendSSE({"msg" : "Rien du tout"});
       	break;
       }
@@ -56,29 +56,29 @@ function execute_task(event_id, value, sensor_id) {//this function will search t
 			for (var r in rows){
 				switch (rows[r]["operator"]){
 					case 1 : // if operator = "="
-					if (rows[r]["value_to_compare"] == value){
+					if (parseInt(rows[r]["value_to_compare"]) == parseInt(value)){
 						results.push(rows[r]["action_type_id"]);
 					}
 					break;
 					case 2 :  // if operator = "<"
-					if (rows[r]["value_to_compare"] < value){
+					if (parseInt(rows[r]["value_to_compare"]) < parseInt(value)){
 						results.push(rows[r]["action_type_id"]);
 					}
 					break;
 					case 3 : // if operator = ">"
-					if (rows[r]["value_to_compare"] > value){
+					if (parseInt(rows[r]["value_to_compare"]) > parseInt(value)){
 						results.push(rows[r]["action_type_id"]);
 					}
 					break;
 					case 4 : // if operator = "<="
 					case 7 : // if operator = "passage de seuil bas"
-					if (rows[r]["value_to_compare"] <= value){
+					if (parseInt(rows[r]["value_to_compare"]) <= parseInt(value)){
 						results.push(rows[r]["action_type_id"]);
 					}
 					break;
 					case 5 : // if operator = ">="
 					case 6 : // if operator = "passage de seuil haut"
-					if (rows[r]["value_to_compare"] >= value){
+					if (parseInt(rows[r]["value_to_compare"]) >= parseInt(value)){
 						results.push(rows[r]["action_type_id"]);
 					}
 					break;
