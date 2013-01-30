@@ -4,7 +4,7 @@ CREATE TABLE `conditions` (
   `event_type_id` INTEGER NOT NULL,
   `task_id` INTEGER NOT NULL,
   `type_id` INTEGER NOT NULL,
-  `sensor_id` INTEGER NOT NULL,
+  `sensor_id` INTEGER,
 
   FOREIGN KEY(event_type_id) REFERENCES event_types(id),
   FOREIGN KEY(task_id) REFERENCES tasks(id),
