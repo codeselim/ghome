@@ -1,25 +1,43 @@
 var fs = require('fs')
 var tpl = require('./template_engine')
 var ss = require('./sensors_server')
+var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
 var off = true
 
 //* Only used to test the device testing methods
 var nbrq = 0
 
+/**
+ * Gets the list of the devices types from the DB and passes it as a parameter to the callback
+ * Object passed ; [{'value': type_id, 'label': type_name}]
+*/
+function getDevicesTypesList (db, callback) {
+	q = "SELECT * FROM " + t['st'] + " ORDER BY name ASC"
+	var data = []
+	db.query(q, null, function (err, rows) { // Dictionary of the SQL tables names
+		if (null != err) {
+			console.error("SQL Query [1] " + q + " went wrong. Error objet: " + JSON.stringify(err))
+			// SQL Query went wrong, don't crash, just don't reply anything
+		} else {
+			for(i in rows) {
+				data.push({'value': rows[i]['id'], 'label': rows[i]['name']})
+			}
+		}
+		callback(data)
+	})
+}
+
 var newDeviceRH = function (req, res, params, responseSender) {
 	//* Loads required data and sends the filled template
 	var initNewDevicePage = function() {
-		var data = tpl.get_template_result("new_device.html", {
-			'devices' : [
-				  {'value': 1, 'label': 'Prise'}
-				, {'value': 2, 'label': 'Thermomètre'}
-			]
+		getDevicesTypesList(params.db, function (devices_types) {
+			var data = tpl.get_template_result("new_device.html", { 'devices_types' : devices_types })
+			params.fileUrl = 'new_device.html'
+			responseSender(req, res, params, data)
 		})
-		params.fileUrl = 'new_device.html'
-		responseSender(req, res, params, data)
 	}
 
-	var actions = {
+	var actions = {// lol, this is a hidden switch // new JS way huhu
 		'default' : initNewDevicePage,
 
 		//* Test functions . return 'ok' after 3 requests

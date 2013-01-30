@@ -13,6 +13,9 @@ Database.prototype.connect = function(dbName, callback) {
 Database.prototype.query = function(query_str, parameters, callback_func) {
 	db.serialize(function() {
 		var statement = db.prepare(query_str);
+		statement.on("error", function (err) {
+			callback_func(err, null) // Passing the error to the callback, and null as result
+		});
 		statement.all(parameters, callback_func);
 		statement.finalize();	
 	});

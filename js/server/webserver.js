@@ -171,6 +171,7 @@ function start (db, port) {
 
 			req.addListener("end", function() {
 				if(urlParams.query.module in requestHandlers) {
+					urlParams['db'] = db; // Quick fix, the RH needs access to db but no parameter has been though for that, so inject it there, with urls params, does matter if it's not that clean
 					requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender)
 				} else {
 					console.error(404)
