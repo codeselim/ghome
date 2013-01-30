@@ -9,38 +9,41 @@ var idTimer;
 var tasks_executor = require("./tasks_executor.js");
 
 
-function setTempEvent(value, threshold) {
+function tempEvent(value, threshold) {
 	return "temperature";
 }
-function setLumEvent(value, threshold) {
+function lumEvent(value, threshold) {
 	return "luminosity";
 }
-function setContEvent(value, threshold) {
+function contEvent(value, threshold) {
 	return "contact";
 }
-function setPreEvent(value, threshold) {
+function preEvent(value, threshold) {
 	return "presence";
 }
-function setTimeEvent(value, threshold) {
+function timeEvent(value, threshold) {
 	return "hour";
 }
-var dictEvents = {"temperature":tempEvent,
-	"luminosity": lumEvent,
-	"contact": setContEvent,
-	"presence": setPreEvent,
-	"time": setTimeEvent};
+var dictSensorEvent = { 1 : tempEvent,
+	2 : lumEvent,
+	4 : contEvent,
+	3 : preEvent,
+	};
 
 function sendTimeEvent() {
 	var currentTime = new Date();
 	console.log("Minute changed = " + currentTime.getMinutes());
-	db.query("SELECT id FROM event_types WHERE name = ?", "minute", sendEvent);
+	//db.query("SELECT id FROM event_types WHERE name = ?", "minute", sendEvent);
+	tasks_executor.execute_task(7, currentTime.getMinutes(), null);
 
 
 	if (currentTime.getMinutes() == 0) {
 		console.log("Hour changed = " + currentTime.getHours());
+		tasks_executor.execute_task(6, currentTime.getHours(), null);
 	}
 	if (currentTime.getHours() == 0) {
 		console.log("Day changed = " + currentTime.getDay());
+		tasks_executor.execute_task(5, currentTime.getDay(), null);
 	}
 }
 
@@ -82,10 +85,15 @@ function getThresholds(err, rows) {
 function sendEventHardwareSensor(err, rows) {
 
 	var d;
+	// For every type of the sensor (a sensor can have many types)
 	 for (var r in rows) {
       console.log(rows[r]["sensors_types.name"]);
       var sensor_type = rows[r]["sensors_types.name"];
       var sensor_type_id = rows[r]["sensors_types.id"];
+      // If sensor_type_id is associated with a function in dictSensorEvent
+      if (sensor_type_id in Object.keys(dictSensorEvent)) {
+      	dictSensorEvent[sensor_type_id]();
+      }
       db.query("SELECT value FROM thresholds WHERE sensor_type_id = ?", [sensor_type_id], getThresholds);
       /*var eventStr = dictEvents[sensor_type](2,5);
       db.query("SELECT id FROM event_types WHERE name = ?", eventStr, sendEvent);*/
