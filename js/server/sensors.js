@@ -38,15 +38,15 @@ function decode_frame (frame) {
 */
 function decode_data_byte (frame_data) {
 	func = frame_data.data [3] >> 2 ; //shift right the bytes of data_byte3 by 2 to obtain func
-	if (frame_data.org == 0X7 ){
+	if (frame_data.org == 0x7 ){
 		switch (func) {
-			case 0X02 :
+			case 0x02 :
 				value = Math.abs((frame_data.data[2] * 40 /255) - 40 ) ;//temperature sensor
 				return [1,value]; // 0 indicates that it is a temperature
-			case 0X03 :
+			case 0x03 :
 				value = frame_data.data[1] * 510 / 255;//luminosity value
 				return [2,value]; // 1 indicates that it's a luminosity
-			case 0X12 : //this func doesn't exist in the documentation
+			case 0x12 : //this func doesn't exist in the documentation
 				   // we added it for our consumption module
 				value = parseFloat (frame_data.data[1]+"."+frame_data.data[0]);
 				   //value of power consumption in a minute in Wh
@@ -54,11 +54,7 @@ function decode_data_byte (frame_data) {
 			default:
 				return [-1,0];
 		}
-	} else {
-		console.error("An invalid data_byte frame was sent to decode_data_byte(). The ORG field was " + frame_data.org + " instead of 0x7")
-		return [-1, null]
-	}
-	else if (frame_data.org == 0X2){
+	} else if (frame_data.org == 0x2) {
 		if (func == 2) {
 			db3_bit0 = frame_data_byte[3] & 1;
 			switch (db3_bit0) {
@@ -70,9 +66,10 @@ function decode_data_byte (frame_data) {
 					return [-1,0];
 			}
 		}
-
+	} else {
+		console.error("An invalid data_byte frame was sent to decode_data_byte(). The ORG field was " + frame_data.org + " instead of 0x7")
+		return [-1, null]
 	}
-	
 }
 
 function check_frame_checksum (frame_data, framestr) {
