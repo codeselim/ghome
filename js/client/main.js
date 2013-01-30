@@ -10,7 +10,8 @@ require.config({
 })
 
 
-require(['jquery', 'sseListener', 'device_management', 'new_device', 'jquerymobile'], function($,sseListener, devMgmt, new_device) {
+require(['jquery', 'sseListener', 'device_management', 'new_device', 'scheduler', 'jquerymobile'], 
+	function($,sseListener, devMgmt, new_device, scheduler) {
 	$(function() {
 		//* Hides the body until JQM finishes applying styles
 		$('body').css('visibility', 'visible')
@@ -38,10 +39,12 @@ require(['jquery', 'sseListener', 'device_management', 'new_device', 'jquerymobi
 
 		//* Registering the page inits
 		pageinits = {
-			  'home' : homePI
-			, 'notif' : notifPI
-			, 'devMgmt' : devMgmt.pageInit
-			, 'newDevice' : new_device.pageInit 
+			  'home'      : homePI
+			, 'notif'     : notifPI
+			, 'devMgmt'   : devMgmt.pageInit
+			, 'newDevice' : new_device.pageInit
+			, 'scheduler' : scheduler.pageInit
+			, 'newTask'   : scheduler.newTaskPageInit
 		}
 
 		for( id in pageinits) {
