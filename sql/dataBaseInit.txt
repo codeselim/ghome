@@ -6,3 +6,5 @@
 .read tasks.sql
 .read conditions.sql
 .read logs.sql
+.read thresholds.sql
+.read actions_types.sql

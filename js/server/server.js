@@ -31,6 +31,8 @@ var sse_sender = require('./sse_sender')
 var dbms = require('./dbms')
 var logger = require('./logger')
 var events_monitor = require('./events_monitor')
+
+var tasks_executor = require ('./tasks_executor')
 var device_communicator = require('./device_communicator')
 
 var cp = require('child_process')
@@ -154,6 +156,7 @@ function start () {
 	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
 	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
 	events_monitor.start(db);
+	tasks_executor.start(db);
 }
 
 GLOBAL_INIT()

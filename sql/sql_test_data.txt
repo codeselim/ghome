@@ -1,3 +1,20 @@
+INSERT INTO condition_types VALUES (1, "égalité", 1);
+INSERT INTO condition_types VALUES (null, "inférieur", 2);
+INSERT INTO condition_types VALUES (null, "supérieur", 3);
+INSERT INTO condition_types VALUES (null, "inférieur ou égal", 4);
+INSERT INTO condition_types VALUES (null, "supérieur ou égal", 5);
+INSERT INTO condition_types VALUES (null, "passage de seuil haut", 6);
+INSERT INTO condition_types VALUES (null, "passage de seuil bas", 7);
+
+INSERT INTO actions_types VALUES (1, "Allumer prise");
+INSERT INTO actions_types VALUES (null, "Eteindre prise");
+INSERT INTO actions_types VALUES (null, "Ouvrir volets");
+INSERT INTO actions_types VALUES (null, "Fermer Volets");
+
+INSERT INTO tasks VALUES (1, "changer minuteuh", 1, null, 7, 1, 11, 0, 6, 0, 24, 0);
+
+INSERT INTO conditions VALUES (1, "10", 1, 1, -1);
+
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (1, 2214883, 'Temp 1', 1); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (2, 346751, 'Lumi 1', 2); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (3, 8991608, 'Présence 1', 3); -- @TODO Check that this hardware id actually is of that type
@@ -11,3 +28,4 @@ INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 1, 82, datetime())
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 2, 27, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 3, 07, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 4, 11, datetime());
+
