@@ -14,6 +14,7 @@ function switch_off_plug(){
 function make_action(results) { //this function will execute the actions of results
 	console.log("rentrée dans make action")
 	 for (var r in results) {
+	 	console.log(results[r])
       switch(results[r]){
       	case 1 :      //if command is "allumer prise"
       	console.log("action allumer prise !");
