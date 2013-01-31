@@ -11,9 +11,9 @@ INSERT INTO actions_types VALUES (null, "Eteindre prise");
 INSERT INTO actions_types VALUES (null, "Ouvrir volets");
 INSERT INTO actions_types VALUES (null, "Fermer Volets");
 
-INSERT INTO tasks VALUES (1, "changer minuteuh", 1, null, 7, 1, 11, 0, 6, 0, 24, 0);
+INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, mode_id, max_month, min_month, max_day, min_day, max_hour, min_hour) VALUES (1, "changer minuteuh", 1, null, 7, 1, 11, 0, 6, 0, 24, 0);
 
-INSERT INTO conditions VALUES (1, "10", 1, 1, -1);
+INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (1, "10", 1, 1, 1);
 
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (1, 2214883, 'Temp 1', 1); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (2, 346751, 'Lumi 1', 2); -- @TODO Check that this hardware id actually is of that type
