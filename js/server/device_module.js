@@ -4,9 +4,6 @@ var ss = require('./sensors_server')
 var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
 var off = true
 
-//* Only used to test the device testing methods
-var nbrq = 0
-
 /**
  * Gets the list of the devices types from the DB and passes it as a parameter to the callback
  * Object passed ; [{'value': type_id, 'label': type_name}]
@@ -37,6 +34,10 @@ var newDeviceRH = function (req, res, params, responseSender) {
 		})
 	}
 
+	ts = get_shared_data('DEVICE_START_TESTS')
+	te = get_shared_data('DEVICE_END_TESTS')
+	tp = get_shared_data('DEVICE_POLL_TESTS')
+
 	var actions = {// lol, this is a hidden switch // new JS way huhu
 		'default' : initNewDevicePage,
 
@@ -45,40 +46,22 @@ var newDeviceRH = function (req, res, params, responseSender) {
 			//* Should check the device type and answer whether or not polling should be done.
 			//* Different devices would have different tests (e.g. switch on a plug, poll for the temperature, etc.)
 			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			nbrq = 0
-			res.end(JSON.stringify({'status': 'ok'}))
+			ts[params.query.deviceType]()
 		},
 
 		'testend' : function() {
 			console.log('testend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			res.end(JSON.stringify({'status': 'ok'}))
+			te[params.query.deviceType]()
 		},
 
 		'testpoll' : function() {
 			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
 			console.log('nbrq = ' + nbrq)
-			if (++nbrq >= 3) {
-				res.end(JSON.stringify({'status': 'ok', 'events' : []}))
-			} else {
-				res.end(JSON.stringify({'status': 'err'}))
-			}
+
+			tp[params.query.deviceType]()
+			// res.end(JSON.stringify({'status': 'ok', 'events' : []}))
 		},
 		//* Test functions end
-
-		'test' : function () {
-			// setTimeout (function(){
-			// 	res.end(JSON.stringify({'test': 'test'}))
-			// }, 2000)
-			if (off) {
-				ss.sendToSensor(params.query.deviceId, ss.PLUG_SWITCH_ON_FRAME)
-				res.end(JSON.stringify({msg: "Test sent ON to plug"}))
-				off = !off;
-			} else {
-				ss.sendToSensor(params.query.deviceId, ss.PLUG_SWITCH_OFF_FRAME)
-				res.end(JSON.stringify({msg: "Test sent OFF to plug"}))
-				off = !off;
-			}
-		},
 
 		'submit': function() {
 			console.log('TODO: save the new device')
