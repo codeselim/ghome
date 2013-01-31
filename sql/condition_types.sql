@@ -7,3 +7,4 @@ CREATE TABLE `condition_types` (
   -- (actually, would only restrict the value we could put there, but we might replace by an ENUM if we want that)
 );
 
+

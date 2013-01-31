@@ -12,12 +12,12 @@ var db ;
  	var date = new Date();
 	var previous_hour = date.getHours() - 1;
 	//insert the average of temperature of the previous hour in the table hour_stats
-	var query_str = "insert into hour_stats (sensor_type_id,value,time)
-				Select  sensors_types.id, avg(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)
-				from logs,sensors_types,sensors
-				where sensors.sensor_type_id = sensors_types.id and 
-				sensors.sensor_type_id = logs.sensor_id and sensors_types.id = 1 and
-				(strftime('%H',logs.time) = ?) and strftime('%Y-%m-%d', logs.time) = date('now');"
+	var query_str = "insert into hour_stats (sensor_type_id,value,time)"+
+				"Select  sensors_types.id, avg(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)"+
+				"from logs,sensors_types,sensors"+
+				"where sensors.sensor_type_id = sensors_types.id and "+
+				"sensors.sensor_type_id = logs.sensor_id and sensors_types.id = 1 and"+
+				"(strftime('%H',logs.time) = ?) and strftime('%Y-%m-%d', logs.time) = date('now');"
 	db.query (query_str, [previous_hour],NULL)
  }
 
@@ -32,12 +32,12 @@ var db ;
  	var date = new Date();
 	var previous_hour = date.getHours() - 1;
 	//insert the average of temperature of the previous hour in the table hour_stats
-	var query_str = "insert into hour_stats (sensor_type_id,value,time)
-				Select  sensors_types.id, sum(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)
-				from logs,sensors_types,sensors
-				where sensors.sensor_type_id = sensors_types.id and 
-				sensors.sensor_type_id = logs.sensor_id and sensors_types.id = 5 and
-				(strftime('%H',logs.time) = ?) and strftime('%Y-%m-%d', logs.time) = date('now');"
+	var query_str = "insert into hour_stats (sensor_type_id,value,time)"+
+				"Select  sensors_types.id, sum(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)"+
+				"from logs,sensors_types,sensors"+
+				"where sensors.sensor_type_id = sensors_types.id and "+
+				"sensors.sensor_type_id = logs.sensor_id and sensors_types.id = 5 and"+
+				"(strftime('%H',logs.time) = ?) and strftime('%Y-%m-%d', logs.time) = date('now');"
 	db.query (query_str, [previous_hour],NULL)
  }
 
@@ -50,12 +50,12 @@ var db ;
  function temperature_d ( ) {
  	
 	//insert the average of temperature of the previous day in the table daily_stats
-	var query_str = "insert into daily_stats (sensor_type_id,value,day)
-				Select  sensors_types.id, avg(hour_stats.value),  strftime('%Y-%m-%d', hour_stats.time)
-				from hour_stats,sensors_types,sensors
-				where sensors.sensor_type_id = sensors_types.id and 
-				sensors.sensor_type_id = hour_stats.sensor_type_id and sensors_types.id = 1 and
-				strftime('%Y-%m-%d', hour_stats.time) =  strftime('%Y-%m-%d','now', '-1 day');"
+	var query_str = "insert into daily_stats (sensor_type_id,value,day)"+
+				"Select  sensors_types.id, avg(hour_stats.value),  strftime('%Y-%m-%d', hour_stats.time)"+
+				"from hour_stats,sensors_types,sensors"+
+				"where sensors.sensor_type_id = sensors_types.id and "+
+				"sensors.sensor_type_id = hour_stats.sensor_type_id and sensors_types.id = 1 and"+
+				"strftime('%Y-%m-%d', hour_stats.time) =  strftime('%Y-%m-%d','now', '-1 day');"
 	db.query (query_str, NULL,NULL)
  }
 
@@ -69,12 +69,12 @@ var db ;
  function consumption_d ( ) {
  	
 	//insert the average of temperature of the previous day in the table daily_stats
-	var query_str = "insert into daily_stats (sensor_type_id,value,day)
-				Select  sensors_types.id, sum(hour_stats.value),  strftime('%Y-%m-%d', hour_stats.time)
-				from hour_stats,sensors_types,sensors
-				where sensors.sensor_type_id = sensors_types.id and 
-				sensors.sensor_type_id = hour_stats.sensor_type_id and sensors_types.id = 5 and
-				strftime('%Y-%m-%d', hour_stats.time) =  strftime('%Y-%m-%d','now', '-1 day');"
+	var query_str = "insert into daily_stats (sensor_type_id,value,day)"+
+				"Select  sensors_types.id, sum(hour_stats.value),  strftime('%Y-%m-%d', hour_stats.time)"+
+				"from hour_stats,sensors_types,sensors"+
+				"where sensors.sensor_type_id = sensors_types.id and "+
+				"sensors.sensor_type_id = hour_stats.sensor_type_id and sensors_types.id = 5 and"+
+				"strftime('%Y-%m-%d', hour_stats.time) =  strftime('%Y-%m-%d','now', '-1 day');"
 	db.query (query_str, NULL,NULL)
  }
 
@@ -87,12 +87,12 @@ var db ;
  function temperature_m ( ) {
  	
 	//insert the average of temperature of the previous month in the table monthly_stats
-	var query_str = "insert into monthly_stats (sensor_type_id,value,date)
-				Select  sensors_types.id, avg(daily_stats.value),  strftime('%Y-%m-%d', daily_stats.day,'start of month')
-				from daily_stats,sensors_types,sensors
-				where sensors.sensor_type_id = sensors_types.id and 
-				sensors.sensor_type_id = daily_stats.sensor_type_id and sensors_types.id = 1 and
-				strftime('%Y-%m-%d', daily_stats.day) =  strftime('%Y-%m-%d','now', '-1 day');"
+	var query_str = "insert into monthly_stats (sensor_type_id,value,date)"+
+				"Select  sensors_types.id, avg(daily_stats.value),  strftime('%Y-%m-%d', daily_stats.day,'start of month')"+
+				"from daily_stats,sensors_types,sensors"+
+				"where sensors.sensor_type_id = sensors_types.id and "+
+				"sensors.sensor_type_id = daily_stats.sensor_type_id and sensors_types.id = 1 and"+
+				"strftime('%Y-%m-%d', daily_stats.day) =  strftime('%Y-%m-%d','now', '-1 day');"
 	db.query (query_str, NULL,NULL)
  }
 
@@ -106,12 +106,12 @@ var db ;
  function consumption_m ( ) {
  	
 	//insert the average of temperature of the previous month in the table monthly_stats
-	var query_str = "insert into monthly_stats (sensor_type_id,value,date)
-				Select  sensors_types.id, sum(daily_stats.value),  strftime('%Y-%m-%d', daily_stats.day,'start of month')
-				from daily_stats,sensors_types,sensors
-				where sensors.sensor_type_id = sensors_types.id and 
-				sensors.sensor_type_id = daily_stats.sensor_type_id and sensors_types.id = 5 and
-				strftime('%Y-%m-%d', daily_stats.day) =  strftime('%Y-%m-%d','now', '-1 day');"
+	var query_str = "insert into monthly_stats (sensor_type_id,value,date)"+
+				"Select  sensors_types.id, sum(daily_stats.value),  strftime('%Y-%m-%d', daily_stats.day,'start of month')"+
+				"from daily_stats,sensors_types,sensors"+
+				"where sensors.sensor_type_id = sensors_types.id and "+
+				"sensors.sensor_type_id = daily_stats.sensor_type_id and sensors_types.id = 5 and"+
+				"strftime('%Y-%m-%d', daily_stats.day) =  strftime('%Y-%m-%d','now', '-1 day');"
 	db.query (query_str, NULL,NULL)
  }
 
@@ -123,10 +123,10 @@ var db ;
  *@returns
 */
  function get_hour_stats (type_sensor, date1, date2) {
- 	var query_str = " select value 
-					from hour_stats
-					where time between '?' and '?'
-					and sensor_type_id = ?; "	
+ 	var query_str = " select value "+
+					"from hour_stats"+
+					"where time between '?' and '?'"+
+					"and sensor_type_id = ?; "	
 	db.query (query_str, [date1,date2,type_sensor], testcallback)
  }
 
@@ -137,10 +137,10 @@ var db ;
  *@returns
 */
  function get_daily_stats (type_sensor, date1, date2) {
- 	var query_str = " select value 
-					from daily_stats
-					where time between '?' and '?'
-					and sensor_type_id = ?; "	
+ 	var query_str = " select value "+
+					"from daily_stats"+
+					"where time between '?' and '?'"+
+					"and sensor_type_id = ?; "	
 	db.query (query_str, [date1,date2,type_sensor], testcallback)
  }
 

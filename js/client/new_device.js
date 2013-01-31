@@ -46,7 +46,7 @@ define(['jquery', 'jqvalidate'], function($){
 		//* We display the test results
 		if (reqStatus.validated) {
 			$.mobile.loading('hide')
-			$('#popupContent').html("Le test s'est terminé avec succès! (si type = prise: la commande d'activation de la prise a été envoyée. Vérifiez si elle s'est bien allumée.)")
+			$('#popupContent').html("Le test s'est terminé avec succès! (si type = prise : la commande d'activation de la prise a été envoyée. Vérifiez si elle s'est bien allumée.)")
 			$('#popup').popup('open')	
 		} else {
 			$.mobile.loading('hide')
