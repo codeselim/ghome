@@ -1,4 +1,26 @@
 define(['jquery', 'jqvalidate'], function($){
+	var conditionTemplate = '<li> <a href="#" onclick="return false;" class="leftLink"> <span> <div class="ui-grid-b"> <div class="ui-block-a"> <select name="condSource" data-inline="true"data-mini="true" disabled></select> </div> <div class="ui-block-b"> <select name="condData" data-inline="true"data-mini="true" disabled></select> </div> </div> </span> </a> <a href="#">Retirer</a> </li> '
+/* Multi line template:
+<li>	
+	<a href="#" onclick="return false;" class="leftLink">
+		<span>
+			<div class="ui-grid-b">
+				<div class="ui-block-a">
+					<select name="condSource" data-inline="true" disabled></select>
+				</div>
+				<div class="ui-block-b">
+					<select name="condData" data-inline="true" disabled></select>
+				</div>
+				<div class="ui-block-c">
+					<select name="condValue" data-inline="true"  disabled></select>
+				</div>
+			</div>
+
+		</span>
+	</a>
+	<a href="#">Retirer</a>
+</li>
+*/
 
 	var populateSelectBox = function($select, data) {
 		$select.empty()
@@ -52,18 +74,17 @@ define(['jquery', 'jqvalidate'], function($){
 		})
 	}
 
-	var updateTriggerConditions = function() {
-		var sensorType = $('#sensor :selected').data('sensor-type')
-		console.log(sensorType)
-		$.ajax({
-				'url'      : "/"
-			, 'dataType' : 'html'
-			, 'data'     : {'module' : 'new_task', 'action' : 'get_threshold_div', 'sensorType' : sensorType}
-		})
-		.always(function(data) {
-			$('#thresholdDiv').html(data).trigger('create')
-			// $('#sensor').change(updateTriggerConditions)
-		})
+	var addCondition = function() {
+		$condList = $('#conditions')
+		// var condition = conditionTemplate.replace(/a/g, '')
+		// $("li:last").before('<li>azddddddddd</li>')
+		$condList.find('li:last').before(conditionTemplate)
+		$condList.find('li:last').prev('li').trigger('create')
+		$condList.listview('refresh')
+	}
+
+	var remove = function() {
+		console.log('remove: ', $(this))
 	}
 
 	//*** Returned functions *************************************************************************
@@ -101,6 +122,7 @@ define(['jquery', 'jqvalidate'], function($){
 		$('[name=aActor]').change(updateActionList)
 		$('[name=evtSource]').change(updateEvtTypeList)
 		$('[name=evtType]').change(updateEvtValueList)
+		$('#addCondition').click(addCondition)
 	}
 
 	return {
