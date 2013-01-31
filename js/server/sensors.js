@@ -49,9 +49,8 @@ function decode_data_byte (type_s, frame_data) {
 			value = frame_data.data[3] & 2;
 			return value;
 		case 4 ://contact
-				value = frame_data.data[3] & 1;
-			
-
+			value = frame_data.data[3] & 1;
+			return value;
 		case 5 : //electricity : value of power consumption in a minute in Wh
 			value = parseFloat (frame_data.data[2]+"."+frame_data.data[3]);
 			   //value of power consumption in a minute in Wh
