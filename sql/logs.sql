@@ -6,4 +6,4 @@ CREATE TABLE `logs` (
    FOREIGN KEY(sensor_id) REFERENCES sensors(id)
 );
 
-CREATE INDEX ON `logs` (sensor_id);
+CREATE INDEX `logs_sensor_id` ON `logs` (sensor_id);
