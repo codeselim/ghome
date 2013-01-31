@@ -3,7 +3,7 @@ var tpl = require('./template_engine')
 var ss = require('./sensors_server')
 var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
 var off = true
-var testid = 0
+var testid = 0 // The testid can be used by the test start/poll/end handlers to share data among them if they need to, by allowing them to identify a given request
 /**
  * Gets the list of the devices types from the DB and passes it as a parameter to the callback
  * Object passed ; [{'value': type_id, 'label': type_name}]
@@ -52,24 +52,31 @@ var deviceTestRH = function (req, res, params, responseSender) {
 	ts = get_shared_data('DEVICE_START_TESTS')
 	te = get_shared_data('DEVICE_END_TESTS')
 	tp = get_shared_data('DEVICE_POLL_TESTS')
-
+	testid++
+	aids = get_shared_data('ALLOWED_IDS')
+	cids = get_shared_data('CONNECTED_IDS')
 	switch(params.query.action) {
 		case "teststart":
 			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			ts[params.query.deviceType]()
+			// In case if was already in memory, delete it:
+			aids.remove(aids.indexOf(params.query.deviceId))
+			cids.remove(cids.indexOf(params.query.deviceId))
+			//* Then add it to the allowed ids so that we don't filter it out, but don't add to connected ones, as what we want is to detect connection
+			aids.push(params.query.deviceId)
+			ts[params.query.deviceType](req, res, params, responseSender, testid)
 			break;
 
 		case "testpoll":
 			console.log('testend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			te[params.query.deviceType]()
+			te[params.query.deviceType](req, res, params, responseSender)
 			break;
 
-		case "testend":
+		case "testend":js
 			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			console.log('nbrq = ' + nbrq)
-
-			tp[params.query.deviceType]()
-			// res.end(JSON.stringify({'status': 'ok', 'events' : []}))
+			//* Removing from in-memory arrays
+			aids.remove(aids.indexOf(params.query.deviceId))
+			cids.remove(cids.indexOf(params.query.deviceId))
+			tp[params.query.deviceType](req, res, params, responseSender)
 			break;
 
 		default:
@@ -103,3 +110,4 @@ var deviceManagementRH  = function (req, res, params, responseSender) {
 
 exports.newDeviceRequestHandler = newDeviceRH
 exports.devMgmtRequestHandler = deviceManagementRH
+exports.deviceTestRH = deviceTestRH

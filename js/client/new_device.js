@@ -1,10 +1,11 @@
-define(['jquery', 'jqvalidate'], function($){
+define(['jquery', 'jqvalidate'], function($) {
 	// var progressbardiv = "<div style='width: 200px; opacity: .75' class='meter'><span style='width: 25%'></span></div>"
 
 	//*** Server Polling *****************************************************************************
-
+	var testid = null
 	var deviceInfoRequest = function deviceInfoRequest(ajaxData, interval, countdown, finalCallback) {
 		ajaxData.action = 'testpoll'
+		ajaxData.testid = testid
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
@@ -77,6 +78,7 @@ define(['jquery', 'jqvalidate'], function($){
 					, 'dataType' : 'json'
 		})
 		.done(function(data) {
+			testid = data.testid
 			deviceInfoRequest(ajaxData, 3000, 15000, endTest)
 		})
 		.fail(function(jqXHR, textStatus) {

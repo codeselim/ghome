@@ -10,9 +10,8 @@ poll_tests[5] = function (req, res, params, testid) {
     res.end({status: 'ok', events: []})
 }
 
-//* Action for device of type 2 
-poll_tests[2] = function (req, res, params, testid) {
-    
-
+//* Action for device of type 1 = temperature
+poll_tests[1] = function (req, res, params, testid) {
+	
 }
 

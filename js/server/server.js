@@ -1,6 +1,8 @@
 //* Server of the GHome application
 //* Will be launching the network sensors server as well as the web server that deals with the different GUIs
 
+//* Small JS "upgrade"
+Array.prototype.remove = function(index) { this.splice(index, 1); return this;}
 
 // ************ WARNING : KEEP THOSE LINES AT THE TOP, OR SOME DATA WILL BE UNDEFINED ! ***************
 var shared = require('./shared_data')
@@ -15,6 +17,8 @@ set_shared_data('SQL_TABLES', {'st': 'sensors_types',
 								'm':'modes',
 								's':'sensors',
 								't':'tasks'})
+var allowed_ids = [2214883, 346751, 8991608, 112022, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
+set_shared_data('ALLOWED_IDS', allowed_ids)
 var t = get_shared_data('SQL_TABLES')
 //******************************************************************
 
@@ -146,7 +150,6 @@ function start () {
 	// database.query()
 
 
-	var allowed_ids = [2214883, 346751, 8991608, 112022, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 	sensors_serv.start(db, web_serv, SENSORS_SERVER_PORT, allowed_ids)
 	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
 	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
