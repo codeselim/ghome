@@ -3,7 +3,7 @@
 var shared = require('./shared_data')
 var get_shared_data = shared.get_shared_data
 var set_shared_data = shared.set_shared_data
-
+var sensors_utils = require('./sensors')
 /**
  * Initilization 
  */
