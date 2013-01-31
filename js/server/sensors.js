@@ -55,9 +55,9 @@ function decode_data_byte (frame_data) {
 				return [-1,0];
 		}
 	}
-	else if (frame_data.org == 0X2){
+	else if (frame_data.org == 0X6){
 		if (func == 2) {
-			db3_bit0 = frame_data_byte[3] & 1;
+			db3_bit0 = frame_data.data[3] & 1;
 			switch (db3_bit0) {
 				case 0 :
 					return [4,0]; //contact opened
