@@ -105,11 +105,9 @@ function GLOBAL_INIT () {
 		console.log("DB connected.")
 		set_shared_data('IN_TEMP', 0) // @TODO : Get the value from the database instead !
 		set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
-		query = "SELECT s.id AS sid, l.value " +
-		"FROM `" + t['s'] + "` s " +
-		"INNER JOIN `" + t['l'] + "` AS l ON(l.sensor_id = s.id) " +
-		"GROUP BY s.id";
-		// "ORDER BY l.time DESC " + 
+		query = "SELECT sensor_id AS sid, MAX(time), value " +
+		"FROM `" + t['l'] + "` l " +
+		"GROUP BY sensor_id";//* /!\ According to StackOverflow, when using BTree as indexes (which is the case with sqlite), the maximum (key1, key2, key3) tuple will be the one returned by the GROUP BY and thus, for us, the last one in terms of time
 		db.query(
 		query,
 		null,
