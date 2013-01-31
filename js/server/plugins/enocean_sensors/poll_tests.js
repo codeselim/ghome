@@ -6,7 +6,7 @@ poll_tests = gsd('DEVICE_START_TESTS')
 
 //* Action for device of type 5 : Power switch plug
 poll_tests[5] = function (req, res, params) {
-    deviceCommunicator[5].send("ON")
+    deviceCommunicator[5]("ON")
     res.end({status: 'ok', events: []})
 }
 

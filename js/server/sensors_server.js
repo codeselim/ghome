@@ -10,8 +10,6 @@ var check_checksum = sensors_utils.check_frame_checksum
 var eventEmitter = new events.EventEmitter();
 var SENSOR_FRAME_EVENT = "newSensorFrame"
 var FRAME_SEPARATOR = "A55A"
-var PLUG_SWITCH_ON_FRAME = 'A55A6B0555000000FF9F1E063072'//* Frame to be sent to toggle the switch on plug state (specific to our given switch power plug)
-var PLUG_SWITCH_OFF_FRAME = 'A55A6B0577000000FF9F1E063072'//* Frame to be sent to toggle the switch off plug state (specific to our given switch power plug)
 function start (db, web_serv, port, allowed_ids) {
 	FRAME_SIZE = 28
 	console.log(new Date(), "Starting Sensors server")
@@ -72,5 +70,3 @@ function start (db, web_serv, port, allowed_ids) {
 exports.start = start
 exports.events = eventEmitter
 exports.SENSOR_FRAME_EVENT = SENSOR_FRAME_EVENT
-exports.PLUG_SWITCH_ON_FRAME = PLUG_SWITCH_ON_FRAME
-exports.PLUG_SWITCH_OFF_FRAME = PLUG_SWITCH_OFF_FRAME
