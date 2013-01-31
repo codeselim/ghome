@@ -42,10 +42,15 @@ function lumEvent(idSensor, sensor_type_id, value) {
 }
 function contEvent(idSensor, sensor_type_id, value) {
 	// Contact performed
-	tasks_executor.execute_task(3, value, idSensor);
+	if(value == 1) {
+		tasks_executor.execute_task(3, value, idSensor);
+	}
 
 	// Contact removed
-	//tasks_executor.execute_task(4, value, idSensor);
+	if(value == 0) {
+		tasks_executor.execute_task(4, value, idSensor);
+	}
+
 }
 function preEvent(idSensor, sensor_type_id, value) {
 	//return "presence";
@@ -61,16 +66,16 @@ function sendTimeEvent() {
 	var currentTime = new Date();
 	console.log("Minute changed = " + currentTime.getMinutes());
 	//db.query("SELECT id FROM event_types WHERE name = ?", "minute", sendEvent);
-	tasks_executor.execute_task(7, currentTime.getMinutes(), null);
+	tasks_executor.execute_task(7, "10", -1);
 
 
 	if (currentTime.getMinutes() == 0) {
 		console.log("Hour changed = " + currentTime.getHours());
-		tasks_executor.execute_task(6, currentTime.getHours(), null);
+		tasks_executor.execute_task(6, currentTime.getHours(), -1);
 	}
 	if (currentTime.getHours() == 0) {
 		console.log("Day changed = " + currentTime.getDay());
-		tasks_executor.execute_task(5, currentTime.getDay(), null);
+		tasks_executor.execute_task(5, currentTime.getDay(), -1);
 	}
 }
 
@@ -79,8 +84,8 @@ function start(database) {
 	console.log("Starting events_monitor");
 	lastValues = shared_data.get_shared_data("SENSOR_VALUES");
 	db = database;
-	getData(36, 48);
-	getData(36, 50);
+	getData(2214883, 10);
+	getData(2214883, 10);
 	idTimer = setInterval(sendTimeEvent, 15000);
 }
 

@@ -13,6 +13,7 @@ function switch_off_plug(){
 function make_action(results) { //this function will make the actions of results
 	console.log("rentrée dans make action")
 	 for (var r in results) {
+	 	console.log(results[r])
       switch(results[r]){
       	case 1 :      //if command is "allumer prise"
       	console.log("action allumer prise !");
@@ -60,7 +61,10 @@ function execute_task(event_id, value, sensor_id) {//this function will search t
 				switch (rows[r]["operator"]){
 					case 1 : // if operator = "="
 					console.log("operateur est égal à égal")
+					console.log(rows[r]["value_to_compare"])
+					console.log(value)
 					if (parseInt(rows[r]["value_to_compare"]) == parseInt(value)){
+						console.log("value to compare = value")
 						results.push(rows[r]["action_type_id"]);
 					}
 					break;
