@@ -15,10 +15,10 @@ function start(database) {
 }
 
 function insertLog(data) {
-	console.log(tables);
-    db.query("INSERT INTO "+tables.l+" values (? , ? , ? , datetime() )", [null, data.sensor_id, data.value], function (err, rows){
- 		if(err) console.log("[INSERT_LOG_ERROR] : "+err)
- 		else console.log("[INSERT_LOG_OKAY]")
+    db.query("INSERT INTO " + tables.l + " VALUES (?, ?, ?, datetime() )", [null, data.sensor_id, data.value], function (err, rows){
+ 		if(err) {
+ 			console.error("[INSERT_LOG_ERROR] : " + err)
+ 		}
 	});
 }
 
