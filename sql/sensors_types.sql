@@ -8,3 +8,4 @@ INSERT INTO sensors_types VALUES (null, "Lumière");
 INSERT INTO sensors_types VALUES (null, "Présence");
 INSERT INTO sensors_types VALUES (null, "Contact");
 --INSERT INTO sensors_types VALUES (null, "Temps");
+

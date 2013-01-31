@@ -16,6 +16,10 @@ Database.prototype.query = function(query_str, parameters, callback_func) {
 		statement.on("error", function (err) {
 			callback_func(err, null) // Passing the error to the callback, and null as result
 		});
+		
+		if(null == parameters) {
+			parameters = {}
+		}
 		statement.all(parameters, callback_func);
 		statement.finalize();	
 	});
