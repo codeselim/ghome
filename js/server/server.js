@@ -102,19 +102,30 @@ function GLOBAL_INIT () {
 	db = new dbms.Database()
 	console.log("Connecting to db...")
 	db.connect('dat', function () {
+		console.log("DB connected.")
 		set_shared_data('IN_TEMP', 0) // @TODO : Get the value from the database instead !
 		set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
-		db.query("
-		SELECT s.id AS sid, l.value 
-		FROM `" + t['s'] + "` s 
-		INNER JOIN `" + t['l'] + "` AS l ON(l.sensor_id = s.id) 
-		ORDER BY l.time DESC 
-		LIMIT 0, 1", 
+		query = "SELECT s.id AS sid, l.value " +
+		"FROM `" + t['s'] + "` s " +
+		"INNER JOIN `" + t['l'] + "` AS l ON(l.sensor_id = s.id) " +
+		"GROUP BY s.id";
+		// "ORDER BY l.time DESC " + 
+		db.query(
+		query,
+		null,
 		function (err, rows) {
+			if (null != err) {
+				console.error("!! Error, could not load the former state of the sensors from the DB, aborting server startup. ¡¡")
+				console.error("The query that caused the error is " + query)
+				console.error("And the error is" + err)
+				process.exit()
+			};
 			for(i in rows) {
 				sensors_values[rows[i].sid] = rows[i].value
 			}
+			console.log("Server startup states: " + JSON.stringify(sensors_values))
 			set_shared_data('SENSORS_VALUES', sensors_values)
+			start()
 		})
 	})
 }
