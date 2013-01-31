@@ -27,7 +27,7 @@ var sse_sender = require('./sse_sender')
 var dbms = require('./dbms')
 var logger = require('./logger')
 var events_monitor = require('./events_monitor')
-
+var device_communicator = require('./device_communicator')
 
 var cp = require('child_process')
 var n = cp.fork(__dirname + '/background_worker.js')
@@ -130,6 +130,7 @@ function GLOBAL_INIT () {
 
 function start () {
 	console.log('Data initialized... Starting server components.')
+	device_communicator.start(db)
 	web_serv.start(db, WEB_SERVER_PORT)
 	android_notif_serv.start(ANDROID_NOTIF_SERVER_PORT, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Well, or test after changing it !) I don't know why, but it's working on port 5000 and not on port 3000 for instance....
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
