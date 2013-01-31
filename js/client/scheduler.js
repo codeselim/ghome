@@ -7,33 +7,47 @@ define(['jquery', 'jqvalidate'], function($){
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
-			, 'data'     : {'module' : 'new_task', 'action' : 'get_options', 'device-type' : deviceType}
+			, 'data'     : {'module' : 'new_task', 'action' : 'get_actions', 'deviceType' : deviceType}
 		})
 		.always(function(data) {
 			console.log(data)
+			$devAction = $('#devAction')
 
-			$('#devAction option:gt(0)').remove(); //* Remove all options, but not the first
+			$devAction.empty()
+			// $('#devAction option:gt(0)').remove(); //* Remove all options, but not the first
 
 			$.each(data, function(key, value) {
-			  $('#devAction').append($("<option></option>").attr("value", value).text(key))
+			  $devAction.append($("<option></option>").attr("value", value).text(key))
 			})
+			$devAction.selectmenu('refresh', true)
 		})
 	}
 
-var updateTriggerDiv = function() {
-	console.log('utd')
-	$.ajax({
-			'url'      : "/"
-		, 'dataType' : 'html'
-		, 'data'     : {'module' : 'new_task', 'action' : 'get_trigger_div', 'trigger_type' : $('#trigger :selected').val()}
-	})
-	.always(function(data) {
-		console.log(data)
+	var updateTriggerConditions = function() {
+		var sensorType = $('#sensor :selected').data('sensor-type')
+		console.log(sensorType)
+		$.ajax({
+				'url'      : "/"
+			, 'dataType' : 'html'
+			, 'data'     : {'module' : 'new_task', 'action' : 'get_threshold_div', 'sensorType' : sensorType}
+		})
+		.always(function(data) {
+			$('#thresholdDiv').html(data).trigger('create')
+			// $('#sensor').change(updateTriggerConditions)
+		})
+	}
 
-		$('#triggerDiv').html(data)
-	})
-}
-
+	var updateTriggerDiv = function() {
+		$.ajax({
+				'url'      : "/"
+			, 'dataType' : 'html'
+			, 'data'     : {'module' : 'new_task', 'action' : 'get_trigger_div', 'triggerType' : $('#trigger :selected').val()}
+		})
+		.always(function(data) {
+			$('#triggerDiv').html(data).trigger('create')
+			$('#sensor').change(updateTriggerConditions)
+		})
+	}
 
 	//*** Returned functions *************************************************************************
 	var pageInit = function pageInit() {
@@ -42,8 +56,33 @@ var updateTriggerDiv = function() {
 
 	var newTaskPI = function newTaskPI() {
 		console.log('new task pageInit')
-		$('#device').on('change', updateActionList)
-		$('#trigger').on('change', updateTriggerDiv)
+
+	  $('.leftLink').parent().parent().parent().removeClass('ui-btn');
+    $('.leftLink').contents().unwrap();
+
+		$("#form").validate({
+			  rules: {
+			  	  'device'          : {'required': true }
+			  	, 'devAction'       : {'required': true }
+			  	, 'trigger'         : {'required': true }
+			  	, 'sensor'          : {'required': true }
+			  	, 'threshold_type'  : {'required': true }
+			  	, 'threshold_value' : {'required': true }
+			  	, 'threshold_event' : {'required': true }
+			  } 
+			, messages: {}
+			, errorPlacement: function(error, element) {
+				//* Needed to place the error message out of the select menu.
+				if (element.is('select')) {
+					error.insertAfter($(element).parent())
+				} else {
+					error.insertAfter(element)
+				}
+			}
+		})
+
+		$('#device').change(updateActionList)
+		$('#trigger').change(updateTriggerDiv)
 	}
 
 	return {

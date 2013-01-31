@@ -96,8 +96,8 @@ define(['jquery', 'jqvalidate'], function($){
 					, equip_type: "required"
 				} 
 			, messages: { 
-					  equip_id: "Entrez l'identifiant de l'équipemement à ajouter"
-					, equip_type: "Sélectionnez le type d'équipement"
+					  equip_id: "Veuillez entrez l'identifiant de l'équipemement à ajouter"
+					, equip_type: "Veuillez sélectionner le type d'équipement"
 				}
 			, errorPlacement: function(error, element) {
 				//* Needed to place the error message out of the select menu.
