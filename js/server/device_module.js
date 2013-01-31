@@ -17,6 +17,7 @@ function getDevicesTypesList (db, callback) {
 			// SQL Query went wrong, don't crash, just don't reply anything
 		} else {
 			for(i in rows) {
+				console.log("Row " + i, rows[i])
 				data.push({'value': rows[i]['id'], 'label': rows[i]['name']})
 			}
 		}
@@ -59,8 +60,8 @@ var deviceTestRH = function (req, res, params, responseSender) {
 		case "teststart":
 			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
 			// In case if was already in memory, delete it:
-			aids.remove(aids.indexOf(params.query.deviceId))
-			cids.remove(cids.indexOf(params.query.deviceId))
+			ArrayRemove(aids.indexOf(params.query.deviceId))
+			ArrayRemove(cids.indexOf(params.query.deviceId))
 			//* Then add it to the allowed ids so that we don't filter it out, but don't add to connected ones, as what we want is to detect connection
 			aids.push(params.query.deviceId)
 			ts[params.query.deviceType](req, res, params, responseSender, testid)
@@ -74,8 +75,8 @@ var deviceTestRH = function (req, res, params, responseSender) {
 		case "testend":js
 			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
 			//* Removing from in-memory arrays
-			aids.remove(aids.indexOf(params.query.deviceId))
-			cids.remove(cids.indexOf(params.query.deviceId))
+			ArrayRemove(aids.indexOf(params.query.deviceId))
+			ArrayRemove(cids.indexOf(params.query.deviceId))
 			tp[params.query.deviceType](req, res, params, responseSender)
 			break;
 

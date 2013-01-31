@@ -2,7 +2,7 @@
 //* Will be launching the network sensors server as well as the web server that deals with the different GUIs
 
 //* Small JS "upgrade"
-Array.prototype.remove = function(index) { this.splice(index, 1); return this;}
+ArrayRemove = function(a, index) { a.splice(index, 1); return a;}
 
 // ************ WARNING : KEEP THOSE LINES AT THE TOP, OR SOME DATA WILL BE UNDEFINED ! ***************
 var shared = require('./shared_data')
