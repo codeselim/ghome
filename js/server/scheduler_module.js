@@ -1,17 +1,8 @@
+"use strict"
+
 // var fs = require('fs')
 var tpl = require('./template_engine')
 // var ss = require('./sensors_server')
-
-
-/**
- * Required Data:
- * 	Device list
- * 	Device type to action list => TODO table: id device type | id evt/Action | frame data
- * 	Device type to event list => TODO table: id device type | id evt/Action | frame data
- * 	Supported event types list
- */
-
-
 
 var schedulerRH  = function (req, res, params, responseSender) {
 	var data = tpl.get_template_result("scheduler.html", {})
@@ -34,11 +25,20 @@ var newTaskRH  = function (req, res, params, responseSender) {
 				  		, {'label' : 'Volet2', 'value' : 2, 'type' : 2}
 				  	]}
 				  ]
-				, 'triggers': [
-						  {'label' : 'Capteur', 'value': 1}
-						, {'label' : 'Date', 'value': 2}
-						, {'label' : 'Météo', 'value': 3}
-					]
+				, 'evtSourceTypes' : [
+				{'label' : 'Sources spéciales', 'sensors' : [
+			  	    {'label' : 'Date', 'value' : 1, 'type' : 51}
+			  		, {'label' : 'Météo', 'value' : 2, 'type' : 52}
+			  	]},
+			  	{'label' : 'Capteurs Température', 'sensors' : [
+			  	    {'label' : 'Capteur Température1', 'value' : 1, 'type' : 2}
+			  		, {'label' : 'Capteur Température2', 'value' : 2, 'type' : 2}
+			  	]},
+			  	{'label' : 'Capteurs Présence', 'sensors' : [
+			  	    {'label' : 'Capteur Présence1', 'value' : 1, 'type' : 3}
+			  		, {'label' : 'Capteur Présence2', 'value' : 2, 'type' : 3}
+			  	]}
+			  ]
 			})
 			params.fileUrl = 'new_task.html'
 			responseSender(req, res, params, data)			
@@ -52,35 +52,42 @@ var newTaskRH  = function (req, res, params, responseSender) {
 				res.end(JSON.stringify({'Allumer' : 1, 'Eteindre' : 2}))
 			} else if (params.query.deviceType == 2){
 				res.end(JSON.stringify({'Ouvrir 100%' : 1, 'Ouvrir 50%' : 2, 'Fermer' : 3 }))
+			} else if (params.query.deviceType == 2){
+				res.end(JSON.stringify({'Ouvrir 100%' : 1, 'Ouvrir 50%' : 2, 'Fermer' : 3 }))
 			} else {
 				res.end(JSON.stringify({'On' : 1, 'Off' : 2}))
 			}
+			break
 		}
 
-		case 'get_trigger_div' :
+		case 'get_event_types' :
 		{
-			var tpldata = {}
-			if (params.query.triggerType == 1 ){
-				tpldata = {
-				  'template1' : {
-					  'sensorTypes' : [
-					  	{'label' : 'Capteurs Température', 'sensors' : [
-					  	    {'label' : 'Capteur Température1', 'value' : 1, 'type' : 1}
-					  		, {'label' : 'Capteur Température2', 'value' : 2, 'type' : 1}
-					  	]},
-					  	{'label' : 'Capteurs Présence', 'sensors' : [
-					  	    {'label' : 'Capteur Présence1', 'value' : 1, 'type' : 2}
-					  		, {'label' : 'Capteur Présence2', 'value' : 2, 'type' : 2}
-					  	]}
-					  ]
-					, 'triggers': [{'label' : 'Trigger1', 'value': '1'}]
-					}
+			var data = {}
+			if (params.query.sourceType == '2' ){
+				data = {
+				    'Passe au dessus de ' : 1
+		  		, 'Passe en dessous de ' : 2
 				}
-			} else {
-				tpldata = {'template2' : {}}
+			} else if (params.query.sourceType == 3 ){
+		  	data = {
+				    'Activation' : 11
+		  		, 'Désactivation' : 12
+				}
 			}
-			params.fileUrl = 'triggerDivs.html'
-			responseSender(req, res, params, tpl.get_template_result("triggerDivs.html", tpldata))			
+			res.end(JSON.stringify(data))
+			break
+		}
+
+		case 'get_event_values' :
+		{
+			var data = {}
+			if (params.query.eventType < 10 ) {
+				data = {
+				    'Seuil 1 ' : 1
+		  		, 'Seuil 2 ' : 2
+				}
+			} 
+			res.end(JSON.stringify(data))
 			break
 		}
 
@@ -88,7 +95,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 		{
 			//* A request should be done to find the type of threshold associated to a sensor type
 			var tpldata = {}
-			if (params.query.sensorType == 1 ){
+			if (params.query.sourceType == 1 ){
 				tpldata = {'fuzzyValueThreshold' : {
 					  'thresholdTypes' : [
 					  	  {'label' : 'Passe au dessus de ', 'value' : 1}
@@ -101,8 +108,8 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			} else {
 				tpldata = {'fixedValueThreshold' : {
 						'eventTypes' : [
-							  {'label' : 'Activation', 'value' : 1}
-							, {'label' : 'Désactivation', 'value' : 2}
+							  {'label' : 'Activation', 'value' : 11}
+							, {'label' : 'Désactivation', 'value' : 22}
 						]
 					}
 				}

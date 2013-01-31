@@ -12,26 +12,30 @@
 	<div data-role="page" id="newTask">
 		<div data-theme="a" data-role="header" data-position="fixed">
 			<h3>Nouvelle tâche</h3>
-			<a href="/?module=home" data-icon="home" data-iconpos="notext" data-rel="back" >Accueil</a>
+			<a href="/?module=home" data-icon="home" data-iconpos="notext" >Accueil</a>
 		</div>
 		<div data-role="content">
 			<form>
 				<ul data-role="listview" data-inset="true" data-divider-theme="d">
 					<li data-role="list-divider" role="heading">
-						Action - Rien ne marche, c'est normal. TODO: chargement dynamique
+						Action
 					</li>
 					<li>	
 						<div class="ui-grid-a">
 							<div class="ui-block-a">
-								<select name="devAction" id="devAction" data-inline="true">
-									<option value="">Prise 1</option>
+								<select name="aActor" data-inline="true">
 									<option value="">-- Acteur --</option>
+									{{#deviceTypes}}
+									<optgroup label="{{label}}">
+										{{#devices}}
+									    <option value="{{value}}" data-device-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
+										{{/devices}}
+									</optgroup>
+									{{/deviceTypes}}
 								</select>
 							</div>
 							<div class="ui-block-b">
-								<select name="devAction" id="devAction" data-inline="true">
-									<option value="">Allumer</option>
-									<option value="">-- Action --</option>
+								<select name="aAction" data-inline="true" disabled>
 								</select>
 							</div>
 						</div>
@@ -42,26 +46,23 @@
 					<li>	
 						<div class="ui-grid-b">
 							<div class="ui-block-a">
-								<select name="devAction" id="devAction" data-inline="true" data-mini="true">
-									<option value="">Date</option>
-									<option value="">Température 1</option>
+								<select name="evtSource" data-inline="true" data-mini="true">
 									<option value="">-- Source --</option>
+									{{#evtSourceTypes}}
+									<optgroup label="{{label}}">
+									{{#sensors}}
+									    <option value="{{value}}" data-sensor-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
+									{{/sensors}}
+									</optgroup>
+									{{/evtSourceTypes}}
 								</select>
 							</div>
 							<div class="ui-block-b">
-								<select name="devAction" id="devAction" data-inline="true" data-mini="true">
-									<option value="">Franch. seuil mont.</option>
-									<option value="">Franch. seuil desc.</option>
-									<option value="">Changement heure</option>
-									<option value="">Changement jour</option>
-									<option value="">-- Type --</option>
+								<select name="evtType" data-inline="true" data-mini="true" disabled>
 								</select>
 							</div>
 							<div class="ui-block-c">
-								<select name="devAction" id="devAction" data-inline="true" data-mini="true">
-									<option value="">Chaud</option>
-									<option value="">Tiède</option>
-									<option value="">-- Valeur --</option>
+								<select name="evtValue" id="devAction" data-inline="true" data-mini="true" disabled>
 								</select>
 							</div>
 						</div>
@@ -71,25 +72,25 @@
 					</li>
 					<li>
 						<div>
-							<ul data-role="listview" data-divider-theme="d" data-split-icon="minus" data-split-theme="d">
+							<ul data-role="listview" data-divider-theme="d" data-split-icon="minus" data-split-theme="d" id="conditions">
 								<li>	
 									<a href="#" onclick="return false;" class="leftLink">
 										<span>
 											<div class="ui-grid-b">
 												<div class="ui-block-a">
-													<select name="devAction" id="devAction" data-inline="true">
+													<select name="condSource" data-inline="true">
 														<option value="">Temps</option>
 														<option value="">-- Source --</option>
 													</select>
 												</div>
 												<div class="ui-block-b">
-													<select name="devAction" id="devAction" data-inline="true">
+													<select name="condData" data-inline="true">
 														<option value="">Jour</option>
 														<option value="">-- Donnée --</option>
 													</select>
 												</div>
 												<div class="ui-block-c">
-													<select name="devAction" id="devAction" data-inline="true">
+													<select name="condValue" data-inline="true">
 														<option value="">Lundi</option>
 														<option value="">-- Valeur --</option>
 													</select>

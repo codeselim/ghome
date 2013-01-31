@@ -1,25 +1,54 @@
 define(['jquery', 'jqvalidate'], function($){
 
+	var populateSelectBox = function($select, data) {
+		$select.empty()
+		// $('#select option:gt(0)').remove(); //* Remove all options, but not the first
+
+		$.each(data, function(key, value) {
+		  $select.append($("<option></option>").attr("value", value).text(key))
+		})
+		$select.selectmenu($.isEmptyObject(data)? 'disable' : 'enable')
+		$select.selectmenu('refresh', true)
+	}
+
 	var updateActionList = function() {
-		console.log('ual')
-		var deviceType = $('#device :selected').data('device-type')
+		var deviceType = $(this).find(':selected').data('device-type')
 
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
 			, 'data'     : {'module' : 'new_task', 'action' : 'get_actions', 'deviceType' : deviceType}
 		})
-		.always(function(data) {
+		.done(function(data) {
 			console.log(data)
-			$devAction = $('#devAction')
+			populateSelectBox($('[name=aAction]'), data)
+		})
+	}
 
-			$devAction.empty()
-			// $('#devAction option:gt(0)').remove(); //* Remove all options, but not the first
+	var updateEvtTypeList = function() {
+		var sourceType = $(this).find(':selected').data('sensor-type')
+		$.ajax({
+				'url'      : "/"
+			, 'dataType' : 'json'
+			, 'data'     : {'module' : 'new_task', 'action' : 'get_event_types', 'sourceType' : sourceType}
+		})
+		.done(function(data) {
+			console.log(data)
+			populateSelectBox($('[name=evtType]'), data)
+			if ($.isEmptyObject(data)) populateSelectBox($('[name=evtValue]'), {})
+		})
+	}
 
-			$.each(data, function(key, value) {
-			  $devAction.append($("<option></option>").attr("value", value).text(key))
-			})
-			$devAction.selectmenu('refresh', true)
+	var updateEvtValueList = function() {
+		var evtType = $(this).val()
+		$.ajax({
+				'url'      : "/"
+			, 'dataType' : 'json'
+			, 'data'     : {'module' : 'new_task', 'action' : 'get_event_values', 'eventType' : evtType}
+		})
+		.done(function(data) {
+			console.log(data)
+			populateSelectBox($('[name=evtValue]'), data)
 		})
 	}
 
@@ -34,18 +63,6 @@ define(['jquery', 'jqvalidate'], function($){
 		.always(function(data) {
 			$('#thresholdDiv').html(data).trigger('create')
 			// $('#sensor').change(updateTriggerConditions)
-		})
-	}
-
-	var updateTriggerDiv = function() {
-		$.ajax({
-				'url'      : "/"
-			, 'dataType' : 'html'
-			, 'data'     : {'module' : 'new_task', 'action' : 'get_trigger_div', 'triggerType' : $('#trigger :selected').val()}
-		})
-		.always(function(data) {
-			$('#triggerDiv').html(data).trigger('create')
-			$('#sensor').change(updateTriggerConditions)
 		})
 	}
 
@@ -81,8 +98,9 @@ define(['jquery', 'jqvalidate'], function($){
 			}
 		})
 
-		$('#device').change(updateActionList)
-		$('#trigger').change(updateTriggerDiv)
+		$('[name=aActor]').change(updateActionList)
+		$('[name=evtSource]').change(updateEvtTypeList)
+		$('[name=evtType]').change(updateEvtValueList)
 	}
 
 	return {
