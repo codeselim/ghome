@@ -18,7 +18,9 @@ set_shared_data('SQL_TABLES', {'st': 'sensors_types',
 								's':'sensors',
 								't':'tasks'})
 var allowed_ids = [2214883, 346751, 8991608, 112022, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
+var connect_ids = allowed_ids.slice(0) // copies the content of allowed_ids
 set_shared_data('ALLOWED_IDS', allowed_ids)
+set_shared_data('CONNECTED_IDS', connected_ids)
 var t = get_shared_data('SQL_TABLES')
 //******************************************************************
 
@@ -31,10 +33,8 @@ var sse_sender = require('./sse_sender')
 var dbms = require('./dbms')
 var logger = require('./logger')
 var events_monitor = require('./events_monitor')
-
-var tasks_executor = require ('./tasks_executor')
 var device_communicator = require('./device_communicator')
-
+var tasks_executor = require('./tasks_executor')
 var cp = require('child_process')
 var n = cp.fork(__dirname + '/background_worker.js')
 
@@ -75,23 +75,7 @@ function update_main_temperatures (frame_data) {
 		set_shared_data('OUT_TEMP', temp)
 		
 	};
-	// set_shared_data('OUT_TEMP', temp)
 }
-
-function log_event_in_db(frame_data){
-	console.log('**********###### Log event in db launched ! #####*********');
-	logger.start(db);
-	data = { "sensor_id"  :  frame_data.id //the sensor id (decimal) ex. 8991608 
-			,"value"	  :  sensors_utils.decode_data_byte(frame_data)[1]  //the value  extracted from the array [type, value]
-		   }
-	logger.insertLog(data);
-}
-
-// function mycallback(err, rows){
-// 		console.log(err);
-// 	}
-
-
 
 /** GLOBAL_INIT : Initialization function at the startup of the global server (server.js file) 
  * It will for instance get the last inside/outised temperatures and push them into memory, etc. .. 
@@ -114,10 +98,7 @@ function GLOBAL_INIT () {
 		query = "SELECT sensor_id AS sid, MAX(time), value " +
 		"FROM `" + t['l'] + "` l " +
 		"GROUP BY sensor_id";//* /!\ According to StackOverflow, when using BTree as indexes (which is the case with sqlite), the maximum (key1, key2, key3) tuple will be the one returned by the GROUP BY and thus, for us, the last one in terms of time
-		db.query(
-		query,
-		null,
-		function (err, rows) {
+		db.query(query, null, function (err, rows) {
 			if (null != err) {
 				console.error("!! Error, could not load the former state of the sensors from the DB, aborting server startup. ¡¡")
 				console.error("The query that caused the error is " + query)
@@ -137,13 +118,16 @@ function GLOBAL_INIT () {
 function start () {
 	console.log('Data initialized... Starting server components.')
 	device_communicator.start(db)
+	logger.start(db)
 	web_serv.start(db, WEB_SERVER_PORT)
+	events_monitor.start(db);
+	tasks_executor.start(db);
 	android_notif_serv.start(ANDROID_NOTIF_SERVER_PORT, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Well, or test after changing it !) I don't know why, but it's working on port 5000 and not on port 3000 for instance....
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)
-	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, log_event_in_db)
+	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, logger.insertLog)
 	
 	/** 
 	*
@@ -155,8 +139,6 @@ function start () {
 	sensors_serv.start(db, web_serv, SENSORS_SERVER_PORT, allowed_ids)
 	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
 	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
-	events_monitor.start(db);
-	tasks_executor.start(db);
 }
 
 GLOBAL_INIT()
