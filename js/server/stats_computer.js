@@ -117,7 +117,7 @@ var db ;
 
 
 /**
- * Gets stats for a certain type of sensor in [date1,date2]
+ * Gets stats from hour_stats for a certain type of sensor in [date1,date2]
  * dates must be in the following format : YYYY-MM-DD HH:MM:SS
  *@params {string} type_sensor, date1, date2
  *@returns
@@ -130,13 +130,13 @@ var db ;
 	db.query (query_str, [date1,date2,type_sensor], testcallback)
  }
 
-/**
- * Gets stats for a certain type of sensor in [date1,date2]
+/** 
+ * Gets stats from daily_stats for a certain type of sensor in [date1,date2]
  * dates must be in the following format : YYYY-MM-DD HH:MM:SS
  *@params {string} type_sensor, date1, date2
  *@returns
 */
- function get_stats_hour (type_sensor, date1, date2) {
+ function get_stats_day (type_sensor, date1, date2) {
  	var query_str = " select value 
 					from hour_stats
 					where time between '?' and '?'
