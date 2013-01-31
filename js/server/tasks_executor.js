@@ -3,11 +3,9 @@ var sensors_server = require("./sensors_server.js");
 var sse_sender = require("./sse_sender.js");
 
 function switch_on_plug(){
-	sensors_server.send_to_sensor(null, sensors_server.PLUG_SWITCH_ON_FRAME)
 }
 
 function switch_off_plug(){
-	sensors_server.send_to_sensor(null, sensors_server.PLUG_SWITCH_OFF_FRAME)
 }
 
 function make_action(results) { //this function will make the actions of results
@@ -53,7 +51,7 @@ function execute_task(event_id, value, sensor_id) {//this function will search t
 	console.log(event_id)
 
 	//We get the action type id and the operator from the candidate actions (actions wich are in the right timer for being candidate)
-	db.query("SELECT action_type_id, operator, value_to_compare FROM Tasks AS t, conditions AS c, condition_types AS ct WHERE t.id = c.task_id AND ct.id = c.type_id AND event_type_id = ? AND " + month + " <= max_month AND " + month + " >= min_month AND "
+	db.query("SELECT action_type_id, operator, value_to_compare FROM Tasks AS t INNER JOIN conditions AS c ON c.task_id = t.id INNER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND " + month + " <= max_month AND " + month + " >= min_month AND "
 		+ day + " <= max_day AND " + day + " >= min_day AND " + hour + " <= max_hour AND " + hour + " >= min_hour AND sensor_id = ?"
 		, [event_id, sensor_id], function (err, rows) { //now we select the proper actions with the operator 
 			for (var r in rows){
