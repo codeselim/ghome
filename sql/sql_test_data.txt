@@ -6,8 +6,8 @@ INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (4, 112022,
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 1, 42, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 2, 13, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 3, 32, datetime());
+INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 4, 45, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 1, 82, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 2, 27, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 3, 07, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 4, 11, datetime());
-INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 4, 45, datetime());
