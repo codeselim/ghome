@@ -22,24 +22,57 @@ var schedulerRH  = function (req, res, params, responseSender) {
 var newTaskRH  = function (req, res, params, responseSender) {
 	switch(params.query.action) {
 		default :
-		{
-			var data = tpl.get_template_result("new_task.html", {
-				  'deviceTypes' : [
-				  	{'label' : 'Prises', 'devices' : [
-				  	    {'label' : 'Prise1', 'value' : 1, 'type' : 1}
-				  		, {'label' : 'Prise2', 'value' : 2, 'type' : 1}
-				  	]},
-				  	{'label' : 'Volets', 'devices' : [
-				  	    {'label' : 'Volet1', 'value' : 1, 'type' : 2}
-				  		, {'label' : 'Volet2', 'value' : 2, 'type' : 2}
-				  	]}
-				  ]
-				, 'triggers': [
-						  {'label' : 'Capteur', 'value': 1}
-						, {'label' : 'Date', 'value': 2}
-						, {'label' : 'Météo', 'value': 3}
-					]
-			})
+		{	var deviceTypes = ''
+			var firsttime = 1
+			var sensor_type_id = -1
+			var number_of_rows = 0
+			params.db.query("select st.name , s.sensor_type_id, s.name as device_name  from sensors_types st JOIN sensors s ON st.id =  s.sensor_type_id order by s.sensor_type_id", null, function (err, rows){
+					if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
+					
+					//deviceTypes +=  '"deviceTypes" : ['  //moved down
+					for (var r in rows) {
+						if( sensor_type_id != rows[r].sensor_type_id ){	
+								sensor_type_id = rows[r].sensor_type_id
+								deviceTypes +=	']},'
+								deviceTypes += '{"label" : "'+rows[r].name+'", "devices" : [ '
+								deviceTypes += '{"label" : "'+rows[r].device_name+'", "value" : 1, "type" : 1}'
+								//console.log(rows[r].name);
+							} // \if
+						else {
+							deviceTypes += ',{"label" : "'+rows[r].device_name+'", "value" : 1, "type" : 1}'
+							} // \else  
+							number_of_rows++
+						} // \for
+							if(number_of_rows)
+							 { var 	temp =  '['  //	temp =  '"deviceTypes" : ['
+									temp  += deviceTypes.substr(3) //pour enlever les premier  ]},
+						  			temp +=  ']}  ]'
+						 		deviceTypes = JSON.parse(temp)
+						 	}
+						 	else deviceTypes = JSON.parse('[]')
+
+						console.log( deviceTypes )
+				})
+
+			// var data = tpl.get_template_result("new_task.html", {
+			// 	  'deviceTypes' : [
+			// 	  	{'label' : 'Prises', 'devices' : [
+			// 	  	    {'label' : 'Prise1', 'value' : 1, 'type' : 1}
+			// 	  		, {'label' : 'Prise2', 'value' : 2, 'type' : 1}
+			// 	  	]},
+			// 	  	{'label' : 'Volets', 'devices' : [
+			// 	  	    {'label' : 'Volet1', 'value' : 1, 'type' : 2}
+			// 	  		, {'label' : 'Volet2', 'value' : 2, 'type' : 2}
+			// 	  	]}
+			// 	  ]
+			// 	, 'triggers': [
+			// 			  {'label' : 'Capteur', 'value': 1}
+			// 			, {'label' : 'Date', 'value': 2}
+			// 			, {'label' : 'Météo', 'value': 3}
+			// 		]
+			// })
+
+			var data = tpl.get_template_result("new_task.html", { 'deviceTypes' : deviceTypes })
 			params.fileUrl = 'new_task.html'
 			responseSender(req, res, params, data)			
 			break
