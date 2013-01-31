@@ -1,10 +1,11 @@
-define(['jquery', 'jqvalidate'], function($){
+define(['jquery', 'jqvalidate'], function($) {
 	// var progressbardiv = "<div style='width: 200px; opacity: .75' class='meter'><span style='width: 25%'></span></div>"
 
 	//*** Server Polling *****************************************************************************
-
+	var testid = null
 	var deviceInfoRequest = function deviceInfoRequest(ajaxData, interval, countdown, finalCallback) {
 		ajaxData.action = 'testpoll'
+		ajaxData.testid = testid
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
@@ -46,7 +47,7 @@ define(['jquery', 'jqvalidate'], function($){
 		//* We display the test results
 		if (reqStatus.validated) {
 			$.mobile.loading('hide')
-			$('#popupContent').html("Le test s'est terminé avec succès! (si type = prise: la commande d'activation de la prise a été envoyée. Vérifiez si elle s'est bien allumée.)")
+			$('#popupContent').html("Le test s'est terminé avec succès! (si type = prise : la commande d'activation de la prise a été envoyée. Vérifiez si elle s'est bien allumée.)")
 			$('#popup').popup('open')	
 		} else {
 			$.mobile.loading('hide')
@@ -60,7 +61,7 @@ define(['jquery', 'jqvalidate'], function($){
 		var deviceType = $('#equip_type').val()
 		//* frame to send at each request. only the action will be changed.
 		var ajaxData = {
-				'module'     : 'new_device'
+			  'module'     : 'device_test'
 			, 'action'     : 'teststart'
 			, 'deviceId'   : deviceId
 			, 'deviceType' : deviceType
@@ -77,6 +78,7 @@ define(['jquery', 'jqvalidate'], function($){
 					, 'dataType' : 'json'
 		})
 		.done(function(data) {
+			testid = data.testid
 			deviceInfoRequest(ajaxData, 3000, 15000, endTest)
 		})
 		.fail(function(jqXHR, textStatus) {

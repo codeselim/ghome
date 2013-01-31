@@ -5,3 +5,5 @@ CREATE TABLE `logs` (
   `time` DATETIME NOT NULL,
    FOREIGN KEY(sensor_id) REFERENCES sensors(id)
 );
+
+CREATE INDEX `logs_sensor_id` ON `logs` (sensor_id);
