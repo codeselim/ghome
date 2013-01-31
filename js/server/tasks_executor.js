@@ -11,9 +11,11 @@ function switch_off_plug(){
 }
 
 function make_action(results) { //this function will make the actions of results
+	console.log("rentrée dans make action")
 	 for (var r in results) {
       switch(results[r]){
       	case 1 :      //if command is "allumer prise"
+      	console.log("action allumer prise !");
       	switch_on_plug();
       	sse_sender.sendSSE({"msg" : "Prise allumée"});
       	break;
@@ -47,7 +49,8 @@ function execute_task(event_id, value, sensor_id) {//this function will search t
 	var day = date.getDay()
 	var hour = date.getHours()
 	var results = new Array();
-	//console.log(event_id)
+	console.log("event id :")
+	console.log(event_id)
 
 	//We get the action type id and the operator from the candidate actions (actions wich are in the right timer for being candidate)
 	db.query("SELECT action_type_id, operator, value_to_compare FROM Tasks AS t, conditions AS c, condition_types AS ct WHERE t.id = c.task_id AND ct.id = c.type_id AND event_type_id = ? AND " + month + " <= max_month AND " + month + " >= min_month AND "
@@ -56,6 +59,7 @@ function execute_task(event_id, value, sensor_id) {//this function will search t
 			for (var r in rows){
 				switch (rows[r]["operator"]){
 					case 1 : // if operator = "="
+					console.log("operateur est égal à égal")
 					if (parseInt(rows[r]["value_to_compare"]) == parseInt(value)){
 						results.push(rows[r]["action_type_id"]);
 					}
