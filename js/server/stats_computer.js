@@ -122,7 +122,7 @@ var db ;
  *@params {string} type_sensor, date1, date2
  *@returns
 */
- function get_stats_hour (type_sensor, date1, date2) {
+ function get_hour_stats (type_sensor, date1, date2) {
  	var query_str = " select value 
 					from hour_stats
 					where time between '?' and '?'
@@ -136,18 +136,21 @@ var db ;
  *@params {string} type_sensor, date1, date2
  *@returns
 */
- function get_stats_day (type_sensor, date1, date2) {
+ function get_daily_stats (type_sensor, date1, date2) {
  	var query_str = " select value 
-					from hour_stats
+					from daily_stats
 					where time between '?' and '?'
 					and sensor_type_id = ?; "	
 	db.query (query_str, [date1,date2,type_sensor], testcallback)
  }
 
-function testcallback ( err, rows){
 
+
+function testcallback ( err, rows){
+	var array = [] ;
 	for (var r in rows) {
     	console.log(r.value);
+    	array.push(r);
     }
 }
 
