@@ -15,7 +15,7 @@ function start(database) {
 }
 
 function insertLog(data) {
-    db.query("INSERT INTO " + tables.l + " values (?, ?, ?, datetime() )", [null, data.sensor_id, data.value], function (err, rows){
+    db.query("INSERT INTO " + tables.l + " VALUES (?, ?, ?, datetime() )", [null, data.sensor_id, data.value], function (err, rows){
  		if(err) {
  			console.error("[INSERT_LOG_ERROR] : " + err)
  		}
