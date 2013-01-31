@@ -3,7 +3,7 @@ var tpl = require('./template_engine')
 var ss = require('./sensors_server')
 var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
 var off = true
-
+var testid = 0
 /**
  * Gets the list of the devices types from the DB and passes it as a parameter to the callback
  * Object passed ; [{'value': type_id, 'label': type_name}]
@@ -34,45 +34,48 @@ var newDeviceRH = function (req, res, params, responseSender) {
 		})
 	}
 
-	ts = get_shared_data('DEVICE_START_TESTS')
-	te = get_shared_data('DEVICE_END_TESTS')
-	tp = get_shared_data('DEVICE_POLL_TESTS')
-
 	var actions = {// lol, this is a hidden switch // new JS way huhu
 		'default' : initNewDevicePage,
-
-		//* Test functions . return 'ok' after 3 requests
-		'teststart' : function() {
-			//* Should check the device type and answer whether or not polling should be done.
-			//* Different devices would have different tests (e.g. switch on a plug, poll for the temperature, etc.)
-			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			ts[params.query.deviceType]()
-		},
-
-		'testend' : function() {
-			console.log('testend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			te[params.query.deviceType]()
-		},
-
-		'testpoll' : function() {
-			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			console.log('nbrq = ' + nbrq)
-
-			tp[params.query.deviceType]()
-			// res.end(JSON.stringify({'status': 'ok', 'events' : []}))
-		},
-		//* Test functions end
-
 		'submit': function() {
 			console.log('TODO: save the new device')
 			initNewDevicePage()
-		}	
+		}
 	}
 
 	if ( !params.query.action || !(typeof actions[params.query.action] == 'function')) {
 		params.query.action = 'default'
 	}
 	actions[params.query.action]()
+}
+
+var deviceTestRH = function (req, res, params, responseSender) {
+	ts = get_shared_data('DEVICE_START_TESTS')
+	te = get_shared_data('DEVICE_END_TESTS')
+	tp = get_shared_data('DEVICE_POLL_TESTS')
+
+	switch(params.query.action) {
+		case "teststart":
+			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			ts[params.query.deviceType]()
+			break;
+
+		case "testpoll":
+			console.log('testend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			te[params.query.deviceType]()
+			break;
+
+		case "testend":
+			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			console.log('nbrq = ' + nbrq)
+
+			tp[params.query.deviceType]()
+			// res.end(JSON.stringify({'status': 'ok', 'events' : []}))
+			break;
+
+		default:
+				// ???
+				break;
+		}
 }
 
 var deviceManagementRH  = function (req, res, params, responseSender) {

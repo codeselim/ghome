@@ -5,13 +5,13 @@ deviceCommunicator = require('../device_communicator')
 poll_tests = gsd('DEVICE_START_TESTS')
 
 //* Action for device of type 5 : Power switch plug
-poll_tests[5] = function (req, res, params) {
-    deviceCommunicator[5]("ON")
+poll_tests[5] = function (req, res, params, testid) {
+    deviceCommunicator[5](params.query.deviceId, "ON")
     res.end({status: 'ok', events: []})
 }
 
 //* Action for device of type 2 
-poll_tests[2] = function (req, res, params) {
+poll_tests[2] = function (req, res, params, testid) {
     
 
 }

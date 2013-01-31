@@ -60,7 +60,7 @@ define(['jquery', 'jqvalidate'], function($){
 		var deviceType = $('#equip_type').val()
 		//* frame to send at each request. only the action will be changed.
 		var ajaxData = {
-				'module'     : 'new_device'
+			  'module'     : 'device_test'
 			, 'action'     : 'teststart'
 			, 'deviceId'   : deviceId
 			, 'deviceType' : deviceType
