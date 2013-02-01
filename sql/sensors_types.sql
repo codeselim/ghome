@@ -4,8 +4,8 @@ CREATE TABLE `sensors_types` (
 );
 
 INSERT INTO sensors_types VALUES (1, "Température");
-INSERT INTO sensors_types VALUES (null, "Lumière");
-INSERT INTO sensors_types VALUES (null, "Présence");
-INSERT INTO sensors_types VALUES (null, "Contact");
---INSERT INTO sensors_types VALUES (null, "Temps");
+INSERT INTO sensors_types VALUES (2, "Lumière");
+INSERT INTO sensors_types VALUES (3, "Présence");
+INSERT INTO sensors_types VALUES (4, "Contact");
+INSERT INTO sensors_types VALUES (5, "Prise électrique");
 
