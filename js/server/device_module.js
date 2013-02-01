@@ -6,6 +6,10 @@ var tpl = require('./template_engine')
 var get_shared_data = require('./shared_data').get_shared_data
 var off = true
 var testid = 0 // The testid can be used by the test start/poll/end handlers to share data among them if they need to, by allowing them to identify a given request
+require('./shared_data').set_shared_data('shared_among_tests_requests', {}) // For each testid, will allow us to shared data among the different poll requests
+satr = get_shared_data('shared_among_tests_requests')
+
+
 /**
  * Gets the list of the devices types from the DB and passes it as a parameter to the callback
  * Object passed ; [{'value': type_id, 'label': type_name}]
@@ -65,6 +69,8 @@ var deviceTestRH = function (req, res, params, responseSender) {
 		case "teststart":
 			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
 			testid++
+			// Initialize the data structure allowing tests to shared data about this specific test (unique testid)
+			satr[testid] = {}
 			// In case if was already in memory, delete it:
 			ArrayRemove(aids, aids.indexOf(params.query.deviceId))
 			ArrayRemove(cids, cids.indexOf(params.query.deviceId))
@@ -74,16 +80,18 @@ var deviceTestRH = function (req, res, params, responseSender) {
 			break;
 
 		case "testpoll":
-			console.log('testend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			te[params.query.deviceType](req, res, params, params.query.testid)
+			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			tp[params.query.deviceType](req, res, params, params.query.testid)
 			break;
 
-		case "testend":js
-			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+		case "testend":
+			console.log('testpend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
 			//* Removing from in-memory arrays
 			ArrayRemove(aids, aids.indexOf(params.query.deviceId))
 			ArrayRemove(cids, cids.indexOf(params.query.deviceId))
-			tp[params.query.deviceType](req, res, params, params.query.testid)
+			// The test is over, cleaning shared data about it
+			delete satr[testid]
+			te[params.query.deviceType](req, res, params, params.query.testid)
 			break;
 
 		default:
