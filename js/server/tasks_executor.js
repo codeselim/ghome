@@ -2,13 +2,16 @@ var db;
 var sensors_server = require("./sensors_server.js");
 var sse_sender = require("./sse_sender.js");
 var shared = require('./shared_data')
+var device_communicator = require('./device_communicator.js')
 var get_shared_data = shared.get_shared_data
 var sensors_values = {}
 
-function switch_on_plug(){
-}
-
-function switch_off_plug(){
+function send_message_to_plug(target, action){
+	db.query("SELECT message_to_sensor FROM actions_types WHERE id = ?", [action], function (err, rows) {
+		for (var r in rows){
+			device_communicator.sendToSensor (target, rows[r]["message_to_sensor"]);
+		}
+	})
 }
 
 function make_action(results,targets) { //this function will execute the actions of results to the correct target
@@ -18,11 +21,11 @@ function make_action(results,targets) { //this function will execute the actions
       switch(parseInt(results[r])){
       	case 1 :      //if command is "allumer prise"
       	console.log("action allumer prise ", targets[r], " !");
-      	switch_on_plug();
+      	send_message_to_plug(targets[r], 1);
       	sse_sender.sendSSE({"msg" : "Prise " + targets[r] + " allumée"});
       	break;
       	case 2 :     //if command is "eteindre prise"
-      	switch_off_plug();
+      	send_message_to_plug(targets[r], 2);
       	sse_sender.sendSSE({"msg" : "Prise " + targets[r] + " éteinte"});
       	break;
       	case 3 :     //if commande is "ouvrir volets"
