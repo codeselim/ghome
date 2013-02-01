@@ -127,7 +127,7 @@ var db ;
 					"from hour_stats"+
 					"where time between '?' and '?'"+
 					"and sensor_type_id = ?; "	
-	db.query (query_str, [date1,date2,type_sensor], testcallback)
+	db.query (query_str, [date1,date2,type_sensor], getData (err, rows))
  }
 
 /** 
@@ -141,12 +141,12 @@ var db ;
 					"from daily_stats"+
 					"where time between '?' and '?'"+
 					"and sensor_type_id = ?; "	
-	db.query (query_str, [date1,date2,type_sensor], testcallback)
+	db.query (query_str, [date1,date2,type_sensor], getData (err, rows))
  }
 
 
 
-function testcallback ( err, rows){
+function getData ( err, rows){
 	var array = [] ;
 	for (var r in rows) {
     	console.log(r.value);
