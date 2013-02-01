@@ -35,7 +35,6 @@ define(['jquery', 'jqvalidate'], function($){
 			, 'data'     : {'module' : 'new_task', 'action' : 'get_actions', 'deviceType' : deviceType}
 		})
 		.done(function(data) {
-			console.log(data)
 			populateSelectBox($('[name=aAction]'), data)
 		})
 	}

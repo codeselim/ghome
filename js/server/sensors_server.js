@@ -28,16 +28,16 @@ function start (db, web_serv, port, allowed_ids) {
 			buffer += data
 			var pos = -1
 			while (buffer.length >= FRAME_SIZE && -1 != (pos = buffer.indexOf(FRAME_SEPARATOR))) {//* We have found a separator, that means that the previous frame (that may be incomplete or may not) is over and a new one starts
-				console.log(new Date(), "A frame is over")
-				console.log(buffer)
-				console.log(buffer.indexOf(FRAME_SEPARATOR))
-				console.log("pos=", pos)
+				// console.log(new Date(), "A frame is over")
+				// console.log(buffer)
+				// console.log(buffer.indexOf(FRAME_SEPARATOR))
+				// console.log("pos=", pos)
 				if (0 != pos) {//* The separator is not the first char, that means we have an unfinished / incomplete frame just before the current one. Throw it away
 					//* Skip the beginning of the buffer:
 					buffer = buffer.substr(pos, buffer.length) //* If the second parameter is >= the maximum possible length substr can return, substr just returns the maximum length possible, so who cares substracting?
 					//* Once we've skipped the rubbish, we need to re-check that the frame we want to read (the one which actually provides the FRAME_SEPARATOR) is now long enough (>= FRAME_SIZE)
 					//* We do that by skipping the end of the loop and thus re-doing the loop condition:
-					console.log("Throwing away rubbish.")
+					// console.log("Throwing away rubbish.")
 					continue;
 				}
 				frame = buffer.substr(0, FRAME_SIZE) //* We know we have a complete frame (>= FRAME_SIZE and pos == 0) so just cut it off by its length

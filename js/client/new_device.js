@@ -4,6 +4,7 @@ define(['jquery', 'jqvalidate'], function($) {
 	//*** Server Polling *****************************************************************************
 	var testid = null
 	var deviceInfoRequest = function deviceInfoRequest(ajaxData, interval, countdown, finalCallback) {
+		console.log("Polling for testid=" + testid)
 		ajaxData.action = 'testpoll'
 		ajaxData.testid = testid
 		$.ajax({
@@ -12,9 +13,9 @@ define(['jquery', 'jqvalidate'], function($) {
 			, 'data'     : ajaxData
 		})
 		.always(function(data) {
-			var reqStatus = {'validated' :false}
+			var reqStatus = {'validated': false}
 			//* We test the response.
-			if (Object.prototype.toString.call(data.events) === '[object Array]') {
+			if (Object.prototype.toString.call(data.events) === '[object Array]') {// When there is at least one event, then we consider things are validated (as we received an event!)
 				reqStatus.validated = true
 				reqStatus.events = data.events
 			}
@@ -39,6 +40,7 @@ define(['jquery', 'jqvalidate'], function($) {
 	var endTest = function endTest(reqStatus, ajaxData) {
 		//* We tell the server that the test is over
 		ajaxData.action = 'testend'
+		ajaxData.testid = testid
 		$.ajax({
 				'url': "/"
 			, 'data': ajaxData
@@ -47,13 +49,20 @@ define(['jquery', 'jqvalidate'], function($) {
 		//* We display the test results
 		if (reqStatus.validated) {
 			$.mobile.loading('hide')
-			$('#popupContent').html("Le test s'est terminé avec succès! (si type = prise : la commande d'activation de la prise a été envoyée. Vérifiez si elle s'est bien allumée.)")
+			$('#popupContent').html("Le test s'est terminé avec succès !")
 			$('#popup').popup('open')	
 		} else {
 			$.mobile.loading('hide')
 			$('#popupContent').html("Le nouvel équipement ne répond pas.")
 			$('#popup').popup('open')
 		}
+	}
+
+	var showLoading = function () {
+		$.mobile.loading( 'show', {
+				text: "Test de l'équipement en cours. Cela peut prendre quelques minutes..."
+			, textVisible: true
+		})
 	}
 
 	var testDevice = function testDevice() {
@@ -67,10 +76,7 @@ define(['jquery', 'jqvalidate'], function($) {
 			, 'deviceType' : deviceType
 		}
 
-		$.mobile.loading( 'show', {
-				text: "Test de l'équipement en cours. Cela peut prendre quelques minutes..."
-			, textVisible: true
-		})
+		
 		// $.mobile.loading( 'show', {html: progressbardiv})
 		$.ajax({
 						'url': "/"
@@ -79,7 +85,20 @@ define(['jquery', 'jqvalidate'], function($) {
 		})
 		.done(function(data) {
 			testid = data.testid
-			deviceInfoRequest(ajaxData, 3000, 15000, endTest)
+			// console.log("testid=" + testid)
+			if (data.msg) {
+				$.mobile.loading('hide')
+				$('#popupContent').html(data.msg)
+				$('#popup').popup('open')
+				if (data.hideafter) {
+					setTimeout(function () {
+						console.log("Hiding popup")
+						$('#popup').popup('close')
+						showLoading()
+					}, Math.abs(data.hideafter))
+				};
+			};
+			deviceInfoRequest(ajaxData, 1000, 180000, endTest)
 		})
 		.fail(function(jqXHR, textStatus) {
 			$.mobile.loading('hide')
