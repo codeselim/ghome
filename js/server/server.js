@@ -22,6 +22,7 @@ var connected_ids = allowed_ids.slice(0) // copies the content of allowed_ids
 set_shared_data('ALLOWED_IDS', allowed_ids)
 set_shared_data('CONNECTED_IDS', connected_ids)
 var t = get_shared_data('SQL_TABLES')
+var plugins = ['enocean_sensors/'] // Edit this array in order to load new plugins
 //******************************************************************
 
 var sensors_utils = require('./sensors')
@@ -75,6 +76,15 @@ function update_main_temperatures (frame_data) {
 		set_shared_data('OUT_TEMP', temp)
 		
 	};
+}
+
+
+function load_plugins () {
+	for(i in plugins) {
+		p = './plugins/' + plugins[i] + '/'
+		require(p + 'poll_tests.js')
+		require(p + 'start_tests.js')
+	}
 }
 
 /** GLOBAL_INIT : Initialization function at the startup of the global server (server.js file) 

@@ -3,6 +3,7 @@ var tpl = require('./template_engine')
 var ss = require('./sensors_server')
 var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
 var tpl = require('./template_engine')
+var get_shared_data = require('./shared_data').get_shared_data
 var off = true
 var testid = 0 // The testid can be used by the test start/poll/end handlers to share data among them if they need to, by allowing them to identify a given request
 /**
