@@ -19,19 +19,19 @@ function make_action(results,targets) { //this function will execute the actions
       	case 1 :      //if command is "allumer prise"
       	console.log("action allumer prise ", targets[r], " !");
       	switch_on_plug();
-      	sse_sender.sendSSE({"msg" : "Prise allumée"});
+      	sse_sender.sendSSE({"msg" : "Prise " + targets[r] + " allumée"});
       	break;
       	case 2 :     //if command is "eteindre prise"
       	switch_off_plug();
-      	sse_sender.sendSSE({"msg" : "Prise éteinte"});
+      	sse_sender.sendSSE({"msg" : "Prise " + targets[r] + " éteinte"});
       	break;
       	case 3 :     //if commande is "ouvrir volets"
       	switch_off_plug();
-      	sse_sender.sendSSE({"msg" : "Volets ouverts"});
+      	sse_sender.sendSSE({"msg" : "Volets " + targets[r] + " ouverts"});
       	break;
       	case 4 :     //if command is "fermer volets"
       	switch_off_plug();
-      	sse_sender.sendSSE({"msg" : "Volets fermés"});
+      	sse_sender.sendSSE({"msg" : "Volets " + targets[r] + " fermés"});
       	break;
       	default :     //if not in the results (very very improbable)
       	sse_sender.sendSSE({"msg" : "Rien du tout"});
