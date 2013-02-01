@@ -39,6 +39,7 @@ define(['jquery', 'jqvalidate'], function($) {
 	var endTest = function endTest(reqStatus, ajaxData) {
 		//* We tell the server that the test is over
 		ajaxData.action = 'testend'
+		ajaxData.testid = testid
 		$.ajax({
 				'url': "/"
 			, 'data': ajaxData
@@ -78,10 +79,12 @@ define(['jquery', 'jqvalidate'], function($) {
 					, 'dataType' : 'json'
 		})
 		.done(function(data) {
+			console.log('titi')
 			testid = data.testid
 			deviceInfoRequest(ajaxData, 3000, 15000, endTest)
 		})
 		.fail(function(jqXHR, textStatus) {
+			console.log('toto')
 			$.mobile.loading('hide')
 			$('#popupContent').html(textStatus)
 			$('#popup').popup('open')
