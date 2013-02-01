@@ -50,3 +50,4 @@ if [ "OK" = $m ]; then
 	sudo echo "Fuck sudo" > /dev/null   # Does not do anything, necessary to get sudo OK
 	sudo su -c 'node server.js' # & echo $! > ./main_server.pid && chmod 0777 -v ./main_server.pid & fg'
 fi
+
