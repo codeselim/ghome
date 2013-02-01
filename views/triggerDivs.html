@@ -1,9 +1,56 @@
+<!-- Condition Template -->
+{{#conditionTemplate}}
+<li>	
+	<a href="#" onclick="return false;" class="leftLink">
+		<span>
+			<div class="ui-grid-b">
+				<div class="ui-block-a">
+					<select name="condSource" data-inline="true" >
+					{{#evtSourceTypes}}
+					<optgroup label="{{label}}">
+					{{#sensors}}
+					    <option value="{{value}}" data-sensor-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
+					{{/sensors}}
+					</optgroup>
+					{{/evtSourceTypes}}
+					</select>
+				</div>
+				<div class="ui-block-b">
+					<select name="condData" data-inline="true" disabled></select>
+				</div>
+			</div>
+		</span>
+	</a>
+	<a href="#">Retirer</a>
+</li>
+{{/conditionTemplate}}
+
+{{#evtCondition}}
+<li id="evtCondition">	
+	<div class="ui-grid-b">
+		<div class="ui-block-a">
+			<select name="condSource" data-inline="true" disabled>
+			{{#evtSource}}
+			    <option value="{{value}}" data-sensor-type="{{type}}">{{label}}</option>
+			{{/evtSource}}
+			</select>
+		</div>
+		<div class="ui-block-b">
+				<select name="condData" data-inline="true" >
+				{{#conditions}}
+			    <option value="{{value}}">{{label}}</option>
+				{{/conditions}}
+				</select>
+		</div>
+		<div class="ui-block-c" class="condValue"></div>
+	</div>
+</li>
+{{/evtCondition}}
 
 <!-- Trigger: sensors -->
 {{#template1}}
 <div data-role="fieldcontain">
 	<label for="sensor">Capteur </label>
-	<select name="sensor" id="sensor">
 		<option value="">-- Choisir --</option>
 		{{#sensorTypes}}
 		<optgroup label="{{label}}">
@@ -17,41 +64,6 @@
 
 <div id="thresholdDiv"></div>
 {{/template1}}
-
-<!-- Trigger: date -->
-{{#template2}}
-<!-- <div data-role="fieldcontain">
-	<label for="sensor_type">Type de capteur </label>
-	<select name="sensor_type" id="sensor_type">
-		<option value="">-- Choisir --</option>
-		{{#sensor_types}}
-		    <option value="{{value}}">{{label}}</option>
-		{{/sensor_types}}
-	</select>
-</div>
-
-<div data-role="fieldcontain">
-	<label for="sensor">Capteur </label>
-	<select name="sensor" id="sensor">
-		<option value="">-- Choisir --</option>
-		{{#sensors}}
-		    <option value="{{value}}">{{label}}</option>
-		{{/sensors}}
-	</select>
-</div>
-
-<div data-role="fieldcontain">
-	<label for="threshold">Seuil </label>
-	<select name="threshold_type" id="threshold_type">
-		<option value="1">Passe au dessus de </option>
-		<option value="1">Passe en dessous de </option>
-		<option value="1">Est supérieur à </option>
-		<option value="1">Est inférieur à </option>
-	</select>
-                
-  <input name="threshold_value" value="" type="number">
-</div> -->
-{{/template2}}
 
 {{#fuzzyValueThreshold}}
 <input type="hidden" value="1" name="val" id="val" />

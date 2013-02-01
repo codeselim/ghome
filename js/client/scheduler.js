@@ -1,35 +1,28 @@
 define(['jquery', 'jqvalidate'], function($){
-	var conditionTemplate = '<li> <a href="#" onclick="return false;" class="leftLink"> <span> <div class="ui-grid-b"> <div class="ui-block-a"> <select name="condSource" data-inline="true"data-mini="true" disabled></select> </div> <div class="ui-block-b"> <select name="condData" data-inline="true"data-mini="true" disabled></select> </div> </div> </span> </a> <a href="#">Retirer</a> </li> '
-/* Multi line template:
-<li>	
-	<a href="#" onclick="return false;" class="leftLink">
-		<span>
-			<div class="ui-grid-b">
-				<div class="ui-block-a">
-					<select name="condSource" data-inline="true" disabled></select>
-				</div>
-				<div class="ui-block-b">
-					<select name="condData" data-inline="true" disabled></select>
-				</div>
-				<div class="ui-block-c">
-					<select name="condValue" data-inline="true"  disabled></select>
-				</div>
-			</div>
 
-		</span>
-	</a>
-	<a href="#">Retirer</a>
-</li>
-*/
+	var initCache = function(cache) {
+		$.ajax({
+				'url'      : "/"
+			, 'dataType' : 'json'
+			, 'data'     : {'module' : 'new_task', 'action' : 'initCache'}
+		})
+		.done(function(data) {
+			$.extend(cache, data)
+		})
+	}
 
-	var populateSelectBox = function($select, data) {
+
+	var populateSelectBox = function($select, data, keepstate) {
 		$select.empty()
 		// $('#select option:gt(0)').remove(); //* Remove all options, but not the first
 
 		$.each(data, function(key, value) {
 		  $select.append($("<option></option>").attr("value", value).text(key))
 		})
-		$select.selectmenu($.isEmptyObject(data)? 'disable' : 'enable')
+
+		if (!keepstate) {
+			$select.selectmenu($.isEmptyObject(data)? 'disable' : 'enable')
+		}
 		$select.selectmenu('refresh', true)
 	}
 
@@ -55,36 +48,41 @@ define(['jquery', 'jqvalidate'], function($){
 			, 'data'     : {'module' : 'new_task', 'action' : 'get_event_types', 'sourceType' : sourceType}
 		})
 		.done(function(data) {
-			console.log(data)
 			populateSelectBox($('[name=evtType]'), data)
-			if ($.isEmptyObject(data)) populateSelectBox($('[name=evtValue]'), {})
+			$('[name=evtType]').trigger('change')
 		})
 	}
 
-	var updateEvtValueList = function() {
-		var evtType = $(this).val()
-		$.ajax({
-				'url'      : "/"
-			, 'dataType' : 'json'
-			, 'data'     : {'module' : 'new_task', 'action' : 'get_event_values', 'eventType' : evtType}
-		})
-		.done(function(data) {
+	var updateEvtCondition = function() {
+		var updateCondition = function(data) {
+			var label = $('[name=evtSource]').find(':selected').html().replace(/&nbsp;/g, '')
+			var key = $('[name=evtSource]').val()
+
 			console.log(data)
-			populateSelectBox($('[name=evtValue]'), data)
-		})
-	}
 
-	var addCondition = function() {
-		$condList = $('#conditions')
-		// var condition = conditionTemplate.replace(/a/g, '')
-		// $("li:last").before('<li>azddddddddd</li>')
-		$condList.find('li:last').before(conditionTemplate)
-		$condList.find('li:last').prev('li').trigger('create')
-		$condList.listview('refresh')
-	}
+			populateSelectBox($('#evtCondition [name=condSource]'), JSON.parse('{"' + label +'" : ' + key + '}'), true)
+			populateSelectBox($('#evtCondition [name=condData]'), data)
 
-	var remove = function() {
-		console.log('remove: ', $(this))
+			if ($.isEmptyObject(data)) {
+				$('#evtCondition').hide()
+			} else {
+				$('#evtCondition').show()
+			}
+		}
+
+		var evtType = $(this).val()
+		if (evtType) {
+			$.ajax({
+					'url'      : "/"
+				, 'dataType' : 'json'
+				, 'data'     : {'module' : 'new_task', 'action' : 'get_condition_types', 'evtType' : evtType}
+			})
+			.done(function(data) {
+				updateCondition(data)
+			})
+		} else {
+			updateCondition({})
+		}
 	}
 
 	//*** Returned functions *************************************************************************
@@ -93,7 +91,7 @@ define(['jquery', 'jqvalidate'], function($){
 	}
 
 	var newTaskPI = function newTaskPI() {
-		console.log('new task pageInit')
+		var cache = {}		
 
 	  $('.leftLink').parent().parent().parent().removeClass('ui-btn');
     $('.leftLink').contents().unwrap();
@@ -119,10 +117,17 @@ define(['jquery', 'jqvalidate'], function($){
 			}
 		})
 
+		initCache(cache)
+
 		$('[name=aActor]').change(updateActionList)
 		$('[name=evtSource]').change(updateEvtTypeList)
-		$('[name=evtType]').change(updateEvtValueList)
-		$('#addCondition').click(addCondition)
+		$('[name=evtType]').change(updateEvtCondition)
+		$('#addCondition').click(function() {
+			$condList = $('#conditions')
+			$condList.find('li:last').before(cache.conditionTemplate)
+			$condList.find('li:last').prev('li').trigger('create')
+			$condList.listview('refresh')
+		})
 	}
 
 	return {

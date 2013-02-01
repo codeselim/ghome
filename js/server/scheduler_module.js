@@ -26,19 +26,19 @@ var newTaskRH  = function (req, res, params, responseSender) {
 				  	]}
 				  ]
 				, 'evtSourceTypes' : [
-				{'label' : 'Sources spéciales', 'sensors' : [
-			  	    {'label' : 'Date', 'value' : 1, 'type' : 51}
-			  		, {'label' : 'Météo', 'value' : 2, 'type' : 52}
-			  	]},
-			  	{'label' : 'Capteurs Température', 'sensors' : [
-			  	    {'label' : 'Capteur Température1', 'value' : 1, 'type' : 2}
-			  		, {'label' : 'Capteur Température2', 'value' : 2, 'type' : 2}
-			  	]},
-			  	{'label' : 'Capteurs Présence', 'sensors' : [
-			  	    {'label' : 'Capteur Présence1', 'value' : 1, 'type' : 3}
-			  		, {'label' : 'Capteur Présence2', 'value' : 2, 'type' : 3}
-			  	]}
-			  ]
+				  {'label' : 'Sources spéciales', 'sensors' : [
+				      {'label' : 'Date', 'value' : 1, 'type' : 51}
+				  	, {'label' : 'Météo', 'value' : 2, 'type' : 52}
+				  ]},
+				  {'label' : 'Capteurs Température', 'sensors' : [
+				      {'label' : 'Capteur Température1', 'value' : 1, 'type' : 2}
+				  	, {'label' : 'Capteur Température2', 'value' : 2, 'type' : 2}
+				  ]},
+				  {'label' : 'Capteurs Présence', 'sensors' : [
+				      {'label' : 'Capteur Présence1', 'value' : 1, 'type' : 3}
+				  	, {'label' : 'Capteur Présence2', 'value' : 2, 'type' : 3}
+				  ]}
+				]
 			})
 			params.fileUrl = 'new_task.html'
 			responseSender(req, res, params, data)			
@@ -65,57 +65,72 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			var data = {}
 			if (params.query.sourceType == '2' ){
 				data = {
-				    'Passe au dessus de ' : 1
-		  		, 'Passe en dessous de ' : 2
+					  'Passe au dessus de ' : 1
+					, 'Passe en dessous de ' : 2
 				}
 			} else if (params.query.sourceType == 3 ){
-		  	data = {
-				    'Activation' : 11
-		  		, 'Désactivation' : 12
+				data = {
+					  'Activation' : 11
+					, 'Désactivation' : 12
 				}
 			}
 			res.end(JSON.stringify(data))
 			break
 		}
 
-		case 'get_event_values' :
+		case 'get_condition_types' :
 		{
 			var data = {}
-			if (params.query.eventType < 10 ) {
+			if (params.query.evtType < 10 ) {
 				data = {
-				    'Seuil 1 ' : 1
-		  		, 'Seuil 2 ' : 2
+					  '<' : 1
+					, '>' : 2
+					, 'bleh' : 11
+					, 'plop' : 12
 				}
 			} 
+			console.log(data)
 			res.end(JSON.stringify(data))
 			break
 		}
 
-		case 'get_threshold_div' : 
+		case 'get_event_condition' :
 		{
-			//* A request should be done to find the type of threshold associated to a sensor type
-			var tpldata = {}
-			if (params.query.sourceType == 1 ){
-				tpldata = {'fuzzyValueThreshold' : {
-					  'thresholdTypes' : [
-					  	  {'label' : 'Passe au dessus de ', 'value' : 1}
-					  	, {'label' : 'Passe en dessous de ', 'value' : 2}
-					  	, {'label' : 'Est supérieur à ', 'value' : 3}
-					  	, {'label' : 'Est inférieur à ', 'value' : 4}
-					  ]
-					}
-				}
-			} else {
-				tpldata = {'fixedValueThreshold' : {
-						'eventTypes' : [
-							  {'label' : 'Activation', 'value' : 11}
-							, {'label' : 'Désactivation', 'value' : 22}
-						]
-					}
-				}
+			var evtCondition = ''
+			if (params.query.eventType < 10) {
+				evtCondition = tpl.get_template_result("triggerDivs.html", {
+					  'evtCondition' : true
+					, 'evtSource' : {'label' : 'Truc', 'value' : 1, 'type' : 51}
+					, 'conditions' : [
+						  {'label' : '>', 'value' : 1}
+						, {'label' : '<', 'value' : 2}
+					]
+				})
 			}
-			params.fileUrl = 'triggerDivs.html'
-			responseSender(req, res, params, tpl.get_template_result("triggerDivs.html", tpldata))			
+			res.end(JSON.stringify({'evtCondition' : evtCondition}))
+			break
+		}
+
+		case 'initCache' : 
+		{
+			var data = {'conditionTemplate' : tpl.get_template_result("triggerDivs.html", {
+				  'conditionTemplate' : true
+				, 'evtSourceTypes' : [
+					{'label' : 'Sources spéciales', 'sensors' : [
+						  {'label' : 'Date', 'value' : 1, 'type' : 51}
+						, {'label' : 'Météo', 'value' : 2, 'type' : 52}
+					]},
+					{'label' : 'Capteurs Température', 'sensors' : [
+						  {'label' : 'Capteur Température1', 'value' : 1, 'type' : 2}
+						, {'label' : 'Capteur Température2', 'value' : 2, 'type' : 2}
+					]},
+					{'label' : 'Capteurs Présence', 'sensors' : [
+						  {'label' : 'Capteur Présence1', 'value' : 1, 'type' : 3}
+						, {'label' : 'Capteur Présence2', 'value' : 2, 'type' : 3}
+					]}
+				]
+			})}
+			res.end(JSON.stringify(data))
 			break
 		}
 	}
