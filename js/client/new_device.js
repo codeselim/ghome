@@ -79,10 +79,12 @@ define(['jquery', 'jqvalidate'], function($) {
 					, 'dataType' : 'json'
 		})
 		.done(function(data) {
+			console.log('titi')
 			testid = data.testid
 			deviceInfoRequest(ajaxData, 3000, 15000, endTest)
 		})
 		.fail(function(jqXHR, textStatus) {
+			console.log('toto')
 			$.mobile.loading('hide')
 			$('#popupContent').html(textStatus)
 			$('#popup').popup('open')

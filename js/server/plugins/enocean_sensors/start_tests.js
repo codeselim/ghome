@@ -6,7 +6,7 @@ start_tests = gsd('DEVICE_START_TESTS')
 //* Action for device of type 5 : Power switch plug
 start_tests[5] = function (req, res, params, testid) {
     // nothing to do, right now
-    res.end('{testid: ' + testid + '}')
+    res.end(JSON.stringify({'testid': testid }))
 }
 
 //* Action for device of type 2 
