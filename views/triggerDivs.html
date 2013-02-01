@@ -2,51 +2,25 @@
 <!-- Trigger: sensors -->
 {{#template1}}
 <div data-role="fieldcontain">
-	<label for="sensor_type">Type de capteur </label>
-	<select name="sensor_type" id="sensor_type">
-		<!-- <option value="">-- Choisir --</option> -->
-		{{#sensor_types}}
-		    <option value="{{value}}">{{label}}</option>
-		{{/sensor_types}}
-	</select>
-</div>
-
-<div data-role="fieldcontain">
 	<label for="sensor">Capteur </label>
 	<select name="sensor" id="sensor">
-		<!-- <option value="">-- Choisir --</option> -->
+		<option value="">-- Choisir --</option>
+		{{#sensorTypes}}
+		<optgroup label="{{label}}">
 		{{#sensors}}
-		    <option value="{{value}}">{{label}}</option>
+		    <option value="{{value}}" data-sensor-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
 		{{/sensors}}
+		</optgroup>
+		{{/sensorTypes}}
 	</select>
 </div>
 
-<div data-role="fieldcontain" id="fixed_value_threshold" hidden>
-	<label>Seuil </label>
-	<select name="threshold_type" id="threshold_type">
-		<option value="1">Passe au dessus de </option>
-		<option value="1">Passe en dessous de </option>
-		<option value="1">Est supérieur à </option>
-		<option value="1">Est inférieur à </option>
-	</select>
-                
-  <input name="threshold_value" value="" type="number">
-</div>
-
-<div data-role="fieldcontain" id="fuzzy_value_threshold" hidden>
-	<label for="event"> Evénement </label>
-	<select name="event" id="event">
-		<!-- <option value="">-- Choisir --</option> -->
-		{{#events}}
-		    <option value="{{value}}">{{label}}</option>
-		{{/events}}
-	</select>
-</div>
+<div id="thresholdDiv"></div>
 {{/template1}}
 
 <!-- Trigger: date -->
 {{#template2}}
-<div data-role="fieldcontain">
+<!-- <div data-role="fieldcontain">
 	<label for="sensor_type">Type de capteur </label>
 	<select name="sensor_type" id="sensor_type">
 		<option value="">-- Choisir --</option>
@@ -76,5 +50,35 @@
 	</select>
                 
   <input name="threshold_value" value="" type="number">
-</div>
+</div> -->
 {{/template2}}
+
+{{#fuzzyValueThreshold}}
+<input type="hidden" value="1" name="val" id="val" />
+<div data-role="fieldcontain" >
+	<label for="threshold_type">Type Seuil </label>
+	<select name="threshold_type" id="threshold_type">
+		{{#thresholdTypes}}
+		<option value="{{value}}">{{label}}</option>
+		{{/thresholdTypes}}
+	</select>                
+</div>
+
+<div data-role="fieldcontain">
+	<label for="thrshold_value"> Valeur seuil </label>
+  <input name="threshold_value" value="" type="number">
+</div>
+{{/fuzzyValueThreshold}}
+
+{{#fixedValueThreshold}}
+<input type="hidden" value="2" name="val" id="val" />
+<div data-role="fieldcontain" >
+	<label for="threshold_event"> Evénement </label>
+	<select name="threshold_event" id="threshold_event">
+		<option value="">-- Choisir --</option>
+		{{#eventTypes}}
+		    <option value="{{value}}">{{label}}</option>
+		{{/eventTypes}}
+	</select>
+</div>
+{{/fixedValueThreshold}}

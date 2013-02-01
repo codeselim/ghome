@@ -2,9 +2,10 @@ var fs = require('fs')
 var tpl = require('./template_engine')
 var ss = require('./sensors_server')
 var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
+var tpl = require('./template_engine')
 var get_shared_data = require('./shared_data').get_shared_data
 var off = true
-
+var testid = 0 // The testid can be used by the test start/poll/end handlers to share data among them if they need to, by allowing them to identify a given request
 /**
  * Gets the list of the devices types from the DB and passes it as a parameter to the callback
  * Object passed ; [{'value': type_id, 'label': type_name}]
@@ -18,6 +19,7 @@ function getDevicesTypesList (db, callback) {
 			// SQL Query went wrong, don't crash, just don't reply anything
 		} else {
 			for(i in rows) {
+				console.log("Row " + i, rows[i])
 				data.push({'value': rows[i]['id'], 'label': rows[i]['name']})
 			}
 		}
@@ -35,45 +37,59 @@ var newDeviceRH = function (req, res, params, responseSender) {
 		})
 	}
 
-	ts = get_shared_data('DEVICE_START_TESTS')
-	te = get_shared_data('DEVICE_END_TESTS')
-	tp = get_shared_data('DEVICE_POLL_TESTS')
-
 	var actions = {// lol, this is a hidden switch // new JS way huhu
 		'default' : initNewDevicePage,
-
-		//* Test functions . return 'ok' after 3 requests
-		'teststart' : function() {
-			//* Should check the device type and answer whether or not polling should be done.
-			//* Different devices would have different tests (e.g. switch on a plug, poll for the temperature, etc.)
-			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			ts[params.query.deviceType]()
-		},
-
-		'testend' : function() {
-			console.log('testend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			te[params.query.deviceType]()
-		},
-
-		'testpoll' : function() {
-			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			console.log('nbrq = ' + nbrq)
-
-			tp[params.query.deviceType]()
-			// res.end(JSON.stringify({'status': 'ok', 'events' : []}))
-		},
-		//* Test functions end
-
 		'submit': function() {
-			console.log('TODO: save the new device')
-			initNewDevicePage()
-		}	
+			db.query("INSERT INTO `sensors` (id, hardware_id, name) VALUES (NULL, ?, ?)", [params.postData.equip_label, params.postData.equip_id], function (err, rows) {
+				if (null != err) {
+					deviceManagementRH(req, res, params, responseSender)
+				};
+			})
+			// initNewDevicePage()
+		}
 	}
 
 	if ( !params.query.action || !(typeof actions[params.query.action] == 'function')) {
 		params.query.action = 'default'
 	}
 	actions[params.query.action]()
+}
+
+var deviceTestRH = function (req, res, params, responseSender) {
+	ts = get_shared_data('DEVICE_START_TESTS')
+	te = get_shared_data('DEVICE_END_TESTS')
+	tp = get_shared_data('DEVICE_POLL_TESTS')
+	aids = get_shared_data('ALLOWED_IDS')
+	cids = get_shared_data('CONNECTED_IDS')
+	switch(params.query.action) {
+		case "teststart":
+			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			testid++
+			// In case if was already in memory, delete it:
+			ArrayRemove(aids, aids.indexOf(params.query.deviceId))
+			ArrayRemove(cids, cids.indexOf(params.query.deviceId))
+			//* Then add it to the allowed ids so that we don't filter it out, but don't add to connected ones, as what we want is to detect connection
+			aids.push(params.query.deviceId)
+			ts[params.query.deviceType](req, res, params, testid)
+			break;
+
+		case "testpoll":
+			console.log('testend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			te[params.query.deviceType](req, res, params, params.query.testid)
+			break;
+
+		case "testend":js
+			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			//* Removing from in-memory arrays
+			ArrayRemove(aids, aids.indexOf(params.query.deviceId))
+			ArrayRemove(cids, cids.indexOf(params.query.deviceId))
+			tp[params.query.deviceType](req, res, params, params.query.testid)
+			break;
+
+		default:
+				// ???
+				break;
+		}
 }
 
 var deviceManagementRH  = function (req, res, params, responseSender) {
@@ -101,3 +117,4 @@ var deviceManagementRH  = function (req, res, params, responseSender) {
 
 exports.newDeviceRequestHandler = newDeviceRH
 exports.devMgmtRequestHandler = deviceManagementRH
+exports.deviceTestRH = deviceTestRH

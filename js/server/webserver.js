@@ -20,6 +20,7 @@ var requestHandlers = {
 	  'home'              : homeReqHandler
 	, 'device_management' : device.devMgmtRequestHandler
 	, 'new_device'        : device.newDeviceRequestHandler
+	, 'device_test'       : device.deviceTestRH
 	, 'scheduler'         : scheduler.schedulerRequestHandler
 	, 'new_task'          : scheduler.newTaskRequestHandler
 	, 'app'               : defaultHtmlRequestHandler
@@ -44,7 +45,7 @@ function postformHandler(req, res, params, responseSender){
 	var data = tpl.get_template_result("postform.html", templateData)
 	console.log(params['pathname'])
 	params['fileUrl'] = 'postform.html'
-	response_sender(req, res, params, data)
+	responseSender(req, res, params, data)
 }
 
 /** Appends '.html' to the module name and uses it as fileName */
@@ -110,7 +111,7 @@ var temp2color = function(temperature_value) {
 
 
 /**
- * responseSender is going to be the default callback of every requestHandler
+ * defaultResponseSender is going to be the default callback of every requestHandler
  * It sets the HTTP status to OK 200 and sends the content to be returned to the browser client
  * using the default mime type found using the file extension
  * IF YOU WANT TO WRITE YOUR OWN Content-Type HEADER THEN JUST DON'T CALL THE CALLBACK...
