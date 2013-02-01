@@ -1,8 +1,8 @@
 gsd = require('../../shared_data').get_shared_data
-deviceCommunicator = require('../device_communicator')
+deviceCommunicator = require('../../device_communicator')
 //ssd = require('../../shared_data').set_shared_data
 
-poll_tests = gsd('DEVICE_START_TESTS')
+poll_tests = gsd('DEVICE_POLL_TESTS')
 
 //* Action for device of type 5 : Power switch plug
 poll_tests[5] = function (req, res, params, testid) {

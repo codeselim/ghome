@@ -39,6 +39,7 @@ define(['jquery', 'jqvalidate'], function($) {
 	var endTest = function endTest(reqStatus, ajaxData) {
 		//* We tell the server that the test is over
 		ajaxData.action = 'testend'
+		ajaxData.testid = testid
 		$.ajax({
 				'url': "/"
 			, 'data': ajaxData

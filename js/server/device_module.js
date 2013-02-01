@@ -59,31 +59,31 @@ var deviceTestRH = function (req, res, params, responseSender) {
 	ts = get_shared_data('DEVICE_START_TESTS')
 	te = get_shared_data('DEVICE_END_TESTS')
 	tp = get_shared_data('DEVICE_POLL_TESTS')
-	testid++
 	aids = get_shared_data('ALLOWED_IDS')
 	cids = get_shared_data('CONNECTED_IDS')
 	switch(params.query.action) {
 		case "teststart":
 			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			testid++
 			// In case if was already in memory, delete it:
-			ArrayRemove(aids.indexOf(params.query.deviceId))
-			ArrayRemove(cids.indexOf(params.query.deviceId))
+			ArrayRemove(aids, aids.indexOf(params.query.deviceId))
+			ArrayRemove(cids, cids.indexOf(params.query.deviceId))
 			//* Then add it to the allowed ids so that we don't filter it out, but don't add to connected ones, as what we want is to detect connection
 			aids.push(params.query.deviceId)
-			ts[params.query.deviceType](req, res, params, responseSender, testid)
+			ts[params.query.deviceType](req, res, params, testid)
 			break;
 
 		case "testpoll":
 			console.log('testend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			te[params.query.deviceType](req, res, params, responseSender)
+			te[params.query.deviceType](req, res, params, params.query.testid)
 			break;
 
 		case "testend":js
 			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
 			//* Removing from in-memory arrays
-			ArrayRemove(aids.indexOf(params.query.deviceId))
-			ArrayRemove(cids.indexOf(params.query.deviceId))
-			tp[params.query.deviceType](req, res, params, responseSender)
+			ArrayRemove(aids, aids.indexOf(params.query.deviceId))
+			ArrayRemove(cids, cids.indexOf(params.query.deviceId))
+			tp[params.query.deviceType](req, res, params, params.query.testid)
 			break;
 
 		default:

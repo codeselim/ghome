@@ -78,12 +78,18 @@ function update_main_temperatures (frame_data) {
 	};
 }
 
+function pre_init () {
+	set_shared_data('DEVICE_START_TESTS', {})
+	set_shared_data('DEVICE_POLL_TESTS', {})
+	set_shared_data('DEVICE_END_TESTS', {})
+}
 
 function load_plugins () {
 	for(i in plugins) {
 		p = './plugins/' + plugins[i] + '/'
 		require(p + 'poll_tests.js')
 		require(p + 'start_tests.js')
+		require(p + 'end_tests.js')
 	}
 }
 
@@ -151,4 +157,7 @@ function start () {
 	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
 }
 
+
+pre_init()
+load_plugins()
 GLOBAL_INIT()
