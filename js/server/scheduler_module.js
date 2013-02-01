@@ -1,8 +1,11 @@
 "use strict"
 
+
+
 // var fs = require('fs')
 var tpl = require('./template_engine')
 // var ss = require('./sensors_server')
+
 
 var schedulerRH  = function (req, res, params, responseSender) {
 	var data = tpl.get_template_result("scheduler.html", {})
@@ -18,6 +21,10 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			var firsttime = 1
 			var sensor_type_id = -1
 			var number_of_rows = 0
+			/**
+			 *@TODO : get shared data SQL_TABLES and adjust the query
+			 *@TODO : get the devices that receive actions and adjust the query as well!! 
+			 */
 			params.db.query("select st.name , s.sensor_type_id, s.name as device_name  from sensors_types st JOIN sensors s ON st.id =  s.sensor_type_id order by s.sensor_type_id", null, function (err, rows){
 					if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
 					
@@ -26,12 +33,12 @@ var newTaskRH  = function (req, res, params, responseSender) {
 						if( sensor_type_id != rows[r].sensor_type_id ){	
 								sensor_type_id = rows[r].sensor_type_id
 								deviceTypes +=	']},'
-								deviceTypes += '{"label" : "'+rows[r].name+'", "devices" : [ '
-								deviceTypes += '{"label" : "'+rows[r].device_name+'", "value" : 1, "type" : 1}'
+								deviceTypes += '{"label" : "'+rows[r].name+'", "devices" : [ '    
+								deviceTypes += '{"label" : "'+rows[r].device_name+'", "value" : "'+rows[r].hardware_id+'", "type" : "'+rows[r].sensor_type_id+'"}'   //value  is the id of the device
 								//console.log(rows[r].name);
 							} // \if
 						else {
-							deviceTypes += ',{"label" : "'+rows[r].device_name+'", "value" : 1, "type" : 1}'
+							deviceTypes += ',{"label" : "'+rows[r].device_name+'", "value" : "'+rows[r].hardware_id+'", "type" : "'+rows[r].sensor_type_id+'"}'
 							} // \else  
 							number_of_rows++
 						} // \for
@@ -43,7 +50,11 @@ var newTaskRH  = function (req, res, params, responseSender) {
 						 	}
 						 	else deviceTypes = JSON.parse('[]')
 
-						console.log( deviceTypes )
+						//console.log( deviceTypes )
+					console.log(params)
+					var data = tpl.get_template_result("new_task.html", { 'deviceTypes' : deviceTypes })
+					params.fileUrl = 'new_task.html'
+					responseSender(req, res, params, data)			
 				})
 
 			// var data = tpl.get_template_result("new_task.html", {
@@ -64,10 +75,6 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			// 		]
 			// })
 
-			var data = tpl.get_template_result("new_task.html", { 'deviceTypes' : deviceTypes })
-
-			params.fileUrl = 'new_task.html'
-			responseSender(req, res, params, data)			
 			break
 		}
 
