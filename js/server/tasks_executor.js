@@ -11,13 +11,13 @@ function switch_on_plug(){
 function switch_off_plug(){
 }
 
-function make_action(results) { //this function will execute the actions of results
+function make_action(results,targets) { //this function will execute the actions of results to the correct target
 	console.log("rentrée dans make action")
 	 for (var r in results) {
 	 	console.log(results[r])
-      switch(results[r]){
+      switch(parseInt(results[r])){
       	case 1 :      //if command is "allumer prise"
-      	console.log("action allumer prise !");
+      	console.log("action allumer prise ", targets[r], " !");
       	switch_on_plug();
       	sse_sender.sendSSE({"msg" : "Prise allumée"});
       	break;
@@ -52,19 +52,22 @@ function execute_task(event_id) {//this function will search the good actions to
 	var day = date.getDay()
 	var hour = date.getHours()
 	var results = new Array();
+	var targets = new Array();
 	var value = null;
 	var actions_type = {}
+	var actions_target = {}
 	console.log("event id :")
 	console.log(event_id)
 
-	//We get the action type id, the operator, the value to compare and the sensor_id from the candidate actions (actions wich are in the right timer for being candidate)
-	db.query("SELECT action_type_id, operator, value_to_compare, sensor_id FROM Tasks AS t INNER JOIN conditions AS c ON c.task_id = t.id INNER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND "
+	//We get the action type id, the operator, the value to compare, the sensor_id and the target_id from the candidate actions (actions wich are in the right timer for being candidate)
+	db.query("SELECT action_type_id, operator, value_to_compare, sensor_id, target_id FROM Tasks AS t INNER JOIN conditions AS c ON c.task_id = t.id INNER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND "
 			+ month + " <= max_month AND " + month + " >= min_month AND "
 			+ day + " <= max_day AND " + day + " >= min_day AND "
 			+ hour + " <= max_hour AND " + hour + " >= min_hour"
 			, [event_id], function (err, rows) { //now we select the proper actions with the operator
 				for (var r in rows) { //creation of a dictionnaire where we put all the candidate actions
-					actions_type[rows[r]["action_type_id"]] = true; 
+					actions_type[rows[r]["action_type_id"]] = true;
+					actions_target[rows[r]["action_type_id"]] = rows[r]["target_id"];
 				}
 				for (var r in rows){
 					value = sensors_values[rows[r]["sensor_id"]];//we catch the value corresponding to the current sensor
@@ -113,9 +116,10 @@ function execute_task(event_id) {//this function will search the good actions to
 					console.log(actions_type[i], i)
 					if (actions_type[i] == true){ //if the action_type_id is still true, we can execute this action
 						results.push(i);
+						targets.push(actions_target[i]);
 					}
 				}
-			make_action(results);
+			make_action(results,targets);
 			})
 }
 
