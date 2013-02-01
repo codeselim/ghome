@@ -2,6 +2,7 @@ var fs = require('fs')
 var tpl = require('./template_engine')
 var ss = require('./sensors_server')
 var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
+var tpl = require('./template_engine')
 var off = true
 var testid = 0 // The testid can be used by the test start/poll/end handlers to share data among them if they need to, by allowing them to identify a given request
 /**
@@ -38,8 +39,12 @@ var newDeviceRH = function (req, res, params, responseSender) {
 	var actions = {// lol, this is a hidden switch // new JS way huhu
 		'default' : initNewDevicePage,
 		'submit': function() {
-			console.log('TODO: save the new device')
-			initNewDevicePage()
+			db.query("INSERT INTO `sensors` (id, hardware_id, name) VALUES (NULL, ?, ?)", [params.postData.equip_label, params.postData.equip_id], function (err, rows) {
+				if (null != err) {
+					deviceManagementRH(req, res, params, responseSender)
+				};
+			})
+			// initNewDevicePage()
 		}
 	}
 
