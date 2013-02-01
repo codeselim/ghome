@@ -26,8 +26,8 @@ var newTaskRH  = function (req, res, params, responseSender) {
 						if( sensor_type_id != rows[r].sensor_type_id ){	
 								sensor_type_id = rows[r].sensor_type_id
 								deviceTypes +=	']},'
-								deviceTypes += '{"label" : "'+rows[r].name+'", "devices" : [ '
-								deviceTypes += '{"label" : "'+rows[r].device_name+'", "value" : 1, "type" : 1}'
+								deviceTypes += '{"label" : "'+rows[r].name+'", "devices" : [ '    
+								deviceTypes += '{"label" : "'+rows[r].device_name+'", "value" : 1, "type" : 1}'   //value  is the id of the device
 								//console.log(rows[r].name);
 							} // \if
 						else {
@@ -44,6 +44,9 @@ var newTaskRH  = function (req, res, params, responseSender) {
 						 	else deviceTypes = JSON.parse('[]')
 
 						console.log( deviceTypes )
+					var data = tpl.get_template_result("new_task.html", { 'deviceTypes' : deviceTypes })
+					params.fileUrl = 'new_task.html'
+					responseSender(req, res, params, data)			
 				})
 
 			// var data = tpl.get_template_result("new_task.html", {
@@ -64,10 +67,6 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			// 		]
 			// })
 
-			var data = tpl.get_template_result("new_task.html", { 'deviceTypes' : deviceTypes })
-
-			params.fileUrl = 'new_task.html'
-			responseSender(req, res, params, data)			
 			break
 		}
 
