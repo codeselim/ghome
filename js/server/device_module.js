@@ -2,6 +2,7 @@ var fs = require('fs')
 var tpl = require('./template_engine')
 var ss = require('./sensors_server')
 var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
+var get_shared_data = require('./shared_data').get_shared_data
 var off = true
 
 /**
