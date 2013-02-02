@@ -115,33 +115,31 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			 *@TODO : get shared data SQL_TABLES and adjust the query
 			 *@TODO : get the devices that receive actions and adjust the query as well!! 
 			 */
-			params.db.query("select st.name , s.sensor_type_id, s.name as device_name  from sensors_types st JOIN sensors s ON st.id =  s.sensor_type_id order by s.sensor_type_id", null, function (err, rows){
+			params.db.query("select st.name , s.sensor_type_id, s.hardware_id,  s.name as device_name  from sensors_types st JOIN sensors s ON st.id =  s.sensor_type_id order by s.sensor_type_id", null, function (err, rows){
 					if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
-					
-					//deviceTypes +=  '"deviceTypes" : ['  //moved down
 					for (var r in rows) {
 						if( sensor_type_id != rows[r].sensor_type_id ){	
 								sensor_type_id = rows[r].sensor_type_id
 								deviceTypes +=	']},'
-								deviceTypes += '{"label" : "'+rows[r].name+'", "devices" : [ '    
-								deviceTypes += '{"label" : "'+rows[r].device_name+'", "value" : "'+rows[r].hardware_id+'", "type" : "'+rows[r].sensor_type_id+'"}'   //value  is the id of the device
+								deviceTypes += '{"label" : "'+rows[r].name.trim()+'", "devices" : [ '    
+								deviceTypes += '{"label" : "'+rows[r].device_name.trim()+'", "value" : "'+rows[r].hardware_id+'", "type" : "'+rows[r].sensor_type_id+'"}'   //value  is the id of the device
 								//console.log(rows[r].name);
 							} // \if
 						else {
-							deviceTypes += ',{"label" : "'+rows[r].device_name+'", "value" : "'+rows[r].hardware_id+'", "type" : "'+rows[r].sensor_type_id+'"}'
+							deviceTypes += ',{"label" : "'+rows[r].device_name.trim()+'", "value" : "'+rows[r].hardware_id+'", "type" : "'+rows[r].sensor_type_id+'"}'
 							} // \else  
 							number_of_rows++
 						} // \for
 							if(number_of_rows)
 							 { var 	temp =  '['  //	temp =  '"deviceTypes" : ['
-									temp  += deviceTypes.substr(3) //pour enlever les premier  ]},
-						 				temp +=  ']}  ]'
+									temp += deviceTypes.substr(3) //pour enlever les premier  ]},
+						 			temp +=  ']}  ]'
+						 				//console.log(temp)
 								deviceTypes = JSON.parse(temp)
 							}
 							else deviceTypes = JSON.parse('[]')
-
 						//console.log( deviceTypes )
-					console.log(params)
+						//console.log(params)
 					var data = tpl.get_template_result("new_task.html", { 
 						  'deviceTypes' : deviceTypes
 						  //* Alternative device array
