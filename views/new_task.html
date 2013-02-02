@@ -9,18 +9,20 @@
 	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
 </head>
 <body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
-	<div data-role="page" id="newTask">
+	<div data-role="page" id="newTask" data-cache="never">
 		<div data-theme="a" data-role="header" data-position="fixed">
 			<h3>Nouvelle tâche</h3>
 			<a href="/?module=home" data-icon="home" data-iconpos="notext" >Accueil</a>
 		</div>
 		<div data-role="content">
 			<form>
+				<input type="hidden" name="module" value="new_task">
+				<!-- <input type="hidden" name="action" value="submit"> -->
 				<ul data-role="listview" data-inset="true" data-divider-theme="d" data-split-icon="minus" data-split-theme="d" id="bigList">
 					<li data-role="list-divider" role="heading">
 						Action
 					</li>
-					<li>	
+					<li id="actionArgs">	
 						<div class="ui-grid-a">
 							<div class="ui-block-a">
 								<select name="aActor" >
@@ -43,7 +45,7 @@
 					<li data-role="list-divider" role="heading">
 						Evénement
 					</li>
-					<li>	
+					<li id="evtArgs">	
 						<div class="ui-grid-a">
 							<div class="ui-block-a">
 								<select name="evtSource" 

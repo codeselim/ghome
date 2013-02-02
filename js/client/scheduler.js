@@ -1,4 +1,4 @@
-define(['jquery', 'jqvalidate'], function($){
+define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 
 	var initCache = function(cache) {
 		$.ajax({
@@ -19,10 +19,10 @@ define(['jquery', 'jqvalidate'], function($){
 	 */
 	var populateSelectBox = function($select, data, trigger, keepstate) {
 		$select.empty()
-		// $('#select option:gt(0)').remove(); //* Remove all options, but not the first
+		// $('#select option:gt(0)').remove() //* Remove all options, but not the first
 
 		$.each(data, function(key, value) {
-		  $select.append($("<option></option>").attr("value", value).text(key))
+			$select.append($("<option></option>").attr("value", value).text(key))
 		})
 
 		if (!keepstate) {
@@ -122,6 +122,20 @@ define(['jquery', 'jqvalidate'], function($){
 	}
 
 
+	
+
+	var getFormParams = function() {
+		//* Fixed params
+		params = {
+
+			  action: utils.queryStringToHash($.param($('#actionArgs select')))
+			, evt: utils.queryStringToHash($.param($('#evtArgs select')))
+		}
+
+		return params
+	}
+
+
 	//*** Returned functions *************************************************************************
 	var pageInit = function pageInit() {
 		console.log('scheduler pageInit')
@@ -132,19 +146,19 @@ define(['jquery', 'jqvalidate'], function($){
 		var cache = {}
 		var conditionCount = 0
 
-	  $('.leftLink').parent().parent().parent().removeClass('ui-btn');
-    $('.leftLink').contents().unwrap();
+		$('.leftLink').parent().parent().parent().removeClass('ui-btn');
+		$('.leftLink').contents().unwrap();
 
 		$("#form").validate({
-			  rules: {
-			  	  'device'          : {'required': true }
-			  	, 'devAction'       : {'required': true }
-			  	, 'trigger'         : {'required': true }
-			  	, 'sensor'          : {'required': true }
-			  	, 'threshold_type'  : {'required': true }
-			  	, 'threshold_value' : {'required': true }
-			  	, 'threshold_event' : {'required': true }
-			  } 
+				rules: {
+						'device'          : {'required': true }
+					, 'devAction'       : {'required': true }
+					, 'trigger'         : {'required': true }
+					, 'sensor'          : {'required': true }
+					, 'threshold_type'  : {'required': true }
+					, 'threshold_value' : {'required': true }
+					, 'threshold_event' : {'required': true }
+				} 
 			, messages: {}
 			, errorPlacement: function(error, element) {
 				//* Needed to place the error message out of the select menu.
@@ -173,6 +187,28 @@ define(['jquery', 'jqvalidate'], function($){
 			//* Ask JQM to redraw the new elements
 			$newCondition.trigger('create')
 			$bigList.listview('refresh')
+		})
+
+		$('form').validate({
+				rules: { 
+						equip_id: "required"
+					, equip_type: "required"
+				} 
+			, messages: { 
+						equip_id: "Veuillez entrez l'identifiant de l'équipemement à ajouter"
+					, equip_type: "Veuillez sélectionner le type d'équipement"
+				}
+			, errorPlacement: function(error, element) {
+				//* Needed to place the error message out of the select menu.
+				if (element.is('select')) {
+					error.insertAfter($(element).parent())
+				} else {
+					error.insertAfter(element)
+				}
+			}
+			, submitHandler: function() {
+				console.log(getFormParams())
+			}
 		})
 	}
 
