@@ -127,12 +127,38 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 	var getFormParams = function() {
 		//* Fixed params
 		params = {
-
-			  action: utils.queryStringToHash($.param($('#actionArgs select')))
+				name: $('[name=taskName]').val()
+			, act: utils.queryStringToHash($.param($('#actionArgs select')))
 			, evt: utils.queryStringToHash($.param($('#evtArgs select')))
+			, cond: []
 		}
 
+		$('[id^=condition]').each(function(){
+			console.log($(this))
+			params.cond.push(utils.queryStringToHash($.param($(this).find('select'))))
+		})
+
 		return params
+	}
+
+	var submitNewTask = function() {
+
+		$.ajax({
+				'url'      : "/"
+			, 'dataType' : 'json'
+			, 'data'     : $.extend({'module' : 'new_task', 'action' : 'submit'}, getFormParams())
+		})
+		.done(function(data) {
+			console.log(data)
+			if (data.success) {
+				utils.addMessage('success', 'Ok! Vous allez être redirigé sur la liste des tâches.')
+				// window.location.href = '/?module=scheduler'
+				setTimeout('top.location.href = "/?module=scheduler"',2000)
+			} else {
+				utils.addMessage('error', 'Une erreur est survenue')
+			}
+		})
+		.fail(function(a,status) { alert(status) })
 	}
 
 
@@ -171,7 +197,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		})
 
 		initCache(cache)
-
+		utils.initMessages()
 		$('[name=aActor]').change(updateActionList)
 		$('[name=evtSource]').change(updateEvtTypeList)
 		$('[name=evtType]').change(updateCondType)
@@ -191,12 +217,18 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 
 		$('form').validate({
 				rules: { 
-						equip_id: "required"
-					, equip_type: "required"
+					  taskName: "required" 
+					, aActor: "required"
+					, aAction: "required"
+					, evtSource: "required"
+					, evtType: "required"
 				} 
 			, messages: { 
-						equip_id: "Veuillez entrez l'identifiant de l'équipemement à ajouter"
-					, equip_type: "Veuillez sélectionner le type d'équipement"
+					  taskName: "Veuillez saisir un nom pour la tâche" 
+					, aActor: "Veuillez sélectionner le sujet de la tâche"
+					, aAction: "Veuillez sélectionner l'action à effectuer"
+					, evtSource: "Veuillez sélectionner la source de l'évènement"
+					, evtType: "Veuillez sélectionner le type d'évènement"
 				}
 			, errorPlacement: function(error, element) {
 				//* Needed to place the error message out of the select menu.
@@ -206,9 +238,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 					error.insertAfter(element)
 				}
 			}
-			, submitHandler: function() {
-				console.log(getFormParams())
-			}
+			, submitHandler: submitNewTask
 		})
 	}
 

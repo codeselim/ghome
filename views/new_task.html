@@ -16,9 +16,17 @@
 		</div>
 		<div data-role="content">
 			<form>
-				<input type="hidden" name="module" value="new_task">
-				<!-- <input type="hidden" name="action" value="submit"> -->
 				<ul data-role="listview" data-inset="true" data-divider-theme="d" data-split-icon="minus" data-split-theme="d" id="bigList">
+					<li data-role="list-divider" role="heading">
+						Nom de la tâche
+					</li>
+					<li id="nameArgs">
+						<div data-role="fieldcontain">
+				            <fieldset data-role="controlgroup">
+				                <input name="taskName" id="textinput1" placeholder="" value="" type="text">
+				            </fieldset>
+				        </div>
+					</li>
 					<li data-role="list-divider" role="heading">
 						Action
 					</li>
@@ -86,8 +94,11 @@
 					</li>
 					<li data-icon="plus"><a id="addCondition" href="#">Ajouter une condition</a></li>
 				</ul>
+				
+				<ul data-role="listview" data-inset="true" id="messages"></ul>
 
 				<input type="submit" value="Enregistrer">
+
 
 			</form>
 		</div><!-- /content -->
