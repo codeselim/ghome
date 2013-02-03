@@ -8,3 +8,4 @@
 .read logs.sql
 .read thresholds.sql
 .read actions_types.sql
+.read actions_receivers_view.sql

@@ -120,7 +120,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			 *@TODO : get shared data SQL_TABLES and adjust the query
 			 *@TODO : get the devices that receive actions and adjust the query as well!! 
 			 */
-			params.db.query("select st.name , s.sensor_type_id, s.hardware_id,  s.name as device_name  from sensors_types st JOIN sensors s ON st.id =  s.sensor_type_id order by s.sensor_type_id", null, function (err, rows){
+			params.db.query("select st.name , s.sensor_type_id, s.hardware_id,  s.name as device_name  from sensors_types st JOIN sensors s ON st.id =  s.sensor_type_id where sensor_type_id in  (SELECT sensor_type_id FROM actions_types) order by s.sensor_type_id", null, function (err, rows){
 					if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
 					
 					//deviceTypes +=  '"deviceTypes" : ['  //moved down
