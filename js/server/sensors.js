@@ -99,7 +99,7 @@ function generate_json_devices_list_from_sql_rows (rows) {
 		temp += ']}  ]'
 		deviceTypes = JSON.parse(temp)
 	} else {
-		deviceTypes = JSON.parse('[]')
+		deviceTypes = []
 	}
 	return deviceTypes
 }
