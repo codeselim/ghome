@@ -6,7 +6,7 @@ var device_communicator = require('./device_communicator.js')
 var get_shared_data = shared.get_shared_data
 var sensors_values = {}
 
-function send_message_to_plug(target, action){
+function send_message(target, action){
 	db.query("SELECT message_to_sensor FROM actions_types WHERE id = ?", [action], function (err, rows) {
 		for (var r in rows){
 			device_communicator.sendToSensor (target, rows[r]["message_to_sensor"]);
@@ -17,29 +17,8 @@ function send_message_to_plug(target, action){
 function make_action(results,targets) { //this function will execute the actions of results to the correct target
 	console.log("rentrée dans make action")
 	 for (var r in results) {
-	 	console.log(results[r])
-      switch(parseInt(results[r])){
-      	case 1 :      //if command is "allumer prise"
-      	console.log("action allumer prise ", targets[r], " !");
-      	send_message_to_plug(targets[r], 1);
-      	sse_sender.sendSSE({"msg" : "Prise " + targets[r] + " allumée"});
-      	break;
-      	case 2 :     //if command is "eteindre prise"
-      	send_message_to_plug(targets[r], 2);
-      	sse_sender.sendSSE({"msg" : "Prise " + targets[r] + " éteinte"});
-      	break;
-      	case 3 :     //if commande is "ouvrir volets"
-      	switch_off_plug();
-      	sse_sender.sendSSE({"msg" : "Volets " + targets[r] + " ouverts"});
-      	break;
-      	case 4 :     //if command is "fermer volets"
-      	switch_off_plug();
-      	sse_sender.sendSSE({"msg" : "Volets " + targets[r] + " fermés"});
-      	break;
-      	default :     //if not in the results (very very improbable)
-      	sse_sender.sendSSE({"msg" : "Rien du tout"});
-      	break;
-      }
+	 	console.log("task_executor : send message to ",targets[r], " with action ", results[r])
+      send_message(targets[r], results[r]);
   } 
 }
 
@@ -74,11 +53,6 @@ function execute_task(event_id) {//this function will search the good actions to
 				}
 				for (var r in rows){
 					value = sensors_values[rows[r]["sensor_id"]];//we catch the value corresponding to the current sensor
-
-					for(bla in sensors_values){
-						console.log("blah :",bla);
-						console.log(rows[r]["sensor_id"]);
-					}
 
 					console.log("nan ? :", sensors_values[rows[r]["sensor_id"]])
 					switch (rows[r]["operator"]){
