@@ -7,6 +7,18 @@ var tpl = require('./template_engine')
 var sutils = require('./sensors')
 // var ss = require('./sensors_server')
 var shared = require('./shared_data')
+var SQL_TABLES_DIC = shared.get_shared_data('SQL_TABLES');
+//OUTPUT: SQL_TABLES_DIC - Just for reference
+// { st: 'sensors_types',
+//   et: 'event_types',
+//   at: 'actions_types',
+//   l: 'logs',
+//   c: 'conditions',
+//   ct: 'condition_types',
+//   m: 'modes',
+//   s: 'sensors',
+//   t: 'tasks' 
+// }
 
 
 var schedulerRH  = function (req, res, params, responseSender) {
@@ -30,6 +42,10 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			} else {
 				res.end(JSON.stringify({'On' : 1, 'Off' : 2}))
 			}
+
+			// params.db.query("SELECT at.id , at.name FROM "+SQL_TABLES_DIC.at+" at WHERE at.sensor_type_id = ?", [params.query.deviceType], function (err, rows){
+			// if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
+
 			break
 		}
 
@@ -123,11 +139,11 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			 *@TODO : get the devices that receive actions and adjust the query as well!! 
 			 */
 			params.db.query("SELECT st.name, s.sensor_type_id, s.hardware_id, s.name AS device_name " +
-							"FROM sensors_types st " +
-							"JOIN sensors s ON st.id = s.sensor_type_id " +
+							"FROM " + SQL_TABLES_DIC.st + " st " +
+							"JOIN " + SQL_TABLES_DIC.s + " s ON st.id = s.sensor_type_id " +
 							"WHERE sensor_type_id IN ( " +
 							"	SELECT sensor_type_id " +
-							"	FROM actions_types " +
+							"	FROM " + SQL_TABLES_DIC.at + " " +
 							") " +
 							"ORDER BY s.sensor_type_id", 
 				null, 
@@ -139,6 +155,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 
 						//console.log( deviceTypes )
 					console.log("scheduler_modules.js: ", params)
+
 					var data = tpl.get_template_result("new_task.html", { 
 						  'deviceTypes' : deviceTypes
 						  //* Alternative device array
