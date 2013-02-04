@@ -8,6 +8,7 @@ var off = true
 var testid = 0 // The testid can be used by the test start/poll/end handlers to share data among them if they need to, by allowing them to identify a given request
 require('./shared_data').set_shared_data('shared_among_tests_requests', {}) // For each testid, will allow us to shared data among the different poll requests
 satr = get_shared_data('shared_among_tests_requests')
+var sutils = require('./sensors')
 
 
 /**
@@ -101,24 +102,28 @@ var deviceTestRH = function (req, res, params, responseSender) {
 }
 
 var deviceManagementRH  = function (req, res, params, responseSender) {
-	var data = tpl.get_template_result("device_management.html", {
-		'device_types' : [
-			  {'name' : 'Prises', 'devices' : [
-					  {'id': 'p1', 'label': 'Prise1'}
-					, {'id': 'p2', 'label': 'Prise2'}
-			  ]}
-			, {'name' : 'Capteurs de température', 'devices' : [
-					  {'id': 'ct1', 'label': 'Temp1'}
-					, {'id': 'ct2', 'label': 'Temp2'}
-			  ]}
-		  , {'name' : 'Interrupteurs', 'devices' : [
-				  {'id': 'i1', 'label': 'Interrupteur1'}
-				, {'id': 'i2', 'label': 'Interrupteur2'}
-		  ]}
-		]
-	})
-	params.fileUrl = 'device_management.html'
-	responseSender(req, res, params, data)
+	params.db.query("SELECT st.name, s.sensor_type_id, s.hardware_id, s.name AS device_name " +
+					"FROM " + t['st'] + " st " +
+					"JOIN " + t['s']+ " s ON st.id = s.sensor_type_id " +
+					"ORDER BY s.sensor_type_id", 
+		null, 
+		function (err, rows) {
+			if(null != err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
+			
+			//deviceTypes +=  '"deviceTypes" : ['  //moved down
+			deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
+
+				//console.log( deviceTypes )
+			console.log("scheduler_modules.js: ", params)
+
+			var data = tpl.get_template_result("device_management.html", { 
+				  'device_types' : deviceTypes
+			})
+
+			params.fileUrl = 'device_management.html'
+			responseSender(req, res, params, data)			
+		}
+	);
 }
 
 
