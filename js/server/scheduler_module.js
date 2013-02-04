@@ -5,6 +5,7 @@
 // var fs = require('fs')
 var tpl = require('./template_engine')
 // var ss = require('./sensors_server')
+var shared = require('./shared_data')
 
 
 var schedulerRH  = function (req, res, params, responseSender) {
