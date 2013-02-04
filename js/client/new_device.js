@@ -25,7 +25,7 @@ define(['jquery', 'jqvalidate'], function($) {
 				countdown -= interval
 				setTimeout(function(){
 					deviceInfoRequest(ajaxData, interval, countdown, finalCallback)
-				}, interval)  
+				}, interval)
 			} else {
 				// time is over or the request succeded. Update the view and tell the server we're done.
 				finalCallback(reqStatus, ajaxData)
@@ -97,8 +97,14 @@ define(['jquery', 'jqvalidate'], function($) {
 						showLoading()
 					}, Math.abs(data.hideafter))
 				};
-			};
-			deviceInfoRequest(ajaxData, 1000, 180000, endTest)
+			}
+			if (data.poll_delay) {
+				pd = Math.abs(data.poll_delay)
+				console.log("Starting poll in " + pd)
+				setTimeout(function() {
+					deviceInfoRequest(ajaxData, 1000, 180000, endTest)
+				}, pd);
+			}
 		})
 		.fail(function(jqXHR, textStatus) {
 			$.mobile.loading('hide')
