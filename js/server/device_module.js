@@ -6,6 +6,11 @@ var tpl = require('./template_engine')
 var get_shared_data = require('./shared_data').get_shared_data
 var off = true
 var testid = 0 // The testid can be used by the test start/poll/end handlers to share data among them if they need to, by allowing them to identify a given request
+require('./shared_data').set_shared_data('shared_among_tests_requests', {}) // For each testid, will allow us to shared data among the different poll requests
+satr = get_shared_data('shared_among_tests_requests')
+var sutils = require('./sensors')
+
+
 /**
  * Gets the list of the devices types from the DB and passes it as a parameter to the callback
  * Object passed ; [{'value': type_id, 'label': type_name}]
@@ -20,7 +25,7 @@ function getDevicesTypesList (db, callback) {
 		} else {
 			for(i in rows) {
 				console.log("Row " + i, rows[i])
-				data.push({'value': rows[i]['id'], 'label': rows[i]['name']})
+				data.push({'id': rows[i]['id'], 'label': rows[i]['name']})
 			}
 		}
 		callback(data)
@@ -65,25 +70,39 @@ var deviceTestRH = function (req, res, params, responseSender) {
 		case "teststart":
 			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
 			testid++
+			// Initialize the data structure allowing tests to shared data about this specific test (unique testid)
+			satr[testid] = {}
 			// In case if was already in memory, delete it:
 			ArrayRemove(aids, aids.indexOf(params.query.deviceId))
 			ArrayRemove(cids, cids.indexOf(params.query.deviceId))
 			//* Then add it to the allowed ids so that we don't filter it out, but don't add to connected ones, as what we want is to detect connection
 			aids.push(params.query.deviceId)
-			ts[params.query.deviceType](req, res, params, testid)
+			if (params.query.deviceType in ts) {
+				ts[params.query.deviceType](req, res, params, testid)
+			} else {// If no start_test registered, displaying error message
+				res.end(JSON.stringify({'testid': testid, poll_delay: 3000, hideafter: 3000, msg: "ERROR: The requested device type has not any registered tests." }))
+			}
 			break;
 
 		case "testpoll":
-			console.log('testend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			te[params.query.deviceType](req, res, params, params.query.testid)
+			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			if (params.query.deviceType in tp) {
+				tp[params.query.deviceType](req, res, params, params.query.testid)
+			} else {// If no poll_test registered: Sending events:[] so that we terminate the test
+				res.end(JSON.stringify({status: 'ok', events: []})) 
+			}
 			break;
 
-		case "testend":js
-			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+		case "testend":
+			console.log('testpend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
 			//* Removing from in-memory arrays
 			ArrayRemove(aids, aids.indexOf(params.query.deviceId))
 			ArrayRemove(cids, cids.indexOf(params.query.deviceId))
-			tp[params.query.deviceType](req, res, params, params.query.testid)
+			// The test is over, cleaning shared data about it
+			delete satr[testid]
+			if (params.query.deviceType in te) {
+				te[params.query.deviceType](req, res, params, params.query.testid)
+			}// else : Nothing to do
 			break;
 
 		default:
@@ -93,24 +112,28 @@ var deviceTestRH = function (req, res, params, responseSender) {
 }
 
 var deviceManagementRH  = function (req, res, params, responseSender) {
-	var data = tpl.get_template_result("device_management.html", {
-		'device_types' : [
-			  {'name' : 'Prises', 'devices' : [
-					  {'id': 'p1', 'label': 'Prise1'}
-					, {'id': 'p2', 'label': 'Prise2'}
-			  ]}
-			, {'name' : 'Capteurs de température', 'devices' : [
-					  {'id': 'ct1', 'label': 'Temp1'}
-					, {'id': 'ct2', 'label': 'Temp2'}
-			  ]}
-		  , {'name' : 'Interrupteurs', 'devices' : [
-				  {'id': 'i1', 'label': 'Interrupteur1'}
-				, {'id': 'i2', 'label': 'Interrupteur2'}
-		  ]}
-		]
-	})
-	params.fileUrl = 'device_management.html'
-	responseSender(req, res, params, data)
+	params.db.query("SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
+					"FROM " + t['st'] + " st " +
+					"JOIN " + t['s']+ " s ON st.id = s.sensor_type_id " +
+					"ORDER BY s.sensor_type_id", 
+		null, 
+		function (err, rows) {
+			if(null != err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
+			
+			//deviceTypes +=  '"deviceTypes" : ['  //moved down
+			deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
+
+				//console.log( deviceTypes )
+			console.log("scheduler_modules.js: ", params)
+
+			var data = tpl.get_template_result("device_management.html", { 
+				  'device_types' : deviceTypes
+			})
+
+			params.fileUrl = 'device_management.html'
+			responseSender(req, res, params, data)			
+		}
+	);
 }
 
 

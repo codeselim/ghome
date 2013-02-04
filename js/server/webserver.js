@@ -176,7 +176,10 @@ function start (db, port) {
 					requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender)
 				} else {
 					console.error(404)
-					//@TODO 404 error
+					res.writeHead(200, {'Content-Type': 'text/html'})
+					res.end(fs.readFileSync('../../views/404.html'))
+					// urlParams.params['fileUrl'] = 
+					// responseSender(req, res, urlParams.params, )
 				}
 			});
 

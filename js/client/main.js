@@ -58,5 +58,14 @@ require(['jquery', 'sseListener', 'device_management', 'new_device', 'scheduler'
 		console.log($('[data-role="page"]:first').attr('id'))
 		pageinits[$('[data-role="page"]:first').attr('id')]()
 
+		$(document).on('pagehide', 'div', function(event, ui) {
+      var page = $(event.target)
+ 
+      if(page.attr('data-cache') == 'never'){
+        page.remove()
+      }
+
+		})
+
 	})
 })

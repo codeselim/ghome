@@ -9,33 +9,43 @@
 	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
 </head>
 <body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
-	<div data-role="page" id="newTask">
+	<div data-role="page" id="newTask" data-cache="never">
 		<div data-theme="a" data-role="header" data-position="fixed">
 			<h3>Nouvelle tâche</h3>
 			<a href="/?module=home" data-icon="home" data-iconpos="notext" >Accueil</a>
 		</div>
 		<div data-role="content">
 			<form>
-				<ul data-role="listview" data-inset="true" data-divider-theme="d">
+				<ul data-role="listview" data-inset="true" data-divider-theme="d" data-split-icon="minus" data-split-theme="d" id="bigList">
+					<li data-role="list-divider" role="heading">
+						Nom de la tâche
+					</li>
+					<li id="nameArgs">
+						<div data-role="fieldcontain">
+				            <fieldset data-role="controlgroup">
+				                <input name="taskName" id="textinput1" placeholder="" value="" type="text">
+				            </fieldset>
+				        </div>
+					</li>
 					<li data-role="list-divider" role="heading">
 						Action
 					</li>
-					<li>	
+					<li id="actionArgs">	
 						<div class="ui-grid-a">
 							<div class="ui-block-a">
-								<select name="aActor" data-inline="true">
+								<select name="aActor" >
 									<option value="">-- Acteur --</option>
 									{{#deviceTypes}}
 									<optgroup label="{{label}}">
 										{{#devices}}
-									    <option value="{{value}}" data-device-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
+									    <option value="{{id}}" data-device-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
 										{{/devices}}
 									</optgroup>
 									{{/deviceTypes}}
 								</select>
 							</div>
 							<div class="ui-block-b">
-								<select name="aAction" data-inline="true" disabled>
+								<select name="aAction" disabled>
 								</select>
 							</div>
 						</div>
@@ -43,26 +53,22 @@
 					<li data-role="list-divider" role="heading">
 						Evénement
 					</li>
-					<li>	
-						<div class="ui-grid-b">
+					<li id="evtArgs">	
+						<div class="ui-grid-a">
 							<div class="ui-block-a">
-								<select name="evtSource" data-inline="true" data-mini="true">
+								<select name="evtSource" 
 									<option value="">-- Source --</option>
 									{{#evtSourceTypes}}
 									<optgroup label="{{label}}">
 									{{#sensors}}
-									    <option value="{{value}}" data-sensor-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
+									    <option value="{{id}}" data-sensor-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
 									{{/sensors}}
 									</optgroup>
 									{{/evtSourceTypes}}
 								</select>
 							</div>
 							<div class="ui-block-b">
-								<select name="evtType" data-inline="true" data-mini="true" disabled>
-								</select>
-							</div>
-							<div class="ui-block-c">
-								<select name="evtValue" id="devAction" data-inline="true" data-mini="true" disabled>
+								<select name="evtType" data-condition-id="Evt" disabled>
 								</select>
 							</div>
 						</div>
@@ -70,149 +76,32 @@
 					<li data-role="list-divider" role="heading">
 						Conditions
 					</li>
-					<li>
-						<div>
-							<ul data-role="listview" data-divider-theme="d" data-split-icon="minus" data-split-theme="d" id="conditions">
-								<li>	
-									<a href="#" onclick="return false;" class="leftLink">
-										<span>
-											<div class="ui-grid-b">
-												<div class="ui-block-a">
-													<select name="condSource" data-inline="true">
-														<option value="">Temps</option>
-														<option value="">-- Source --</option>
-													</select>
-												</div>
-												<div class="ui-block-b">
-													<select name="condData" data-inline="true">
-														<option value="">Jour</option>
-														<option value="">-- Donnée --</option>
-													</select>
-												</div>
-												<div class="ui-block-c">
-													<select name="condValue" data-inline="true">
-														<option value="">Lundi</option>
-														<option value="">-- Valeur --</option>
-													</select>
-												</div>
-
-											</div>
-
-										</span>
-									</a>
-									<a href="#">Retirer</a>
-								</li>
-								<li>	
-									<a href="#" onclick="return false;" class="leftLink">
-										<span>
-											<div class="ui-grid-b">
-												<div class="ui-block-a">
-													<select name="devAction" id="devAction" data-inline="true" data-mini="true">
-														<option value="">Température 1</option>
-														<option value="">-- Acteur --</option>
-													</select>
-												</div>
-												<div class="ui-block-b">
-													<select name="devAction" id="devAction" data-inline="true" data-mini="true">
-														<option value="">Temp. sup. à</option>
-														<option value="">-- Test --</option>
-													</select>
-												</div>
-												<div class="ui-block-c">
-													<input type="text" value="18" data-mini="true" style="width: 80px">
-												</div>
-
-											</div>
-
-										</span>
-									</a>
-									<a href="#">Retirer</a>
-								</li>
-								<li data-icon="plus"><a id="addCondition" href="#">Ajouter une condition</a></li>
-							</ul>
+					<li id="conditionEvt" class="ui-screen-hidden">	
+						<div class="ui-grid-b">
+							<div class="ui-block-a evtSourceBlock">
+								<select name="condSource" data-icon="false" data-mini="true" data-condition-id="Evt"disabled>
+								</select>
+							</div>
+							<div class="ui-block-b">
+								<select name="condType" data-mini="true" data-condition-id="Evt" disabled>
+								</select>
+							</div>
+							<div class="ui-block-c">
+								<select name="condValue" data-mini="true" data-condition-id="Evt" disabled>
+								</select>
+							</div>
 						</div>
 					</li>
+					<li data-icon="plus"><a id="addCondition" href="#">Ajouter une condition</a></li>
 				</ul>
+				
+				<ul data-role="listview" data-inset="true" id="messages"></ul>
+
+				<input type="submit" value="Enregistrer">
+
 
 			</form>
 		</div><!-- /content -->
 	</div><!-- /page -->
-	<!-- 
-
-  					<div data-role="collapsible-set">
-  						<div data-role="collapsible" data-collapsed="false"  data-content-theme="c">
-  							<h3>
-  								Action à effectuer
-  							</h3>
-  							<div class="ui-grid-a">
-  								<div class="ui-block-a">
-  									<select name="devAction" id="devAction" data-inline="true">
-  										<option value="">-- Acteur --</option>
-  									</select>
-  								</div>
-  								<div class="ui-block-b">
-  									<select name="devAction" id="devAction" data-inline="true">
-  										<option value="">-- Action --</option>
-  									</select>
-  								</div>
-  							</div>
-  						</div>
-  						<div data-role="collapsible" data-collapsed="false" data-content-theme="c">
-  							<h3>
-  								Evénement
-  							</h3>
-  							<div class="ui-grid-b">
-  								<div class="ui-block-a">
-  									<select name="devAction" id="devAction" data-inline="true">
-  										<option value="">-- Source d'événement --</option>
-  									</select>
-  								</div>
-  								<div class="ui-block-b">
-  									<select name="devAction" id="devAction" data-inline="true">
-  										<option value="">-- Type d'événement --</option>
-  									</select>
-  								</div>
-  								<div class="ui-block-c">
-  									<select name="devAction" id="devAction">
-  										<option value="">-- Valeur --</option>
-  									</select>
-  								</div>
-  							</div>
-  						</div>
-  					</div>
-			<form action="" id="form">
-				<div data-role="fieldcontain">
-					<label for="device">Acteur </label>
-					<select name="device" id="device">
-						<option value="">-- Choisir --</option>
-						{{#deviceTypes}}
-						<optgroup label="{{label}}">
-						{{#devices}}
-						    <option value="{{value}}" data-device-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
-						{{/devices}}
-						</optgroup>
-						{{/deviceTypes}}
-					</select>
-				</div>
-				<div data-role="fieldcontain">
-					<label for="devAction">Action </label>
-					<select name="devAction" id="devAction">
-						<option value="">-- Choisir un acteur --</option>
-					</select>
-				</div>
-				<div data-role="fieldcontain">
-					<label for="trigger">Déclencheur </label>
-					<select name="trigger" id="trigger">
-						<option value="">-- Choisir --</option>
-						{{#triggers}}
-						    <option value="{{value}}">{{label}}</option>
-						{{/triggers}}
-					</select>
-				</div>	
-				<div id="triggerDiv"></div>
-				<input type="submit" value="Submit">
-			</form>
-		</div> -->
-		<!-- </div> -->
 </body>
 </html>

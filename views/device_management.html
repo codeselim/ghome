@@ -20,7 +20,7 @@
 					<a data-transition="fade" href="/?module=new_device"> Nouvel équipement </a>
 				</li>
 				{{#device_types}}
-					<li data-role="list-divider">{{name}}</li>
+					<li data-role="list-divider">{{label}}</li>
 					{{#devices}}
 					<li><a data-transition="fade" href="/?module=device&amp;action=display&amp;id={{id}}">{{label}}</a></li>
 					{{/devices}}
