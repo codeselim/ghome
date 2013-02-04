@@ -87,9 +87,9 @@ function generate_json_devices_list_from_sql_rows (rows) {
 			sensor_type_id = rows[r].sensor_type_id
 			deviceTypes += ']},'
 			deviceTypes += '{"label" : "'+rows[r].name.trim()+'", "devices" : [ '    
-			deviceTypes += '{"label" : "'+rows[r].device_name.trim()+'", "value" : "'+rows[r].hardware_id+'", "type" : "'+rows[r].sensor_type_id+'"}'   //value  is the id of the device
+			deviceTypes += '{"label" : "'+rows[r].device_name.trim()+'", "id" : "'+ rows[r].id +'", "type" : "'+rows[r].sensor_type_id+'"}'
 		} else {
-			deviceTypes += ',{"label" : "'+rows[r].device_name.trim()+'", "value" : "'+rows[r].hardware_id+'", "type" : "'+rows[r].sensor_type_id+'"}'
+			deviceTypes += ',{"label" : "'+rows[r].device_name.trim()+'", "id" : "'+ rows[r].id +'", "type" : "'+rows[r].sensor_type_id+'"}'
 		} 
 		number_of_rows++
 	}

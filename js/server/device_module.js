@@ -102,7 +102,7 @@ var deviceTestRH = function (req, res, params, responseSender) {
 }
 
 var deviceManagementRH  = function (req, res, params, responseSender) {
-	params.db.query("SELECT st.name, s.sensor_type_id, s.hardware_id, s.name AS device_name " +
+	params.db.query("SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
 					"FROM " + t['st'] + " st " +
 					"JOIN " + t['s']+ " s ON st.id = s.sensor_type_id " +
 					"ORDER BY s.sensor_type_id", 
