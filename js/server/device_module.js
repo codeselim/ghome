@@ -45,12 +45,18 @@ var newDeviceRH = function (req, res, params, responseSender) {
 	var actions = {// lol, this is a hidden switch // new JS way huhu
 		'default' : initNewDevicePage,
 		'submit': function() {
-			db.query("INSERT INTO `sensors` (id, hardware_id, name) VALUES (NULL, ?, ?)", [params.postData.equip_label, params.postData.equip_id], function (err, rows) {
-				if (null != err) {
-					deviceManagementRH(req, res, params, responseSender)
-				};
+			q = "INSERT INTO `" + t['s'] + "` (id, name, hardware_id, sensor_type_id) VALUES (NULL, ?, ?, ?)"
+			p = [params.query.equip_label, params.query.equip_id, params.query.equip_type]
+			// console.log("Going to execute query ", q, "with params", p)
+			params.db.query(q, p, function (err, rows) {
+				if (null == err) {
+					console.log("Request went well")
+					res.writeHead(301, {'Location': "/?module=device_management"})
+					res.end()
+				} else {
+					console.error("newDeviceRH: Error when inserting the new device.", err)
+				}
 			})
-			// initNewDevicePage()
 		}
 	}
 
@@ -120,11 +126,7 @@ var deviceManagementRH  = function (req, res, params, responseSender) {
 		function (err, rows) {
 			if(null != err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
 			
-			//deviceTypes +=  '"deviceTypes" : ['  //moved down
 			deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
-
-				//console.log( deviceTypes )
-			console.log("scheduler_modules.js: ", params)
 
 			var data = tpl.get_template_result("device_management.html", { 
 				  'device_types' : deviceTypes
