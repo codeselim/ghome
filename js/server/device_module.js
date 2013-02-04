@@ -13,14 +13,14 @@ var sutils = require('./sensors')
 
 /**
  * Gets the list of the devices types from the DB and passes it as a parameter to the callback
- * Object passed ; [{'value': type_id, 'label': type_name}]
+ * Object passed : [{'value': type_id, 'label': type_name}]
 */
 function getDevicesTypesList (db, callback) {
 	q = "SELECT * FROM " + t['st'] + " ORDER BY name ASC"
 	var data = []
 	db.query(q, null, function (err, rows) { // Dictionary of the SQL tables names
 		if (null != err) {
-			console.error("SQL Query [1] " + q + " went wrong. Error objet: " + JSON.stringify(err))
+			console.error("SQL Query [1] " + q + " went wrong. Error object: " + JSON.stringify(err))
 			// SQL Query went wrong, don't crash, just don't reply anything
 		} else {
 			for(i in rows) {
@@ -32,32 +32,64 @@ function getDevicesTypesList (db, callback) {
 	})
 }
 
-var newDeviceRH = function (req, res, params, responseSender) {
-	//* Loads required data and sends the filled template
-	var initNewDevicePage = function() {
-		getDevicesTypesList(params.db, function (devices_types) {
-			var data = tpl.get_template_result("new_device.html", { 'devices_types' : devices_types })
-			params.fileUrl = 'new_device.html'
-			responseSender(req, res, params, data)
+/**
+ * Gets the device info from the DB and passes it as a parameter to the callback
+ * The info passed contains: type of devices, device name, device hardware id, ##TODO: device status ##
+ * Object passed : {device_types: [{'value': type_id, 'label': type_name}],
+ *                  device: {'id': id, 'type': type_id, 'equip_id': hardware_id, 'equip_label': name}
+*/
+function getDeviceInfo (db, deviceid, callback) {
+	getDevicesTypesList(function(deviceTypes){ //* Retrieving the list of device types
+		var data = {'devices_types': deviceTypes}
+		q = "SELECT * FROM " + t['st'] + " ORDER BY name ASC WHERE id = ?"
+		db.query(q, deviceid, function (err, rows) {
+			if (null != err) {
+				console.error("SQL Query [1] " + q + " went wrong. Error object: " + JSON.stringify(err))
+				// SQL Query went wrong, don't crash, just don't reply anything
+			} else {
+				if (rows) {
+					console.log("Row " + i, rows[i])
+					data.device = { 'id': rows[0]['id']
+												, 'type': rows[0]['type_id']
+												, 'equip_label': rows[0]['name']
+												, 'equip_id': rows[0]['hardware_id']}
+				}
+			}
+			callback(data)
 		})
-	}
+	})
 
-	var actions = {// lol, this is a hidden switch // new JS way huhu
-		'default' : initNewDevicePage,
-		'submit': function() {
+}
+
+var deviceRH = function (req, res, params, responseSender) {
+	switch (params.query.action) {
+		case 'submit':
 			db.query("INSERT INTO `sensors` (id, hardware_id, name) VALUES (NULL, ?, ?)", [params.postData.equip_label, params.postData.equip_id], function (err, rows) {
 				if (null != err) {
 					deviceManagementRH(req, res, params, responseSender)
-				};
+				}
 			})
-			// initNewDevicePage()
-		}
-	}
+			break
 
-	if ( !params.query.action || !(typeof actions[params.query.action] == 'function')) {
-		params.query.action = 'default'
+		case 'new':
+			//* Loads required data and sends the filled template
+			getDevicesTypesList(params.db, function (devices_types) {
+				var data = tpl.get_template_result("device.html", { 'devices_types' : devices_types })
+				params.fileUrl = 'device.html'
+				responseSender(req, res, params, data)
+			})
+			break
+		
+		case 'edit':
+			if (params.query.id) {
+				getDeviceInfo(params.db, params.query.id, function (devices_types) {
+					var data = tpl.get_template_result("device.html", { 'devices_types' : devices_types })
+					params.fileUrl = 'device.html'
+					responseSender(req, res, params, data)
+				})
+			}
+			break	
 	}
-	actions[params.query.action]()
 }
 
 var deviceTestRH = function (req, res, params, responseSender) {
@@ -123,11 +155,11 @@ var deviceManagementRH  = function (req, res, params, responseSender) {
 			params.fileUrl = 'device_management.html'
 			responseSender(req, res, params, data)			
 		}
-	);
+	)
 }
 
 
 
-exports.newDeviceRequestHandler = newDeviceRH
+exports.deviceRequestHandler = deviceRH
 exports.devMgmtRequestHandler = deviceManagementRH
 exports.deviceTestRH = deviceTestRH

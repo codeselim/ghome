@@ -17,12 +17,12 @@
 		<div data-role="content">
 			<ul data-role="listview" data-divider-theme="b" data-inset="true" id="deviceList">
 				<li data-icon="plus">
-					<a data-transition="fade" href="/?module=new_device"> Nouvel équipement </a>
+					<a data-transition="fade" href="/?module=device&amp;action=new"> Nouvel équipement </a>
 				</li>
 				{{#device_types}}
 					<li data-role="list-divider">{{label}}</li>
 					{{#devices}}
-					<li><a data-transition="fade" href="/?module=device&amp;action=display&amp;id={{id}}">{{label}}</a></li>
+					<li><a data-transition="fade" href="/?module=device&amp;action=edit&amp;id={{id}}">{{label}}</a></li>
 					{{/devices}}
 				{{/device_types}}
 			</ul>
