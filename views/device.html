@@ -27,10 +27,10 @@
 						<option value="">-- Choisir --</option>
 						{{#devices_types}}
 								{{#selected}}
-						    <option value="{{value}}" selected>{{label}}</option>
+						    <option value="{{id}}" selected>{{label}}</option>
 								{{/selected}}
 								{{^selected}}
-						    <option value="{{value}}">{{label}}</option>
+						    <option value="{{id}}">{{label}}</option>
 								{{#selected}}
 						{{/devices_types}}
 					</select>

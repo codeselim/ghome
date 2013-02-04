@@ -25,7 +25,7 @@ function getDevicesTypesList (db, callback) {
 		} else {
 			for(i in rows) {
 				console.log("Row " + i, rows[i])
-				data.push({'value': rows[i]['id'], 'label': rows[i]['name']})
+				data.push({'id': rows[i]['id'], 'label': rows[i]['name']})
 			}
 		}
 		callback(data)
@@ -35,7 +35,7 @@ function getDevicesTypesList (db, callback) {
 /**
  * Gets the device info from the DB and passes it as a parameter to the callback
  * The info passed contains: type of devices, device name, device hardware id, ##TODO: device status ##
- * Object passed : {device_types: [{'value': type_id, 'label': type_name}],
+ * Object passed : {device_types: [{'id': type_id, 'label': type_name}],
  *                  device: {'id': id, 'type': type_id, 'equip_id': hardware_id, 'equip_label': name}
 */
 function getDeviceInfo (db, deviceid, callback) {
@@ -109,12 +109,20 @@ var deviceTestRH = function (req, res, params, responseSender) {
 			ArrayRemove(cids, cids.indexOf(params.query.deviceId))
 			//* Then add it to the allowed ids so that we don't filter it out, but don't add to connected ones, as what we want is to detect connection
 			aids.push(params.query.deviceId)
-			ts[params.query.deviceType](req, res, params, testid)
+			if (params.query.deviceType in ts) {
+				ts[params.query.deviceType](req, res, params, testid)
+			} else {// If no start_test registered, displaying error message
+				res.end(JSON.stringify({'testid': testid, poll_delay: 3000, hideafter: 3000, msg: "ERROR: The requested device type has not any registered tests." }))
+			}
 			break;
 
 		case "testpoll":
 			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
-			tp[params.query.deviceType](req, res, params, params.query.testid)
+			if (params.query.deviceType in tp) {
+				tp[params.query.deviceType](req, res, params, params.query.testid)
+			} else {// If no poll_test registered: Sending events:[] so that we terminate the test
+				res.end(JSON.stringify({status: 'ok', events: []})) 
+			}
 			break;
 
 		case "testend":
@@ -124,7 +132,9 @@ var deviceTestRH = function (req, res, params, responseSender) {
 			ArrayRemove(cids, cids.indexOf(params.query.deviceId))
 			// The test is over, cleaning shared data about it
 			delete satr[testid]
-			te[params.query.deviceType](req, res, params, params.query.testid)
+			if (params.query.deviceType in te) {
+				te[params.query.deviceType](req, res, params, params.query.testid)
+			}// else : Nothing to do
 			break;
 
 		default:
@@ -134,7 +144,7 @@ var deviceTestRH = function (req, res, params, responseSender) {
 }
 
 var deviceManagementRH  = function (req, res, params, responseSender) {
-	params.db.query("SELECT st.name, s.sensor_type_id, s.hardware_id, s.name AS device_name " +
+	params.db.query("SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
 					"FROM " + t['st'] + " st " +
 					"JOIN " + t['s']+ " s ON st.id = s.sensor_type_id " +
 					"ORDER BY s.sensor_type_id", 

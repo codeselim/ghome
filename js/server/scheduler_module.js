@@ -161,10 +161,10 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			/**
 			 *@TODO : get the devices that receive actions and adjust the query as well!! 
 			 */
-			params.db.query("SELECT st.name, s.sensor_type_id, s.hardware_id, s.name AS device_name " +
+			params.db.query("SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
 							"FROM " + SQL_TABLES_DIC.st + " st " +
 							"JOIN " + SQL_TABLES_DIC.s + " s ON st.id = s.sensor_type_id " +
-							"WHERE sensor_type_id IN ( " +
+							"WHERE s.sensor_type_id IN ( " +
 							"	SELECT sensor_type_id " +
 							"	FROM " + SQL_TABLES_DIC.at + " " +
 							") " +
