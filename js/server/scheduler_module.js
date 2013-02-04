@@ -135,7 +135,6 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			var sensor_type_id = -1
 			var number_of_rows = 0
 			/**
-			 *@TODO : get shared data SQL_TABLES and adjust the query
 			 *@TODO : get the devices that receive actions and adjust the query as well!! 
 			 */
 			params.db.query("SELECT st.name, s.sensor_type_id, s.hardware_id, s.name AS device_name " +
