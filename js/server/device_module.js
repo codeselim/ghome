@@ -25,7 +25,7 @@ function getDevicesTypesList (db, callback) {
 		} else {
 			for(i in rows) {
 				console.log("Row " + i, rows[i])
-				data.push({'value': rows[i]['id'], 'label': rows[i]['name']})
+				data.push({'id': rows[i]['id'], 'label': rows[i]['name']})
 			}
 		}
 		callback(data)
