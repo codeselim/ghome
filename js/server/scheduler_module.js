@@ -9,7 +9,11 @@ var shared = require('./shared_data')
 
 
 var schedulerRH  = function (req, res, params, responseSender) {
-	var data = tpl.get_template_result("scheduler.html", {})
+
+	//* Required data: list of tasks, and for each: title and id
+	var data = tpl.get_template_result("scheduler.html", {
+		'tasks' : [{'title': 'Tâche 1', 'id' : 1}, {'title': 'Tâche2', 'id' : 2}]
+	})
 	params.fileUrl = 'scheduler.html'
 	responseSender(req, res, params, data)
 }
@@ -20,6 +24,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 		case 'get_actions' : //* Returns the actions available for a given device type
 		{
 			console.log('get_actions: deviceType=' + params.query.deviceType)
+			//* Required data: for deviceType, list of actions, and for each: {actionlabel: action id}
 			if (params.query.deviceType == 1 ){
 				res.end(JSON.stringify({'Allumer' : 1, 'Eteindre' : 2}))
 			} else if (params.query.deviceType == 2){
@@ -35,6 +40,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 		case 'get_event_types' : //* Returns the events available for a given sensor type
 		{
 			var data = {}
+			//* Required data: for sourceType, list of events, and for each: {evtlabel: evtid}
 			if (params.query.sourceType == '2' ){
 				data = {
 					  'Passe le seuil ' : 1
@@ -49,9 +55,27 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			break
 		}
 
+		case 'get_event_conditions' : 
+			// TODO: 
+			var data = {}
+			if (params.query.evtType && params.query.evtType < 10 ) {
+				data = {
+					  'TODO' : 1
+					, 'Passe le seuil en montant' : 1
+					, 'Passe le seuil en descendant' : 1 // the ids are equal
+					, 'pony' : 11
+					, 'unicorn' : 12
+					, 'narwhal' : 13
+				}
+			}
+			console.log(data)
+			res.end(JSON.stringify(data))
+			break
+
 		case 'get_condition_types' : //* Returns the condition types for a given event type or sensor type
 		{
 			var data = {}
+			//* Required data: for evtType (resp. sensorType, list of events, and for each: {evtlabel: evtid}
 			if (params.query.evtType && params.query.evtType < 10 ) {
 				data = {
 					  '<' : 1

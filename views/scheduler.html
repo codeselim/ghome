@@ -19,12 +19,9 @@
 				<li data-icon="plus">
 					<a data-transition="fade" href="/?module=new_task"> Nouvelle tâche</a>
 				</li>
-				{{#device_types}}
-					<li data-role="list-divider">{{name}}</li>
-					{{#devices}}
-					<li><a data-transition="fade" href="/?module=device&amp;action=display&amp;id={{id}}">{{label}}</a></li>
-					{{/devices}}
-				{{/device_types}}
+				{{#tasks}}
+					<li><a data-transition="fade" href="/?module=task&amp;action=display&amp;id={{id}}">{{title}}</a></li>
+				{{/tasks}}
 			</ul>
 		</div>
 	</div>
