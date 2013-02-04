@@ -75,6 +75,36 @@ function check_frame_checksum (frame_data, framestr) {
 	return (checksum == frame_data.checksum)
 
 }
+
+
+function generate_json_devices_list_from_sql_rows (rows) {
+	var sensor_type_id = -1
+	var number_of_rows = 0
+	var deviceTypes = ''
+					
+	for (var r in rows) {
+		if(sensor_type_id != rows[r].sensor_type_id) {	
+			sensor_type_id = rows[r].sensor_type_id
+			deviceTypes += ']},'
+			deviceTypes += '{"label" : "'+rows[r].name.trim()+'", "devices" : [ '    
+			deviceTypes += '{"label" : "'+rows[r].device_name.trim()+'", "value" : "'+rows[r].hardware_id+'", "type" : "'+rows[r].sensor_type_id+'"}'   //value  is the id of the device
+		} else {
+			deviceTypes += ',{"label" : "'+rows[r].device_name.trim()+'", "value" : "'+rows[r].hardware_id+'", "type" : "'+rows[r].sensor_type_id+'"}'
+		} 
+		number_of_rows++
+	}
+	if(number_of_rows) {
+		var temp = '['  //	temp =  '"deviceTypes" : ['
+		temp += deviceTypes.substr(3) //pour enlever les premier  ]},
+		temp += ']}  ]'
+		deviceTypes = JSON.parse(temp)
+	} else {
+		deviceTypes = []
+	}
+	return deviceTypes
+}
+
 exports.decode_frame = decode_frame
 exports.check_frame_checksum = check_frame_checksum
 exports.decode_data_byte = decode_data_byte
+exports.generate_json_devices_list_from_sql_rows = generate_json_devices_list_from_sql_rows
