@@ -109,7 +109,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 					, 'narwhal' : 13
 				}
 			}
-			console.log(data)
+			// console.log(data)
 			res.end(JSON.stringify(data))
 			break
 		}
@@ -176,8 +176,6 @@ var newTaskRH  = function (req, res, params, responseSender) {
 					//deviceTypes +=  '"deviceTypes" : ['  //moved down
 					deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
 
-						//console.log( deviceTypes )
-					console.log("scheduler_modules.js: ", params)
 
 					var data = tpl.get_template_result("new_task.html", { 
 						  'deviceTypes' : deviceTypes
