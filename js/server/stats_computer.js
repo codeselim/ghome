@@ -2,6 +2,27 @@ var db ;
 
 
 
+
+
+function statsRH(req, res, params, responseSender){
+		var templateData = {
+		// 'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
+		// , 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
+		// , 'TEST_DATA'		 : params.postData
+		// , 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
+		// , 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
+		
+		}
+
+
+	var data = tpl.get_template_result("stats.html", templateData)
+	console.log(params['pathname'])
+	params['fileUrl'] = 'stats.html'
+	responseSender(req, res, params, data)
+}
+
+
+
 /**
  *Function that computes the average of temperature each hour and writes the result in the table hour_stats
  *it will be called at the begining of every hour
