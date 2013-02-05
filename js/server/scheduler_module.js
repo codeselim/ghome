@@ -114,7 +114,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 				}
 			} else if (params.query.sensorType && params.query.sensorType < 10 ) {
 				data = {
-					  '<' : 1
+					  '<' : 1 
 					, '>' : 2
 					, 'pony' : 11
 					, 'unicorn' : 12
