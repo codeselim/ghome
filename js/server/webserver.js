@@ -22,10 +22,10 @@ var requestHandlers = {
 	, 'device'            : device.deviceRequestHandler
 	, 'device_test'       : device.deviceTestRH
 	, 'scheduler'         : scheduler.schedulerRequestHandler
-	, 'new_task'          : scheduler.newTaskRequestHandler
+	, 'task'              : scheduler.taskRequestHandler
 	, 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
-	, 'postform'		      : postformHandler //test post implementation selim 	
+	, 'postform'          : postformHandler //test post implementation selim 	
 }
 
 /* Same format as the request handles dict. Exceptions for the default request handler*/

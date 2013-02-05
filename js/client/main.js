@@ -45,7 +45,7 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device
 			, 'devMgmt'   : devMgmt.pageInit
 			, 'newDevice' : new_device.pageInit
 			, 'scheduler' : scheduler.pageInit
-			, 'newTask'   : scheduler.newTaskPageInit
+			, 'task'   : scheduler.taskPageInit
 		}
 
 		for( id in pageinits) {

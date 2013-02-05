@@ -4,7 +4,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
-			, 'data'     : {'module' : 'new_task', 'action' : 'initCache'}
+			, 'data'     : {'module' : 'task', 'action' : 'initCache'}
 		})
 		.done(function(data) {
 			$.extend(cache, data)
@@ -56,7 +56,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
-			, 'data'     : {'module' : 'new_task', 'action' : 'get_actions', 'deviceType' : deviceType}
+			, 'data'     : {'module' : 'task', 'action' : 'get_actions', 'deviceType' : deviceType}
 		})
 		.done(function(data) {
 			populateSelectBox($('[name=aAction]'), data)
@@ -69,7 +69,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
-			, 'data'     : {'module' : 'new_task', 'action' : 'get_event_types', 'sourceType' : sourceType}
+			, 'data'     : {'module' : 'task', 'action' : 'get_event_types', 'sourceType' : sourceType}
 		})
 		.done(function(data) {
 			populateSelectBox($('[name=evtType]'), data, true)
@@ -89,7 +89,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
-			, 'data'     : $.extend({'module' : 'new_task', 'action' : 'get_condition_types'},arg)
+			, 'data'     : $.extend({'module' : 'task', 'action' : 'get_condition_types'},arg)
 		})
 		.done(function(data) {
 			populateSelectBox($('#condition'+ condId +' [name=condType]'), data, true, false, true)
@@ -120,7 +120,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 			$.ajax({
 					'url'      : "/"
 				, 'dataType' : 'json'
-				, 'data'     : {'module' : 'new_task', 'action' : 'get_condition_values', 'condType' : condType}
+				, 'data'     : {'module' : 'task', 'action' : 'get_condition_values', 'condType' : condType}
 			})
 			.done(function(data) {
 				populateSelectBox($('#condition'+ condId +' [name=condValue]'), data, true)
@@ -160,7 +160,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
-			, 'data'     : $.extend({'module' : 'new_task', 'action' : 'submit'}, getFormParams())
+			, 'data'     : $.extend({'module' : 'task', 'action' : 'submit'}, getFormParams())
 		})
 		.done(function(data) {
 			console.log(data)
@@ -182,7 +182,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 	}
 
 
-	var newTaskPI = function newTaskPI() {
+	var taskPI = function taskPI() {
 		var cache = {}
 		var conditionCount = 0
 
@@ -259,7 +259,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 
 	return {
 			'pageInit' : pageInit
-		, 'newTaskPageInit' : newTaskPI
+		, 'taskPageInit' : taskPI
 	}
 })
 

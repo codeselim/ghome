@@ -43,7 +43,7 @@ var schedulerRH  = function (req, res, params, responseSender) {
 	})
 }
 
-var newTaskRH  = function (req, res, params, responseSender) {
+var taskRH  = function (req, res, params, responseSender) {
 	switch(params.query.action) {
 
 		case 'get_actions' : //* Returns the actions available for a given device type
@@ -145,13 +145,13 @@ var newTaskRH  = function (req, res, params, responseSender) {
 		{
 			res.end(JSON.stringify({success: Math.random() > 0.5}))
 		}
+			break
 
-		default : //* Returns the devices for the action and the event
+		case 'edit':
+		case 'new': //* Returns the devices for the action and the event
 		{
 			var deviceTypes = ''
-			var firsttime = 1
-			var sensor_type_id = -1
-			var number_of_rows = 0
+
 			/**
 			 *@TODO : get the devices that receive actions and adjust the query as well!! 
 			 */
@@ -169,7 +169,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 					
 					deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
 
-					var data = tpl.get_template_result("new_task.html", { 
+					var data = tpl.get_template_result("task.html", { 
 						  'deviceTypes' : deviceTypes
 						  //* Alternative device array
 						  // 'deviceTypes' : [{'label' : 'Prises', 'devices' : [{'label' : 'Prise1', 'value' : 1, 'type' : 1} , {'label' : 'Prise2', 'value' : 2, 'type' : 1} ]}, {'label' : 'Volets', 'devices' : [{'label' : 'Volet1', 'value' : 1, 'type' : 2} , {'label' : 'Volet2', 'value' : 2, 'type' : 2} ]} ]
@@ -189,7 +189,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 						] 
 					})
 
-					params.fileUrl = 'new_task.html'
+					params.fileUrl = 'task.html'
 					responseSender(req, res, params, data)			
 				})
 			break
@@ -200,4 +200,4 @@ var newTaskRH  = function (req, res, params, responseSender) {
 
 
 exports.schedulerRequestHandler = schedulerRH
-exports.newTaskRequestHandler = newTaskRH
+exports.taskRequestHandler = taskRH
