@@ -2,7 +2,7 @@
 //* Will be launching the network sensors server as well as the web server that deals with the different GUIs
 
 //* Small JS "upgrade"
-Array.prototype.remove = function(index) { this.splice(index, 1); return this;}
+ArrayRemove = function(a, index) { a.splice(index, 1); return a;}
 
 // ************ WARNING : KEEP THOSE LINES AT THE TOP, OR SOME DATA WILL BE UNDEFINED ! ***************
 var shared = require('./shared_data')
@@ -18,8 +18,9 @@ set_shared_data('SQL_TABLES', {'st': 'sensors_types',
 								's':'sensors',
 								't':'tasks'})
 var allowed_ids = [2214883, 346751, 8991608, 112022, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
+var connected_ids = allowed_ids.slice(0) // copies the content of allowed_ids
 set_shared_data('ALLOWED_IDS', allowed_ids)
-set_shared_data('ALLOWED_IDS', allowed_ids)
+set_shared_data('CONNECTED_IDS', connected_ids)
 var t = get_shared_data('SQL_TABLES')
 var plugins = ['enocean_sensors/'] // Edit this array in order to load new plugins
 //******************************************************************
@@ -77,12 +78,18 @@ function update_main_temperatures (frame_data) {
 	};
 }
 
+function pre_init () {
+	set_shared_data('DEVICE_START_TESTS', {})
+	set_shared_data('DEVICE_POLL_TESTS', {})
+	set_shared_data('DEVICE_END_TESTS', {})
+}
 
 function load_plugins () {
 	for(i in plugins) {
 		p = './plugins/' + plugins[i] + '/'
 		require(p + 'poll_tests.js')
 		require(p + 'start_tests.js')
+		require(p + 'end_tests.js')
 	}
 }
 
@@ -101,13 +108,14 @@ function GLOBAL_INIT () {
 	db = new dbms.Database()
 	console.log("Connecting to db...")
 	db.connect('dat', function () {
+		console.log(db)
 		console.log("DB connected.")
 		set_shared_data('IN_TEMP', 0) // @TODO : Get the value from the database instead !
 		set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
 		query = "SELECT sensor_id AS sid, MAX(time), value " +
 		"FROM `" + t['l'] + "` l " +
 		"GROUP BY sensor_id";//* /!\ According to StackOverflow, when using BTree as indexes (which is the case with sqlite), the maximum (key1, key2, key3) tuple will be the one returned by the GROUP BY and thus, for us, the last one in terms of time
-		db.query(query, null, function (err, rows) {
+		db.select_query(query, null, function (err, rows) {
 			if (null != err) {
 				console.error("!! Error, could not load the former state of the sensors from the DB, aborting server startup. ¡¡")
 				console.error("The query that caused the error is " + query)
@@ -142,7 +150,7 @@ function start () {
 	*
 	*/
 	// var database = new Database;
-	// database.query()
+	// database.select_query()
 
 
 	sensors_serv.start(db, web_serv, SENSORS_SERVER_PORT, allowed_ids)
@@ -150,4 +158,7 @@ function start () {
 	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
 }
 
+
+pre_init()
+load_plugins()
 GLOBAL_INIT()
