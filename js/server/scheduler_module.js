@@ -72,7 +72,9 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			//* Required data: for sourceType, list of events, and for each: {evtlabel: evtid}
 			if (params.query.sourceType == '2' ){
 				data = {
-					  'Passe le seuil ' : 1
+					  'Passe le seuil en montant' : 1
+					  , 'Passe le seuil en descendant ' : 1
+					  , 'bleh' : 4
 				}
 			} else if (params.query.sourceType == 3 ){
 				data = {
@@ -84,33 +86,20 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			break
 		}
 
-		case 'get_event_conditions' : 
-			// TODO: 
-			var data = {}
-			if (params.query.evtType && params.query.evtType < 10 ) {
-				data = {
-					  'TODO' : 1
-					, 'Passe le seuil en montant' : 1
-					, 'Passe le seuil en descendant' : 1 // the ids are equal
-					, 'pony' : 11
-					, 'unicorn' : 12
-					, 'narwhal' : 13
-				}
-			}
-			console.log(data)
-			res.end(JSON.stringify(data))
-			break
-
 		case 'get_condition_types' : //* Returns the condition types for a given event type or sensor type
 		{
 			var data = {}
 			//* Required data: for evtType (resp. sensorType, list of events, and for each: {evtlabel: evtid}
-			if (params.query.evtType && params.query.evtType < 10 ) {
-				data = {
-					  '<' : 1
-					, '>' : 2
-					, 'bleh' : 11
-					, 'plop' : 12
+			if (params.query.evtType) {
+				if (params.query.evtType == 1) {
+					data = {'bouyah!' : 0	}
+				} else if (params.query.evtType < 10 ) {
+					data = {
+						  '<' : 1
+						, '>' : 2
+						, 'bleh' : 11
+						, 'plop' : 12
+					}
 				}
 			} else if (params.query.sensorType && params.query.sensorType < 10 ) {
 				data = {
@@ -120,7 +109,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 					, 'unicorn' : 12
 					, 'narwhal' : 13
 				}
-			}
+			} 
 			// console.log(data)
 			res.end(JSON.stringify(data))
 			break

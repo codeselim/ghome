@@ -14,7 +14,7 @@
  */
 
  /* .css files are not minified in a single file by the compiler. the @import directive will be 
-  * left as is and generate an extra request to download the css file. */
+ * left as is and generate an extra request to download the css file. */
 // @import "jquery.mobile.min.css.less";
 @import "jqm-custom.css";
 // @import "progressbar.css.less";
@@ -26,10 +26,14 @@
 .ui-li .ui-btn-text span.ui-link-inherit { text-overflow: ellipsis; overflow: hidden; white-space: nowrap;  }
 .ui-li .ui-btn-inner span.ui-link-inherit { padding: .7em 15px .7em 15px; display: block; }
 
-li#conditionEvt {
 
-	.evtSourceBlock .ui-select>div {
+.locked, .ui-select{ // Duplicated in case .locked is not at the right place in the node tree
+	.ui-select>div, .locked {
 		opacity:1;
+		
+		span.ui-icon {
+			display: none;
+		}
 	}
 }
 

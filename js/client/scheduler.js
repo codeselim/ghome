@@ -16,8 +16,10 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 	 * fills $select with data, a label:value dictionnary. If keepstate is not true, the $select will
 	 * be enabled or disabled depending on the emptiness of data. if trigger is true, triggers change
 	 * event at the end.
+	 * if lockifsingle is true, the select button will be locked (disabled with style locked) when 
+	 * data contains only one element. For other lengths of data, see keepstate.
 	 */
-	var populateSelectBox = function($select, data, trigger, keepstate) {
+	var populateSelectBox = function($select, data, trigger, keepstate, lockifsingle) {
 		$select.empty()
 		// $('#select option:gt(0)').remove() //* Remove all options, but not the first
 
@@ -28,6 +30,18 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		if (!keepstate) {
 			$select.selectmenu($.isEmptyObject(data)? 'disable' : 'enable')
 		}
+
+		if (lockifsingle) {
+			var nbElems = Object.keys(data).length
+			if(nbElems == 1) {
+				$select.selectmenu('disable')        // makes the select look like an unclickable
+				$select.parent().addClass('locked')  // button (but not greyish like disabled ones)
+			} else if (nbElems > 1) {
+				$select.selectmenu('enable')
+				$select.parent().removeClass('locked')
+			}
+		}
+
 		$select.selectmenu('refresh', true)
 
 		if (trigger) {
@@ -72,15 +86,13 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 			arg = {'sensorType' : $(this).find(':selected').data('sensor-type')}
 		}
 
-		console.error('TODO: get_event_conditions')
-
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
 			, 'data'     : $.extend({'module' : 'new_task', 'action' : 'get_condition_types'},arg)
 		})
 		.done(function(data) {
-			populateSelectBox($('#condition'+ condId +' [name=condType]'), data, true)
+			populateSelectBox($('#condition'+ condId +' [name=condType]'), data, true, false, true)
 
 			if (condId === 'Evt') { //* Update the conditionEvt item too
 				var label = $('[name=evtSource]').find(':selected').html().replace(/&nbsp;/g, '')
