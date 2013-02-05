@@ -145,6 +145,7 @@ function start () {
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, logger.insertLog)
+	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, events_monitor.handleEvent)
 	
 	/** 
 	*
