@@ -27,7 +27,7 @@ var requestHandlers = {
 	, 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
 	, 'postform'		  : postformHandler //test post implementation selim 	
-	, 'stats'			  : statsRequestHandler 	
+	, 'stats'			  : stats_computer.statsRH	
 }
 
 /* Same format as the request handles dict. Exceptions for the default request handler*/

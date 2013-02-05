@@ -1,5 +1,8 @@
 var db ;
 
+var tpl = require('./template_engine')
+var shared = require('./shared_data')
+var SQL_TABLES_DIC = shared.get_shared_data('SQL_TABLES');
 
 
 
@@ -175,3 +178,4 @@ exports.temperature_m = temperature_m
 exports.consumption_h = consumption_h
 exports.consumption_d = consumption_d
 exports.consumption_m = consumption_m
+exports.statsRH = statsRH
