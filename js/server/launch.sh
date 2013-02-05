@@ -36,7 +36,7 @@ fi
 
 if [ "$defaultValue" = $reset ]; then
 	echo "Resetting DB..." 
-	cd ../../sql/ && rm -vf dat.db && sqlite3 dat.db < dataBaseInit.txt && sqlite3 dat.db < sql_test_data.txt &&
+	cd ../../sql/ && rm -vf dat.db && sqlite3 dat.db < dataBaseInit.txt && sqlite3 dat.db < sql_test_data.txt
 	cd $origin 
 fi
 
