@@ -1,3 +1,6 @@
 *.sublime-*
 sqlite3/
 sql/dat.db
+requirejs/
+r.js
+build.js

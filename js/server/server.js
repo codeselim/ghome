@@ -108,6 +108,7 @@ function GLOBAL_INIT () {
 	db = new dbms.Database()
 	console.log("Connecting to db...")
 	db.connect('dat', function () {
+		console.log(db)
 		console.log("DB connected.")
 		set_shared_data('IN_TEMP', 0) // @TODO : Get the value from the database instead !
 		set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !

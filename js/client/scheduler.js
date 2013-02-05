@@ -72,6 +72,8 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 			arg = {'sensorType' : $(this).find(':selected').data('sensor-type')}
 		}
 
+		console.error('TODO: get_event_conditions')
+
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
@@ -84,7 +86,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 				var label = $('[name=evtSource]').find(':selected').html().replace(/&nbsp;/g, '')
 				var key = $('[name=evtSource]').val()
 
-				populateSelectBox($('#conditionEvt [name=condSource]'), JSON.parse('{"' + label +'" : ' + key + '}'), false, true)
+				populateSelectBox($('#conditionEvt [name=condSource]'), JSON.parse('{"' + label +'" : "' + key + '"}'), false, true)
 				if ($.isEmptyObject(data)) {
 					$('#conditionEvt').addClass('ui-screen-hidden')
 				} else {
@@ -158,7 +160,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 				utils.addMessage('error', 'Une erreur est survenue')
 			}
 		})
-		.fail(function(a,status) { alert(status) })
+		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
 	}
 
 

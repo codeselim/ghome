@@ -1,4 +1,4 @@
-define(['jquery', 'jqvalidate'], function($) {
+define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 	// var progressbardiv = "<div style='width: 200px; opacity: .75' class='meter'><span style='width: 25%'></span></div>"
 
 	//*** Server Polling *****************************************************************************
@@ -112,11 +112,42 @@ define(['jquery', 'jqvalidate'], function($) {
 			$('#popup').popup('open')
 		})
 	}
+
+	//*** Submit *************************************************************************************
+	//* Ignores input button and input submit
+	var submitForm = function submitForm() {
+		var data = utils.queryStringToHash($.param($('input:not([type=button],[type=submit]),select')))
+		console.log(data)
+		data.module = 'device'
+		if (data.id) {
+			data.action = 'submit_edit'
+		} else {
+			data.action = 'submit_new'
+		}
+
+		$.ajax({
+				'url'      : "/"
+			, 'dataType' : 'json'
+			, 'data'     : data
+		})
+		.done(function(data) {
+			console.log(data)
+			if (data.success) {
+				utils.addMessage('success', 'TODO: retourner le nouvel id pour pouvoir passer en mode édition')
+				// window.location.href = '/?module=scheduler'
+				// setTimeout('top.location.href = "/?module=scheduler"',2000)
+			} else {
+				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
+			}
+		})
+		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
+	}
 	
 	//*** Returned functions *************************************************************************
 	var pageInit = function pageInit() {
 		console.log('new device pageInit')
-		
+		utils.initMessages()
+
 		$("#form").validate({
 			  rules: { 
 					  equip_id: "required"
@@ -134,9 +165,9 @@ define(['jquery', 'jqvalidate'], function($) {
 					error.insertAfter(element)
 				}
 			}
+			, submitHandler: submitForm
 		})
 		
-		$(":submit").on('click',function () { $("#action").val(this.name) })
 		$("#test").on('click',function(){
 			$("#form").validate()
 			if ( $("#form").valid() ) {
