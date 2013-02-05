@@ -90,6 +90,7 @@ function load_plugins () {
 		require(p + 'poll_tests.js')
 		require(p + 'start_tests.js')
 		require(p + 'end_tests.js')
+		require(p + 'communicators.js')
 	}
 }
 
