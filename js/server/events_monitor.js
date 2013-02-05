@@ -31,10 +31,13 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 
 		for (t in thresholds) {
 			if (lastValues[idSensor] < threshold && value > threshold) {
-		tasks_executor.execute_task(1);
+		//tasks_executor.execute_task(1);
+		eventEmitter.emit(SENSOR_EVENT, 1);
+
 	}    
 	if (lastValues[idSensor] > threshold && value < threshold) {
-		tasks_executor.execute_task(2);
+		//tasks_executor.execute_task(2);
+		eventEmitter.emit(SENSOR_EVENT, 2);
 	}
 	}
 	lastValues[idSensor] = value;
@@ -52,12 +55,14 @@ function lumEvent(idSensor, sensor_type_id, value) {
 function contEvent(idSensor, sensor_type_id, value) {
 	// Contact performed
 	if(value == 1) {
-		tasks_executor.execute_task(3);
+		//tasks_executor.execute_task(3);
+		eventEmitter.emit(SENSOR_EVENT, 3);
 	}
 
 	// Contact removed
 	if(value == 0) {
-		tasks_executor.execute_task(4);
+		//tasks_executor.execute_task(4);
+		eventEmitter.emit(SENSOR_EVENT, 4);
 	}
 
 	lastValues[idSensor] = value;
@@ -66,11 +71,13 @@ function contEvent(idSensor, sensor_type_id, value) {
 function preEvent(idSensor, sensor_type_id, value) {
 	// Occupancy PIR ON
 	if (value == 0) {
-		tasks_executor.execute_task(10);
+		//tasks_executor.execute_task(10);
+		eventEmitter.emit(SENSOR_EVENT, 10);
 	}
 	// Occupancy PIR OFF
 	if (value == 1) {
-		tasks_executor.execute_task(11);
+		//tasks_executor.execute_task(11);
+		eventEmitter.emit(SENSOR_EVENT, 11);
 	}
 
 	lastValues[idSensor] = value;
