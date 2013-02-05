@@ -160,7 +160,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 				utils.addMessage('error', 'Une erreur est survenue')
 			}
 		})
-		.fail(function(a,status) { alert(status) })
+		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
 	}
 
 

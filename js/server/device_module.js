@@ -39,10 +39,10 @@ function getDevicesTypesList (db, callback) {
  *                  device: {'id': id, 'type': type_id, 'equip_id': hardware_id, 'equip_label': name}
 */
 function getDeviceInfo (db, deviceid, callback) {
-	getDevicesTypesList(function(deviceTypes){ //* Retrieving the list of device types
+	getDevicesTypesList(db, function(deviceTypes){ //* Retrieving the list of device types
 		var data = {'devices_types': deviceTypes}
-		q = "SELECT * FROM " + t['st'] + " ORDER BY name ASC WHERE id = ?"
-		db.query(q, deviceid, function (err, rows) {
+		q = "SELECT * FROM " + t['s'] + " s WHERE s.id = ?"
+		db.query(q, [deviceid], function (err, rows) {
 			if (null != err) {
 				console.error("SQL Query [1] " + q + " went wrong. Error object: " + JSON.stringify(err))
 				// SQL Query went wrong, don't crash, just don't reply anything
@@ -50,7 +50,7 @@ function getDeviceInfo (db, deviceid, callback) {
 				if (rows) {
 					console.log("Row " + i, rows[i])
 					data.device = { 'id': rows[0]['id']
-												, 'type': rows[0]['type_id']
+												, 'type': rows[0]['sensor_type_id']
 												, 'equip_label': rows[0]['name']
 												, 'equip_id': rows[0]['hardware_id']}
 				}
@@ -63,20 +63,28 @@ function getDeviceInfo (db, deviceid, callback) {
 
 var deviceRH = function (req, res, params, responseSender) {
 	switch (params.query.action) {
-		case 'submit':
+		case 'submit_new':
+			// @TODO: run query with the method "run" to get the last inserted ID: https://github.com/developmentseed/node-sqlite3/wiki/API
 			q = "INSERT INTO `" + t['s'] + "` (id, name, hardware_id, sensor_type_id) VALUES (NULL, ?, ?, ?)"
 			p = [params.query.equip_label, params.query.equip_id, params.query.equip_type]
 			// console.log("Going to execute query ", q, "with params", p)
 			params.db.query(q, p, function (err, rows) {
+				console.log(err, rows)
 				if (null == err) {
 					console.log("Request went well")
-					res.writeHead(301, {'Location': "/?module=device_management"})
-					res.end()
+					// res.writeHead(301, {'Location': "/?module=device_management"})
+					// res.end()
+					res.end(JSON.stringify({'id': 'TODO', 'success': true}))
 				} else {
 					console.error("newDeviceRH: Error when inserting the new device.", err)
+					res.end(JSON.stringify({'msg': err, 'success': false}))
 				}
 			})
 			break
+
+		case 'submit_edit':
+			res.end(JSON.stringify({'msg': 'not implemented yet', 'success': false}))
+			break;
 
 		case 'new':
 			//* Loads required data and sends the filled template
@@ -89,8 +97,19 @@ var deviceRH = function (req, res, params, responseSender) {
 		
 		case 'edit':
 			if (params.query.id) {
-				getDeviceInfo(params.db, params.query.id, function (devices_types) {
-					var data = tpl.get_template_result("device.html", { 'devices_types' : devices_types })
+				getDeviceInfo(params.db, params.query.id, function (deviceInfo) {
+					console.log(deviceInfo)
+
+					for (i in deviceInfo.devices_types) {
+						var dt = deviceInfo.devices_types[i]
+						console.log(dt)
+						if (dt.id == deviceInfo.device.type) {
+							dt.selected = true
+							break
+						}
+					}
+
+					var data = tpl.get_template_result("device.html", deviceInfo)
 					params.fileUrl = 'device.html'
 					responseSender(req, res, params, data)
 				})

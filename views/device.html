@@ -18,8 +18,6 @@
 		<div data-role="content">
 			<!-- Content-Begin -->
 			<form action="/" method="GET" id="form">
-				<input type="hidden" name="module" value="device" />
-				<input type="hidden" name="action" id="action" />
 				<input type="hidden" name="id" value="{{device.id}}" />
 				<ul data-role="listview" data-divider-theme="d" data-inset="true">
 					<li data-role="list-divider">Type</li>
@@ -28,12 +26,12 @@
 							<select name="equip_type" id="equip_type">
 								<option value="">-- Choisir --</option>
 								{{#devices_types}}
-									{{#selected}}
-									<option value="{{id}}" selected>{{label}}</option>
-									{{/selected}}
-									{{^selected}}
-									<option value="{{id}}">{{label}}</option>
-									{{/selected}}
+								{{#selected}}
+								<option value="{{id}}" selected>{{label}}</option>
+								{{/selected}}
+								{{^selected}}
+								<option value="{{id}}">{{label}}</option>
+								{{/selected}}
 								{{/devices_types}}
 							</select>
 						</div>
@@ -57,18 +55,20 @@
 
 					</li>
 				</ul>
-					<!-- The name will be used as action GET parameter -->
-					<input type="button" value="Tester" id="test" name="test"/>
-					<input type="submit" value="Valider" name="submit"/>
-				</form>
 
-				<div data-role="popup" id="popup">
-					<a href="#" data-rel="back" data-role="button" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
-					<p id="popupContent">Oops</p>
-				</div>
+				<ul data-role="listview" data-inset="true" id="messages"></ul>
 
-				<!-- Content-End -->
+				<input type="button" value="Tester" id="test" name="test"/>
+				<input type="submit" value="Valider" name="submit"/>
+			</form>
+
+			<div data-role="popup" id="popup">
+				<a href="#" data-rel="back" data-role="button" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<p id="popupContent">Oops</p>
 			</div>
+
+			<!-- Content-End -->
 		</div>
-	</body>
-	</html>
+	</div>
+</body>
+</html>
