@@ -30,7 +30,7 @@ var schedulerRH  = function (req, res, params, responseSender) {
 		"ORDER BY st.name ASC"
 	var p = null
 	console.log(q)
-	params.db.query(q, p, function (err, rows) {
+	params.db.select_query(q, p, function (err, rows) {
 		if (null != err) {
 			console.error("An error occured while reading the list of tasks in the DB.", q)
 		} else {
@@ -51,7 +51,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			console.log('get_actions: deviceType=' + params.query.deviceType)
 			//* Required data: for deviceType, list of actions, and for each: {actionlabel: action id}
 			var actions = ''
-			params.db.query("SELECT at.id , at.name FROM "+SQL_TABLES_DIC.at+" at WHERE at.sensor_type_id = ? ", [params.query.deviceType], function (err, rows){
+			params.db.select_query("SELECT at.id , at.name FROM "+SQL_TABLES_DIC.at+" at WHERE at.sensor_type_id = ? ", [params.query.deviceType], function (err, rows){
 			if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
 			actions = sutils.generate_json_get_actions_by_device_type(rows)
 			res.end(actions)
@@ -166,7 +166,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			/**
 			 *@TODO : get the devices that receive actions and adjust the query as well!! 
 			 */
-			params.db.query("SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
+			params.db.select_query("SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
 							"FROM " + SQL_TABLES_DIC.st + " st " +
 							"JOIN " + SQL_TABLES_DIC.s + " s ON st.id = s.sensor_type_id " +
 							"WHERE s.sensor_type_id IN ( " +

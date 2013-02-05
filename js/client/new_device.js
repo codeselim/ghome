@@ -134,7 +134,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 			console.log(data)
 			if (data.success) {
 				utils.addMessage('success', 'TODO: retourner le nouvel id pour pouvoir passer en mode édition')
-				// window.location.href = '/?module=scheduler'
+				window.location.href = '/?module=device_management'
 				// setTimeout('top.location.href = "/?module=scheduler"',2000)
 			} else {
 				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
