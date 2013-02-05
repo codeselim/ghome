@@ -50,19 +50,11 @@ var newTaskRH  = function (req, res, params, responseSender) {
 		{
 			console.log('get_actions: deviceType=' + params.query.deviceType)
 			//* Required data: for deviceType, list of actions, and for each: {actionlabel: action id}
-			if (params.query.deviceType == 1 ){
-				res.end(JSON.stringify({'Allumer' : 1, 'Eteindre' : 2}))
-			} else if (params.query.deviceType == 2){
-				res.end(JSON.stringify({'Ouvrir 100%' : 1, 'Ouvrir 50%' : 2, 'Fermer' : 3 }))
-			} else if (params.query.deviceType == 2){
-				res.end(JSON.stringify({'Ouvrir 100%' : 1, 'Ouvrir 50%' : 2, 'Fermer' : 3 }))
-			} else {
-				res.end(JSON.stringify({'On' : 1, 'Off' : 2}))
-			}
-
+			var actions = ''
 			params.db.query("SELECT at.id , at.name FROM "+SQL_TABLES_DIC.at+" at WHERE at.sensor_type_id = ? ", [params.query.deviceType], function (err, rows){
 			if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
-			actions = sutils.generate_json_get_actiones_by_device_type(rows)
+			actions = sutils.generate_json_get_actions_by_device_type(rows)
+			res.end(actions)
 			})
 			break
 		}

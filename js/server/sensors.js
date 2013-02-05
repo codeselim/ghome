@@ -104,15 +104,22 @@ function generate_json_devices_list_from_sql_rows (rows) {
 	return deviceTypes
 }
 
-function generate_json_get_actiones_by_device_type(rows){
+function generate_json_get_actions_by_device_type(rows){
 	var number_of_rows = 0
-	var actions = ''
-	for (var r in rows) {
-		console.log('Salim last: '+rows[r].id+" "+rows[r].name)
+	var actions = '{'
+	if (rows.length > 0){
+		for (var i = 0 ; i < rows.length - 1 ;i++) {
+			actions += ' "'+rows[i].name.trim()+'" : '+rows[i].id+' , '
+		}
+		actions += ' "'+rows[i].name.trim()+'" : '+rows[i].id
+		actions += ' }'
+		return actions
 	}
+	else return '{}'
 }
 
 exports.decode_frame = decode_frame
 exports.check_frame_checksum = check_frame_checksum
 exports.decode_data_byte = decode_data_byte
 exports.generate_json_devices_list_from_sql_rows = generate_json_devices_list_from_sql_rows
+exports.generate_json_get_actions_by_device_type = generate_json_get_actions_by_device_type
