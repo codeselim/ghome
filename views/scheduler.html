@@ -12,19 +12,23 @@
 	<div data-role="page" id="scheduler">
 		<div data-theme="a" data-role="header" data-position="fixed">
 			<h3>Planificateur</h3>
-			<a href="/?module=home" data-icon="home" data-iconpos="notext" data-rel="back" >Accueil</a>
+			<a href="/?module=home" data-icon="home" data-iconpos="notext" d>Accueil</a>
 		</div>
 		<div data-role="content">
 			<ul data-role="listview" data-divider-theme="b" data-inset="true">
 				<li data-icon="plus">
 					<a data-transition="fade" href="/?module=new_task"> Nouvelle tâche</a>
 				</li>
-				{{#device_types}}
-					<li data-role="list-divider">{{name}}</li>
+				<li data-role="list-divider">Liste des tâches</li>
+				{{#tasks}}
+					<li data-role="list-divider">{{label}}</li>
 					{{#devices}}
-					<li><a data-transition="fade" href="/?module=device&amp;action=display&amp;id={{id}}">{{label}}</a></li>
+					<li><a data-transition="fade" href="/?module=tasks&amp;action=edit&amp;id={{id}}">{{label}}</a></li>
 					{{/devices}}
-				{{/device_types}}
+				{{/tasks}}
+				{{^tasks}}
+					<li>Il n'y a pas de tâche enregistrée</li>
+				{{/tasks}}
 			</ul>
 		</div>
 	</div>

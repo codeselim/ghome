@@ -10,9 +10,10 @@ require.config({
 })
 
 
-require(['jquery', 'sseListener', 'device_management', 'new_device', 'scheduler', 'jquerymobile'], 
-	function($,sseListener, devMgmt, new_device, scheduler) {
+require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device', 'scheduler', 'jquerymobile'], 
+	function($, /*_,*/ sseListener, devMgmt, new_device, scheduler) {
 	$(function() {
+
 		//* Hides the body until JQM finishes applying styles
 		$('body').css('visibility', 'visible')
 
@@ -57,6 +58,15 @@ require(['jquery', 'sseListener', 'device_management', 'new_device', 'scheduler'
 		//* here.
 		console.log($('[data-role="page"]:first').attr('id'))
 		pageinits[$('[data-role="page"]:first').attr('id')]()
+
+		$(document).on('pagehide', 'div', function(event, ui) {
+      var page = $(event.target)
+ 
+      if(page.attr('data-cache') == 'never'){
+        page.remove()
+      }
+
+		})
 
 	})
 })

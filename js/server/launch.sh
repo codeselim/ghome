@@ -29,9 +29,8 @@ done
 
 if [ "$m" = $defaultValue ]; then
 	if [ "$r" = $defaultValue ]; then
-		echo "No valid parameters passed, considering parameter \"all\" "
+		echo "No valid parameters passed, considering parameter \"m\" "
 		m="OK"
-		r="OK"
 	fi
 fi
 
@@ -41,13 +40,14 @@ if [ "$defaultValue" = $reset ]; then
 	cd $origin 
 fi
 
+if [ "OK" = $r ]; then
+	echo "Launching redirect server..."
+	node redirect.js >/dev/null 2>/dev/null & echo $! > ./redirect.pid
+fi
+
 if [ "OK" = $m ]; then
 	echo "Launching main server as root..." 
 	sudo echo "Fuck sudo" > /dev/null   # Does not do anything, necessary to get sudo OK
-	sudo su -c 'node server.js & echo $! > ./main_server.pid && chmod 0777 -v ./main_server.pid'
+	sudo su -c 'node server.js' # & echo $! > ./main_server.pid && chmod 0777 -v ./main_server.pid & fg'
 fi
 
-if [ "OK" = $r ]; then
-	echo "Launching redirect server..."
-	node redirect.js & echo $! > ./redirect.pid
-fi

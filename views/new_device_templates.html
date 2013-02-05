@@ -1,0 +1,35 @@
+{{#comments}}
+<!--
+Condition Template
+	The values between @@ will be replaced in client side JS
+ -->
+{{/comments}}
+
+{{#conditionTemplate}}
+<li id="condition@@condId@@">	
+	<a href="#" onclick="return false;" class="leftLink">
+		<span>
+			<div class="ui-grid-b" >
+				<div class="ui-block-a">
+					<select name="condSource" data-condition-id="@@condId@@" data-mini="true">
+					{{#evtSourceTypes}}
+					<optgroup label="{{label}}">
+					{{#sensors}}
+					    <option value="{{value}}" data-sensor-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
+					{{/sensors}}
+					</optgroup>
+					{{/evtSourceTypes}}
+					</select>
+				</div>
+				<div class="ui-block-b">
+					<select name="condType" data-condition-id="@@condId@@" data-mini="true" disabled></select>
+				</div>
+				<div class="ui-block-c">
+					<select name="condValue" data-condition-id="@@condId@@" data-mini="true" disabled></select>
+				</div>
+			</div>
+		</span>
+	</a>
+	<a href="#" data-condition-id="@@condId@@" class="removeCondition">Retirer</a>
+</li>
+{{/conditionTemplate}}
