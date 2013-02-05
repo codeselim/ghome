@@ -33,7 +33,7 @@ function execute_task(event_id) {//this function will search the good actions to
 	var month = date.getMonth()
 	var day = date.getDay()
 	var hour = date.getHours()
-	var results = new Array();
+var results = new Array();
 	var targets = new Array();
 	var value = null;
 	var actions_type = {}
@@ -85,6 +85,19 @@ function execute_task(event_id) {//this function will search the good actions to
 							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
 						}
 						break;
+						case 8:
+						case 9:
+						case 10:
+						case 11:
+						case 12:
+						case 13:
+						case 14:
+						case 15:
+						case 16:
+						case 17:
+						console.log("!! @TODO !! Manage this operator (=" + rows[r]["operator"] + ")")
+						break;
+						
 						default :
 						break;
 					}

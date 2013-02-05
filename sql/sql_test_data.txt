@@ -5,6 +5,13 @@ INSERT INTO condition_types VALUES (null, "inférieur ou égal", 4);
 INSERT INTO condition_types VALUES (null, "supérieur ou égal", 5);
 INSERT INTO condition_types VALUES (null, "passage de seuil haut", 6);
 INSERT INTO condition_types VALUES (null, "passage de seuil bas", 7);
+INSERT INTO condition_types VALUES (null, "contact réalisé", 8);
+INSERT INTO condition_types VALUES (null, "contact non réalisé", 9);
+INSERT INTO condition_types VALUES (null, "jour de la semaine =", 10);
+INSERT INTO condition_types VALUES (null, "jour du mois =", 11);
+INSERT INTO condition_types VALUES (null, "mois =", 12);
+INSERT INTO condition_types VALUES (null, "heure =", 13);
+INSERT INTO condition_types VALUES (null, "minute =", 14);
 
 INSERT INTO actions_types VALUES (1, "Allumer prise",5, "ON");
 INSERT INTO actions_types VALUES (null, "Eteindre prise",5, "OFF");
