@@ -104,6 +104,14 @@ function generate_json_devices_list_from_sql_rows (rows) {
 	return deviceTypes
 }
 
+function generate_json_get_actiones_by_device_type(rows){
+	var number_of_rows = 0
+	var actions = ''
+	for (var r in rows) {
+		console.log('Salim last: '+rows[r].id+" "+rows[r].name)
+	}
+}
+
 exports.decode_frame = decode_frame
 exports.check_frame_checksum = check_frame_checksum
 exports.decode_data_byte = decode_data_byte

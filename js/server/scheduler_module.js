@@ -60,9 +60,10 @@ var newTaskRH  = function (req, res, params, responseSender) {
 				res.end(JSON.stringify({'On' : 1, 'Off' : 2}))
 			}
 
-			// params.db.query("SELECT at.id , at.name FROM "+SQL_TABLES_DIC.at+" at WHERE at.sensor_type_id = ?", [params.query.deviceType], function (err, rows){
-			// if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
-
+			params.db.query("SELECT at.id , at.name FROM "+SQL_TABLES_DIC.at+" at WHERE at.sensor_type_id = ? ", [params.query.deviceType], function (err, rows){
+			if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
+			actions = sutils.generate_json_get_actiones_by_device_type(rows)
+			})
 			break
 		}
 
@@ -185,9 +186,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 				function (err, rows) {
 					if(null != err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
 					
-					//deviceTypes +=  '"deviceTypes" : ['  //moved down
 					deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
-
 
 					var data = tpl.get_template_result("new_task.html", { 
 						  'deviceTypes' : deviceTypes
