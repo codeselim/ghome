@@ -86,7 +86,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 				var label = $('[name=evtSource]').find(':selected').html().replace(/&nbsp;/g, '')
 				var key = $('[name=evtSource]').val()
 
-				populateSelectBox($('#conditionEvt [name=condSource]'), JSON.parse('{"' + label +'" : ' + key + '}'), false, true)
+				populateSelectBox($('#conditionEvt [name=condSource]'), JSON.parse('{"' + label +'" : "' + key + '"}'), false, true)
 				if ($.isEmptyObject(data)) {
 					$('#conditionEvt').addClass('ui-screen-hidden')
 				} else {

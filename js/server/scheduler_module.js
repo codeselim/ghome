@@ -139,7 +139,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 
 		case 'initCache' : //* Returns the html for a condition, preloaded with the sensors list (more?)
 		{
-			var data = {'conditionTemplate' : tpl.get_template_result("newDeviceTemplates.html", {
+			var data = {'conditionTemplate' : tpl.get_template_result("new_device_templates.html", {
 				  'conditionTemplate' : true
 				, 'evtSourceTypes' : [
 					{'label' : 'Sources spéciales', 'sensors' : [
