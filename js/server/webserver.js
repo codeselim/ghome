@@ -19,7 +19,7 @@ var webdir = '../..'
 var requestHandlers = {
 	  'home'              : homeReqHandler
 	, 'device_management' : device.devMgmtRequestHandler
-	, 'new_device'        : device.newDeviceRequestHandler
+	, 'device'            : device.deviceRequestHandler
 	, 'device_test'       : device.deviceTestRH
 	, 'scheduler'         : scheduler.schedulerRequestHandler
 	, 'new_task'          : scheduler.newTaskRequestHandler

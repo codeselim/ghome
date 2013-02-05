@@ -20,25 +20,31 @@
 			<form action="/" method="GET" id="form">
 				<input type="hidden" name="module" value="new_device" />
 				<input type="hidden" name="action" id="action" />
+				<input type="hidden" name="id" value="{{#device.id}}" />
 				<div data-role="fieldcontain">
 					<label for="equip_type">Type </label>
 					<select name="equip_type" id="equip_type">
 						<option value="">-- Choisir --</option>
 						{{#devices_types}}
+								{{#selected}}
+						    <option value="{{id}}" selected>{{label}}</option>
+								{{/selected}}
+								{{^selected}}
 						    <option value="{{id}}">{{label}}</option>
+								{{#selected}}
 						{{/devices_types}}
 					</select>
 				</div>
 				<div data-role="fieldcontain">
 					<fieldset data-role="controlgroup">
 						<label for="equip_label"> Label </label>
-						<input name="equip_label" id="equip_label" placeholder="" value="" type="text" />
+						<input name="equip_label" id="equip_label" placeholder="" value="{{#device.equip_label}}" type="text" />
 					</fieldset>
 				</div>
 				<div data-role="fieldcontain">
 					<fieldset data-role="controlgroup">
 						<label for="equip_id"> Identifiant </label>
-						<input name="equip_id" id="equip_id" type="text"/>
+						<input name="equip_id" id="equip_id" type="text" value="{{#device.equip_label}}"/>
 					</fieldset>
 				</div>
 				<!-- The name will be used as action GET parameter -->

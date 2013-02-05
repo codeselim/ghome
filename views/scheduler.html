@@ -19,12 +19,13 @@
 				<li data-icon="plus">
 					<a data-transition="fade" href="/?module=new_task"> Nouvelle tâche</a>
 				</li>
-				{{#device_types}}
-					<li data-role="list-divider">{{label}}</li>
-					{{#devices}}
-					<li><a data-transition="fade" href="/?module=device&amp;action=display&amp;id={{id}}">{{label}}</a></li>
-					{{/devices}}
-				{{/device_types}}
+				<li data-role="list-divider">Liste des tâches</li>
+				{{#tasks}}
+					<li><a data-transition="fade" href="/?module=task&amp;action=display&amp;id={{id}}">{{title}}</a></li>
+				{{/tasks}}
+				{{^tasks}}
+					<li>Il n'y a pas de tâche enregistrée</li>
+				{{#tasks}}
 			</ul>
 		</div>
 	</div>

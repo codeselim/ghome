@@ -72,6 +72,8 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 			arg = {'sensorType' : $(this).find(':selected').data('sensor-type')}
 		}
 
+		console.error('TODO: get_event_conditions')
+
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
