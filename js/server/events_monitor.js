@@ -32,12 +32,12 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 		for (t in thresholds) {
 			if (lastValues[idSensor] < threshold && value > threshold) {
 		//tasks_executor.execute_task(1);
-		eventEmitter.emit(SENSOR_EVENT, 1);
+		eventEmitter.emit(SENSOR_EVENT, 1, idSensor);
 
 	}    
 	if (lastValues[idSensor] > threshold && value < threshold) {
 		//tasks_executor.execute_task(2);
-		eventEmitter.emit(SENSOR_EVENT, 2);
+		eventEmitter.emit(SENSOR_EVENT, 2, idSensor);
 	}
 	}
 	lastValues[idSensor] = value;
@@ -56,13 +56,13 @@ function contEvent(idSensor, sensor_type_id, value) {
 	// Contact performed
 	if(value == 1) {
 		//tasks_executor.execute_task(3);
-		eventEmitter.emit(SENSOR_EVENT, 3);
+		eventEmitter.emit(SENSOR_EVENT, 3, idSensor);
 	}
 
 	// Contact removed
 	if(value == 0) {
 		//tasks_executor.execute_task(4);
-		eventEmitter.emit(SENSOR_EVENT, 4);
+		eventEmitter.emit(SENSOR_EVENT, 4, idSensor);
 	}
 
 	lastValues[idSensor] = value;
@@ -72,12 +72,12 @@ function preEvent(idSensor, sensor_type_id, value) {
 	// Occupancy PIR ON
 	if (value == 0) {
 		//tasks_executor.execute_task(10);
-		eventEmitter.emit(SENSOR_EVENT, 10);
+		eventEmitter.emit(SENSOR_EVENT, 10, idSensor);
 	}
 	// Occupancy PIR OFF
 	if (value == 1) {
 		//tasks_executor.execute_task(11);
-		eventEmitter.emit(SENSOR_EVENT, 11);
+		eventEmitter.emit(SENSOR_EVENT, 11, idSensor);
 	}
 
 	lastValues[idSensor] = value;
@@ -104,11 +104,11 @@ function sendTimeEvent() {
 	// Year or month has changed
 	if (previousTime == null || currentTime.getFullYear() != previousTime.getFullYear() || currentTime.getMonth() != previousTime.getMonth()) {
 		// All events
-		eventEmitter.emit(SENSOR_EVENT, 9)
-		eventEmitter.emit(SENSOR_EVENT, 8)
-		eventEmitter.emit(SENSOR_EVENT, 7)
-		eventEmitter.emit(SENSOR_EVENT, 6)
-		eventEmitter.emit(SENSOR_EVENT, 5)
+		eventEmitter.emit(SENSOR_EVENT, 9, -1)
+		eventEmitter.emit(SENSOR_EVENT, 8, -1)
+		eventEmitter.emit(SENSOR_EVENT, 7, -1)
+		eventEmitter.emit(SENSOR_EVENT, 6, -1)
+		eventEmitter.emit(SENSOR_EVENT, 5, -1)
 		/*tasks_executor.execute_task(9);
 		tasks_executor.execute_task(8);
 		tasks_executor.execute_task(5);
@@ -122,31 +122,31 @@ function sendTimeEvent() {
 		tasks_executor.execute_task(5);
 		tasks_executor.execute_task(6);
 		tasks_executor.execute_task(7);*/
-		eventEmitter.emit(SENSOR_EVENT, 5)
-		eventEmitter.emit(SENSOR_EVENT, 8)
-		eventEmitter.emit(SENSOR_EVENT, 7)
-		eventEmitter.emit(SENSOR_EVENT, 6)
+		eventEmitter.emit(SENSOR_EVENT, 5, -1)
+		eventEmitter.emit(SENSOR_EVENT, 8, -1)
+		eventEmitter.emit(SENSOR_EVENT, 7, -1)
+		eventEmitter.emit(SENSOR_EVENT, 6, -1)
 	}
 	// Day has changed
 	else if (currentTime.getDay() != previousTime.getDay()) {
 		/*tasks_executor.execute_task(5);
 		tasks_executor.execute_task(6);
 		tasks_executor.execute_task(7);*/
-		eventEmitter.emit(SENSOR_EVENT, 5)
-		eventEmitter.emit(SENSOR_EVENT, 6)
-		eventEmitter.emit(SENSOR_EVENT, 7)
+		eventEmitter.emit(SENSOR_EVENT, 5, -1)
+		eventEmitter.emit(SENSOR_EVENT, 6, -1)
+		eventEmitter.emit(SENSOR_EVENT, 7, -1)
 	}
 	// Hour has changed
 	else if (currentTime.getHours() != previousTime.getHours()) {
 		/*tasks_executor.execute_task(6);
 		tasks_executor.execute_task(7);*/
-		eventEmitter.emit(SENSOR_EVENT, 6)
-		eventEmitter.emit(SENSOR_EVENT, 7)
+		eventEmitter.emit(SENSOR_EVENT, 6, -1)
+		eventEmitter.emit(SENSOR_EVENT, 7, -1)
 	}
 	// Minute has changed
 	else if (currentTime.getMinutes() != previousTime.getMinutes()) {
 		//tasks_executor.execute_task(7);
-		eventEmitter.emit(SENSOR_EVENT, 7)
+		eventEmitter.emit(SENSOR_EVENT, 7, -1)
 	}
 /*
 	// Hour changed
