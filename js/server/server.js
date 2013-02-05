@@ -116,7 +116,7 @@ function GLOBAL_INIT () {
 		query = "SELECT sensor_id AS sid, MAX(time), value " +
 		"FROM `" + t['l'] + "` l " +
 		"GROUP BY sensor_id";//* /!\ According to StackOverflow, when using BTree as indexes (which is the case with sqlite), the maximum (key1, key2, key3) tuple will be the one returned by the GROUP BY and thus, for us, the last one in terms of time
-		db.query(query, null, function (err, rows) {
+		db.select_query(query, null, function (err, rows) {
 			if (null != err) {
 				console.error("!! Error, could not load the former state of the sensors from the DB, aborting server startup. ¡¡")
 				console.error("The query that caused the error is " + query)
@@ -153,7 +153,7 @@ function start () {
 	*
 	*/
 	// var database = new Database;
-	// database.query()
+	// database.select_query()
 
 
 	sensors_serv.start(db, web_serv, SENSORS_SERVER_PORT, allowed_ids)

@@ -4,6 +4,7 @@ CREATE TABLE `tasks` (
   `action_type_id` INTEGER NOT NULL,
   `target_id` INTEGER,
   `event_type_id` INTEGER NOT NULL,
+  `origin_id` INTEGER NOT NULL,
   `mode_id` INTEGER NOT NULL, -- still work to be done on that : do we allow multiple modes? Thus pushing that into the `conditions` table?
   `max_month` INTEGER UNSIGNED NOT NULL , -- 0 <= m <= 11
   `min_month` INTEGER UNSIGNED NOT NULL, -- 0 <= m <= 11

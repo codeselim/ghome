@@ -28,17 +28,11 @@ function sendToSensor (sensor_id, message) {
 	if (!started) {
 		notStarted()
 	};
-	db.query("SELECT sensor_type_id FROM `" + t['s'] + "` WHERE id = ?", [sensor_id], function (err, rows) {
+	db.select_query("SELECT sensor_type_id FROM `" + t['s'] + "` WHERE id = ?", [sensor_id], function (err, rows) {
 		if (null == err) {
 			tid = rows[0].sensor_type_id
-			console.log("tid :", tid)
-
-			for (r in communicators){
-				console.log("communicator[",r,"]")
-			}
 
 			if (tid in communicators) {
-				console.log("OK")
 				communicators[tid](sensor_id, message)
 			}
 		};
