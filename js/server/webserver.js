@@ -25,7 +25,8 @@ var requestHandlers = {
 	, 'new_task'          : scheduler.newTaskRequestHandler
 	, 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
-	, 'postform'		      : postformHandler //test post implementation selim 	
+	, 'postform'		  : postformHandler //test post implementation selim 	
+	, 'stats'			  : statsRequestHandler 	
 }
 
 /* Same format as the request handles dict. Exceptions for the default request handler*/
@@ -47,6 +48,26 @@ function postformHandler(req, res, params, responseSender){
 	params['fileUrl'] = 'postform.html'
 	responseSender(req, res, params, data)
 }
+
+
+
+function statsRequestHandler(req, res, params, responseSender){
+		var templateData = {
+		'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
+		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
+		//, 'TEST_DATA'		 : params.postData
+		, 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
+		, 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
+		
+	}
+
+
+	var data = tpl.get_template_result("stats.html", templateData)
+	console.log(params['pathname'])
+	params['fileUrl'] = 'stats.html'
+	responseSender(req, res, params, data)
+}
+
 
 /** Appends '.html' to the module name and uses it as fileName */
 function defaultHtmlRequestHandler(req, res, params, responseSender) {
