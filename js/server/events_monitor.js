@@ -12,8 +12,8 @@ var fs = require("fs");
 var events = require('events');
 // Map with last values of each sensor {id : value, ...}
 var lastValues;
-var SENSOR_EVENT = "newSensorEvent"
-;var eventEmitter = new events.EventEmitter();
+var SENSOR_EVENT = "newSensorEvent";
+var eventEmitter = new events.EventEmitter();
 
 Date.prototype.getWeek = function() {
 	var onejan = new Date(this.getFullYear(),0,1);
@@ -93,14 +93,16 @@ function sendTimeEvent() {
 	var currentTime = new Date();
 	//console.log("Minute changed = " + currentTime.getMinutes());
 	//db.query("SELECT id FROM event_types WHERE name = ?", "minute", sendEvent);
-	var fileLastExecution = fs.openSync("lastExecutionTimer.txt", "w");
-	fs.closeSync(fileLastExecution);
-	var lastExecutionStr = fs.readFileSync("lastExecutionTimer.txt", "utf8");
-	var previousTime = new Date(lastExecutionStr);
+	var lastExecutionStr = null;
+	var previousTime = null;
+	if (fs.existsSync("lastExecutionTimer.txt")) {
+	 lastExecutionStr = fs.readFileSync("lastExecutionTimer.txt", "utf8");
+	 previousTime = new Date(lastExecutionStr);
+	}
 	//tasks_executor.execute_task(7);
 
 	// Year or month has changed
-	if (currentTime.getFullYear() != previousTime.getFullYear() || currentTime.getMonth() != previousTime.getMonth()) {
+	if (previousTime == null || currentTime.getFullYear() != previousTime.getFullYear() || currentTime.getMonth() != previousTime.getMonth()) {
 		// All events
 		eventEmitter.emit(SENSOR_EVENT, 9)
 		eventEmitter.emit(SENSOR_EVENT, 8)
@@ -186,7 +188,6 @@ function start(database) {
 	db = database;
 	//getData(2214883, 10);
 	//getData(2214883, 10);
-	eventEmitter.addListener(SENSOR_EVENT, tasks_executor.execute_task)
 	idTimer = setInterval(sendTimeEvent, 15000);
 }
 
@@ -221,4 +222,6 @@ db.query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"` WHERE 
 }
 
 exports.start = start;
-exports.handleEvent = handleEvent
+exports.handleEvent = handleEvent;
+exports.events = eventEmitter;
+exports.SENSOR_EVENT = SENSOR_EVENT;

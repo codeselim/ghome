@@ -147,6 +147,7 @@ function start () {
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, logger.insertLog)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, events_monitor.handleEvent)
+	events_monitor.events.addListener(events_monitor.SENSOR_EVENT, tasks_executor.execute_task)
 	
 	/** 
 	*
