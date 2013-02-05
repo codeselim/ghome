@@ -34,20 +34,13 @@ var schedulerRH  = function (req, res, params, responseSender) {
 		if (null != err) {
 			console.error("An error occured while reading the list of tasks in the DB.", q)
 		} else {
-			tplData['deviceTypes'] = sutils.generate_json_devices_list_from_sql_rows(rows)
+			tplData['tasks'] = sutils.generate_json_devices_list_from_sql_rows(rows)
 			console.log(tplData)
 			var data = tpl.get_template_result("scheduler.html", tplData)
 			params.fileUrl = 'scheduler.html'
 			responseSender(req, res, params, data)
 		}
 	})
-
-	// //* Required data: list of tasks, and for each: title and id
-	// var data = tpl.get_template_result("scheduler.html", {
-	// 	'tasks' : [{'title': 'Tâche 1', 'id' : 1}, {'title': 'Tâche2', 'id' : 2}]
-	// })
-	// params.fileUrl = 'scheduler.html'
-	// responseSender(req, res, params, data)
 }
 
 var newTaskRH  = function (req, res, params, responseSender) {

@@ -21,11 +21,14 @@
 				</li>
 				<li data-role="list-divider">Liste des tâches</li>
 				{{#tasks}}
-					<li><a data-transition="fade" href="/?module=task&amp;action=display&amp;id={{id}}">{{title}}</a></li>
+					<li data-role="list-divider">{{label}}</li>
+					{{#devices}}
+					<li><a data-transition="fade" href="/?module=tasks&amp;action=edit&amp;id={{id}}">{{label}}</a></li>
+					{{/devices}}
 				{{/tasks}}
 				{{^tasks}}
 					<li>Il n'y a pas de tâche enregistrée</li>
-				{{#tasks}}
+				{{/tasks}}
 			</ul>
 		</div>
 	</div>
