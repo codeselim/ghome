@@ -168,3 +168,10 @@ function start ( ) {
 
 
 exports.start = start 
+exports.get_stats = get_stats
+exports.temperature_h = temperature_h
+exports.temperature_d = temperature_d
+exports.temperature_m = temperature_m
+exports.consumption_h = consumption_h
+exports.consumption_d = consumption_d
+exports.consumption_m = consumption_m
