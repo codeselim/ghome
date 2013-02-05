@@ -22,9 +22,26 @@ var SQL_TABLES_DIC = shared.get_shared_data('SQL_TABLES');
 
 
 var schedulerRH  = function (req, res, params, responseSender) {
-	var data = tpl.get_template_result("scheduler.html", {})
-	params.fileUrl = 'scheduler.html'
-	responseSender(req, res, params, data)
+	var tplData = {}
+	var q = "SELECT s.sensor_type_id, st.name, t.id AS id, t.name AS device_name " + // Note : t.name is renamed AS device_name just for compatibility with generate_json_devices_list_from_sql_rows() function
+		"FROM `" + SQL_TABLES_DIC.t + "` t " +
+		"INNER JOIN `" + SQL_TABLES_DIC.s + "` s ON (t.target_id = s.id) " +
+		"INNER JOIN `" + SQL_TABLES_DIC.st + "` st ON (st.id = s.sensor_type_id) " +
+		"ORDER BY st.name ASC"
+	var p = null
+	console.log(q)
+	params.db.query(q, p, function (err, rows) {
+		if (null != err) {
+			console.error("An error occured while reading the list of tasks in the DB.", q)
+		} else {
+			tplData['deviceTypes'] = sutils.generate_json_devices_list_from_sql_rows(rows)
+			console.log(tplData)
+			var data = tpl.get_template_result("scheduler.html", tplData)
+			params.fileUrl = 'scheduler.html'
+			responseSender(req, res, params, data)
+		}
+	})
+
 }
 
 var newTaskRH  = function (req, res, params, responseSender) {
