@@ -10,3 +10,7 @@ INSERT INTO event_types VALUES (null, "Contact rompu");
 INSERT INTO event_types VALUES (null, "Changement de jour");
 INSERT INTO event_types VALUES (null, "Changement d'heure");
 INSERT INTO event_types VALUES (null, "Changement de minute");
+INSERT INTO event_types VALUES (null, "Changement de semaine");
+INSERT INTO event_types VALUES (null, "Changement de mois");
+INSERT INTO event_types VALUES (null, "Présence détectée");
+INSERT INTO event_types VALUES (null, "Absence détectée");

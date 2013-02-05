@@ -1,13 +1,20 @@
-INSERT INTO condition_types VALUES (1, "égalité", 1);
-INSERT INTO condition_types VALUES (null, "inférieur", 2);
-INSERT INTO condition_types VALUES (null, "supérieur", 3);
-INSERT INTO condition_types VALUES (null, "inférieur ou égal", 4);
-INSERT INTO condition_types VALUES (null, "supérieur ou égal", 5);
-INSERT INTO condition_types VALUES (null, "passage de seuil haut", 6);
-INSERT INTO condition_types VALUES (null, "passage de seuil bas", 7);
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (1, "égalité", 1, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "inférieur", 2, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "supérieur", 3, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "inférieur ou égal", 4, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "supérieur ou égal", 5, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "passage de seuil haut", 6, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "passage de seuil bas", 7, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "contact réalisé", 8, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "contact non réalisé", 9, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine =", 10, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois =", 11, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois =", 12, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure =", 13, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute =", 14, "threshold");
 
-INSERT INTO actions_types VALUES (1, "Allumer prise",5, "ON");
-INSERT INTO actions_types VALUES (null, "Eteindre prise",5, "OFF");
+INSERT INTO actions_types VALUES (1, "Allumer prise", 5, "ON");
+INSERT INTO actions_types VALUES (null, "Eteindre prise", 5, "OFF");
 
 INSERT INTO actions_types VALUES (null, "Augmenter Temperature +10C",1, "TRUC");
 INSERT INTO actions_types VALUES (null, "Diminuer Temperature -10C",1, "TRUC");
@@ -16,7 +23,7 @@ INSERT INTO actions_types VALUES (null, "Ouvrir Volet 60%",6, "TRUC");
 INSERT INTO actions_types VALUES (null, "Fermer Volet 30%",6, "TRUC");
 INSERT INTO actions_types VALUES (null, "Fermer Volet 60%",6, "TRUC");
 
-INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, mode_id, max_month, min_month, max_day, min_day, max_hour, min_hour) VALUES (1, "changer minuteuh", 1, 8, 7, 1, 11, 0, 6, 0, 24, 0);
+INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, origin_id, mode_id, max_month, min_month, max_day, min_day, max_hour, min_hour) VALUES (1, "changer minuteuh", 1, 8, 7, -1, 1, 11, 0, 6, 0, 24, 0);
 
 INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (1, "82", 1, 1, 1);
 INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (2, "82", 1, 1, 1);
@@ -41,3 +48,16 @@ INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 1, 82, datetime())
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 2, 27, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 3, 07, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 4, 11, datetime());
+
+-- Join tables data
+
+--  temperature
+INSERT INTO `event_types_condition_types` VALUES(1, 1); -- ascending threshold
+INSERT INTO `event_types_condition_types` VALUES(2, 1);  -- descending threshold
+
+-- light
+INSERT INTO `event_types_condition_types` VALUES(1, 2); -- ascending threshold
+INSERT INTO `event_types_condition_types` VALUES(2, 2);  -- descending threshold
+
+
+-- INSERT INTO `event_types_condition_types` VALUES(, );

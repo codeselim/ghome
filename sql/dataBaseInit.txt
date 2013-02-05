@@ -9,3 +9,4 @@
 .read thresholds.sql
 .read actions_types.sql
 .read actions_receivers_view.sql
+.read join_tables.sql
