@@ -18,7 +18,7 @@ var sutils = require('./sensors')
 function getDevicesTypesList (db, callback) {
 	q = "SELECT * FROM " + t['st'] + " ORDER BY name ASC"
 	var data = []
-	db.query(q, null, function (err, rows) { // Dictionary of the SQL tables names
+	db.select_query(q, null, function (err, rows) { // Dictionary of the SQL tables names
 		if (null != err) {
 			console.error("SQL Query [1] " + q + " went wrong. Error object: " + JSON.stringify(err))
 			// SQL Query went wrong, don't crash, just don't reply anything
@@ -43,7 +43,7 @@ function getDeviceInfo (db, deviceid, callback) {
 	getDevicesTypesList(db, function(deviceTypes){ //* Retrieving the list of device types
 		var data = {'devices_types': deviceTypes}
 		q = "SELECT * FROM " + t['s'] + " s WHERE s.id = ?"
-		db.query(q, [deviceid], function (err, rows) {
+		db.select_query(q, [deviceid], function (err, rows) {
 			if (null != err) {
 				console.error("SQL Query [1] " + q + " went wrong. Error object: " + JSON.stringify(err))
 				// SQL Query went wrong, don't crash, just don't reply anything
@@ -69,13 +69,12 @@ var deviceRH = function (req, res, params, responseSender) {
 			q = "INSERT INTO `" + t['s'] + "` (id, name, hardware_id, sensor_type_id) VALUES (NULL, ?, ?, ?)"
 			p = [params.query.equip_label, params.query.equip_id, params.query.equip_type]
 			// console.log("Going to execute query ", q, "with params", p)
-			params.db.query(q, p, function (err, rows) {
-				console.log(err, rows)
+			params.db.insert_query(q, p, function (err) {
 				if (null == err) {
 					console.log("Request went well")
 					// res.writeHead(301, {'Location': "/?module=device_management"})
 					// res.end()
-					res.end(JSON.stringify({'id': 'TODO', 'success': true}))
+					res.end(JSON.stringify({'id': this.lastID, 'success': true}))
 				} else {
 					console.error("newDeviceRH: Error when inserting the new device.", err)
 					res.end(JSON.stringify({'msg': err, 'success': false}))
@@ -171,7 +170,7 @@ var deviceTestRH = function (req, res, params, responseSender) {
 }
 
 var deviceManagementRH  = function (req, res, params, responseSender) {
-	params.db.query("SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
+	params.db.select_query("SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
 					"FROM " + t['st'] + " st " +
 					"JOIN " + t['s']+ " s ON st.id = s.sensor_type_id " +
 					"ORDER BY s.sensor_type_id", 
