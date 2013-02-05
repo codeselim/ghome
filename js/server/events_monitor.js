@@ -91,7 +91,6 @@ var dictSensorEvent = { 1 : tempEvent,
 
 function sendTimeEvent() {
 	var currentTime = new Date();
-<<<<<<< HEAD
 	//console.log("Minute changed = " + currentTime.getMinutes());
 	//db.query("SELECT id FROM event_types WHERE name = ?", "minute", sendEvent);
 	var lastExecutionStr = null;
@@ -115,12 +114,6 @@ function sendTimeEvent() {
 		tasks_executor.execute_task(5);
 		tasks_executor.execute_task(6);
 		tasks_executor.execute_task(7);*/
-=======
-	console.log("Minute changed = " + currentTime.getMinutes());
-	//db.select_query("SELECT id FROM event_types WHERE name = ?", "minute", sendEvent);
-	tasks_executor.execute_task(7, "10", -1);
-
->>>>>>> master
 
 	}
 	// Week has changed
@@ -202,27 +195,21 @@ function handleEvent(frame_data) {
 
 data = dataSensor;
 console.log("Data received : " + dataSensor + "\nHardware ID sensor : " + idSensor);
-<<<<<<< HEAD
-db.query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"` WHERE hardware_id = ?", [frame_data.id], function(err, rows) {
-=======
-db.select_query("SELECT sensors_types.name FROM (SELECT * FROM sensors WHERE sensors.hardware_id = ?) JOIN sensors_types ON sensor_type_id = sensors_types.id", idSensor, function(err, rows) {
->>>>>>> master
+
+db.select_query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"` WHERE hardware_id = ?", [frame_data.id], function(err, rows) {
+
 // For every type of the sensor (a sensor can have many types)
 	 for (var r in rows) {
       //console.log(rows[r]["sensors_types.name"]);
       //var sensor_type = rows[r]["sensors_types.name"];
       //var sensor_type_id = rows[r]["sensors_types.id"];
       // If sensor_type_id is associated with a function in dictSensorEvent
-<<<<<<< HEAD
       type = rows[i].sensor_type_id
 	  value = sensors_utils.decode_data_byte(frame_data, type)
 	  sensor_id = rows[i].sensor_id
       if (type in Object.keys(dictSensorEvent)) {
       	//db.query("SELECT id FROM sensors WHERE hardware_id = ? AND sensor_type_id = ?", [idSensor, sensor_type_id], function(err, rows) {
-=======
-      if (sensor_type_id in Object.keys(dictSensorEvent)) {
-      	db.select_query("SELECT id FROM sensors WHERE hardware_id = ? AND sensor_type_id = ?", [idSensor, sensor_type_id], function(err, rows) {
->>>>>>> master
+
       		for (var r in rows) {
       			var sensor_id = rows[r]["id"];
       			dictSensorEvent[type](sensor_id, type, value);

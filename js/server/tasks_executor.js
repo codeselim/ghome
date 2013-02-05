@@ -7,7 +7,7 @@ var get_shared_data = shared.get_shared_data
 var sensors_values = {}
 
 function send_message(target, action){
-	db.query("SELECT message_to_sensor FROM actions_types WHERE id = ?", [action], function (err, rows) {
+	db.select_query("SELECT message_to_sensor FROM actions_types WHERE id = ?", [action], function (err, rows) {
 		for (var r in rows){
 			device_communicator.sendToSensor (target, rows[r]["message_to_sensor"]);
 		}
