@@ -42,7 +42,7 @@ function execute_task(event_id) {//this function will search the good actions to
 	console.log(event_id)
 
 	//We get the action type id, the operator, the value to compare, the sensor_id and the target_id from the candidate actions (actions wich are in the right timer for being candidate)
-	db.query("SELECT action_type_id, operator, value_to_compare, sensor_id, target_id FROM Tasks AS t INNER JOIN conditions AS c ON c.task_id = t.id INNER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND "
+	db.select_query("SELECT action_type_id, operator, value_to_compare, sensor_id, target_id FROM Tasks AS t INNER JOIN conditions AS c ON c.task_id = t.id INNER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND "
 			+ month + " <= max_month AND " + month + " >= min_month AND "
 			+ day + " <= max_day AND " + day + " >= min_day AND "
 			+ hour + " <= max_hour AND " + hour + " >= min_hour"
