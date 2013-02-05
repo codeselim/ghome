@@ -23,6 +23,7 @@ function getDevicesTypesList (db, callback) {
 			console.error("SQL Query [1] " + q + " went wrong. Error object: " + JSON.stringify(err))
 			// SQL Query went wrong, don't crash, just don't reply anything
 		} else {
+			console.log(rows)
 			for(i in rows) {
 				console.log("Row " + i, rows[i])
 				data.push({'id': rows[i]['id'], 'label': rows[i]['name']})
