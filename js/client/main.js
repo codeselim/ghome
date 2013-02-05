@@ -1,17 +1,28 @@
 require.config({ 
 	baseUrl: 'js/client'
-	, paths: {  
-		  'jquerymobile': '../vendor/jquery.mobile-1.2.0.min'
+	, paths: { 
+		  'highcharts'  : '../vendor/highcharts'
+		, 'exporting' : '../vendor/exporting'
+		,  'jquerymobile': '../vendor/jquery.mobile-1.2.0.min'
 		, 'jqvalidate': '../vendor/jquery.validate.min'
 	}
 	, shim : {
 		'jquerymobile' : ['jquery']
+		, 'highcharts' : {
+			'exports' : 'Highcharts'
+			, 'deps' : ['jquery']
+		}
+		, 'stats' : {
+			'exports' : 'stats'
+		}
 	}
 })
 
 
-require(['jquery', 'sseListener', 'device_management', 'new_device', 'jquerymobile'], function($,sseListener, devMgmt, new_device) {
+require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device', 'scheduler', 'stats', 'jquerymobile'], 
+	function($, /*_,*/ sseListener, devMgmt, new_device, scheduler, stats) {
 	$(function() {
+
 		//* Hides the body until JQM finishes applying styles
 		$('body').css('visibility', 'visible')
 
@@ -38,10 +49,13 @@ require(['jquery', 'sseListener', 'device_management', 'new_device', 'jquerymobi
 
 		//* Registering the page inits
 		pageinits = {
-			  'home' : homePI
-			, 'notif' : notifPI
-			, 'devMgmt' : devMgmt.pageInit
-			, 'newDevice' : new_device.pageInit 
+			  'home'      : homePI
+			, 'notif'     : notifPI
+			, 'stats'     : stats.pageInit
+			, 'devMgmt'   : devMgmt.pageInit
+			, 'newDevice' : new_device.pageInit
+			, 'scheduler' : scheduler.pageInit
+			, 'newTask'   : scheduler.newTaskPageInit
 		}
 
 		for( id in pageinits) {
@@ -54,6 +68,15 @@ require(['jquery', 'sseListener', 'device_management', 'new_device', 'jquerymobi
 		//* here.
 		console.log($('[data-role="page"]:first').attr('id'))
 		pageinits[$('[data-role="page"]:first').attr('id')]()
+
+		$(document).on('pagehide', 'div', function(event, ui) {
+      var page = $(event.target)
+ 
+      if(page.attr('data-cache') == 'never'){
+        page.remove()
+      }
+
+		})
 
 	})
 })

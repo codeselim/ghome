@@ -4,6 +4,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>ghome</title>
+	<!-- <link rel="stylesheet" href="css/ghome.css"> -->
 	<link rel="stylesheet/less" type="text/css" href="css/ghome.less" />
 	<script src="js/vendor/less.min.js" type="text/javascript"></script>
 	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
@@ -27,12 +28,13 @@
 			<ul data-role="listview" data-divider-theme="b" data-inset="true" >
 				<li><a data-transition="slide" href="/?module=app">Test notifs</a></li>
 				<li><a data-transition="slide" href="/?module=device_management">Gestion des équipements</a></li>
-				<li data-theme="e"><a data-transition="slide" href="#">Configurations</a></li>
-				<li data-theme="e"><a data-transition="slide" href="#">Statistiques</a></li>
-				<li data-theme="e"><a data-transition="slide" href="#">Chauffage</a></li>
-				<li data-theme="e"><a data-transition="slide" href="#">Eclairage automatique</a></li>
+				<li data-theme="f"><a data-transition="slide" href="#">Configurations</a></li>
+				<li data-theme="e"><a data-transition="slide" href="/?module=stats">Statistiques</a></li>
+				<li data-theme="f"><a data-transition="slide" href="#">Chauffage</a></li>
+				<li data-theme="f"><a data-transition="slide" href="#">Eclairage automatique</a></li>
 				<li data-theme="e"><a data-transition="slide" href="#">Mode Espion</a></li>
-				<li data-theme="e"><a data-transition="slide" href="#">Planificateur</a></li>
+				<li><a data-transition="slide" href="/?module=scheduler">Planificateur</a></li>
+				<li data-theme="e"><a data-transition="slide" href="/?module=threshold">Seuils</a></li>
 			</ul>
 	</div>
 

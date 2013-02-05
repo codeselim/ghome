@@ -32,48 +32,35 @@ function decode_frame (frame) {
 
 /**
  * Function the type of the sensor and the detected value
- * @param {array} Array of the data inside the frame
+ * @param {array} frame_data of the data inside the frame
+ *        {integer} type_s  type of sensor
  * @returns {array} Array containig the type of the sensor (temperature or light sensor)
  * and the value detected by the sensor
 */
-function decode_data_byte (frame_data) {
-	func = frame_data.data [3] >> 2 ; //shift right the bytes of data_byte3 by 2 to obtain func
-	if (frame_data.org == 0X7 ){
-		switch (func) {
-			case 0X02 :
-				value = Math.abs((frame_data.data[2] * 40 /255) - 40 ) ;//temperature sensor
-				return [1,value]; // 0 indicates that it is a temperature
-			case 0X03 :
-				value = frame_data.data[1] * 510 / 255;//luminosity value
-				return [2,value]; // 1 indicates that it's a luminosity
-			case 0X12 : //this func doesn't exist in the documentation
-				   // we added it for our consumption module
-				value = parseFloat (frame_data.data[1]+"."+frame_data.data[0]);
-				   //value of power consumption in a minute in Wh
-				return [5,value]; //2 indicates that it is a power consumption
-			default:
-				return [-1,0];
-		}
-	} else {
-		console.error("An invalid data_byte frame was sent to decode_data_byte(). The ORG field was " + frame_data.org + " instead of 0x7")
-		return [-1, null]
+function decode_data_byte (type_s, frame_data) {
+	switch (type_s) {
+		case 1 ://temperature
+			value = Math.abs((frame_data.data[2] * 40 /255) - 40 ) ;//temperature sensor
+			return value;
+		case 2 ://light
+			value = frame_data.data[1] * 510 / 255;//luminosity value
+			return value;
+		case 3 ://presence
+			value = frame_data.data[3] & 2;
+			return value;
+		case 4 ://contact
+			value = frame_data.data[3] & 1;
+			return value;
+		case 5 : //electricity : value of power consumption in a minute in Wh
+			value = parseFloat (frame_data.data[2]+"."+frame_data.data[3]);
+			   //value of power consumption in a minute in Wh
+			return value;
+		default:
+			return null;
 	}
-	else if (frame_data.org == 0X2){
-		if (func == 2) {
-			db3_bit0 = frame_data_byte[3] & 1;
-			switch (db3_bit0) {
-				case 0 :
-					return [4,0]; //contact opened
-				case 1 :
-					return [4,1]; //contact closed
-				default:
-					return [-1,0];
-			}
-		}
-
-	}
-	
 }
+	
+
 
 function check_frame_checksum (frame_data, framestr) {
 	//* Note: The checksum is the least significat Byte of the sum of all the values except the sync bytes (the "separator") and the checksum itself
@@ -88,6 +75,36 @@ function check_frame_checksum (frame_data, framestr) {
 	return (checksum == frame_data.checksum)
 
 }
+
+
+function generate_json_devices_list_from_sql_rows (rows) {
+	var sensor_type_id = -1
+	var number_of_rows = 0
+	var deviceTypes = ''
+					
+	for (var r in rows) {
+		if(sensor_type_id != rows[r].sensor_type_id) {	
+			sensor_type_id = rows[r].sensor_type_id
+			deviceTypes += ']},'
+			deviceTypes += '{"label" : "'+rows[r].name.trim()+'", "devices" : [ '    
+			deviceTypes += '{"label" : "'+rows[r].device_name.trim()+'", "id" : "'+ rows[r].id +'", "type" : "'+rows[r].sensor_type_id+'"}'
+		} else {
+			deviceTypes += ',{"label" : "'+rows[r].device_name.trim()+'", "id" : "'+ rows[r].id +'", "type" : "'+rows[r].sensor_type_id+'"}'
+		} 
+		number_of_rows++
+	}
+	if(number_of_rows) {
+		var temp = '['  //	temp =  '"deviceTypes" : ['
+		temp += deviceTypes.substr(3) //pour enlever les premier  ]},
+		temp += ']}  ]'
+		deviceTypes = JSON.parse(temp)
+	} else {
+		deviceTypes = []
+	}
+	return deviceTypes
+}
+
 exports.decode_frame = decode_frame
 exports.check_frame_checksum = check_frame_checksum
 exports.decode_data_byte = decode_data_byte
+exports.generate_json_devices_list_from_sql_rows = generate_json_devices_list_from_sql_rows

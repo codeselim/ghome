@@ -10,8 +10,6 @@ var check_checksum = sensors_utils.check_frame_checksum
 var eventEmitter = new events.EventEmitter();
 var SENSOR_FRAME_EVENT = "newSensorFrame"
 var FRAME_SEPARATOR = "A55A"
-var PLUG_SWITCH_ON_FRAME = 'A55A6B0555000000FF9F1E063072'//* Frame to be sent to toggle the switch on plug state (specific to our given switch power plug)
-var PLUG_SWITCH_OFF_FRAME = 'A55A6B0577000000FF9F1E063072'//* Frame to be sent to toggle the switch off plug state (specific to our given switch power plug)
 function start (db, web_serv, port, allowed_ids) {
 	FRAME_SIZE = 28
 	console.log(new Date(), "Starting Sensors server")
@@ -30,16 +28,16 @@ function start (db, web_serv, port, allowed_ids) {
 			buffer += data
 			var pos = -1
 			while (buffer.length >= FRAME_SIZE && -1 != (pos = buffer.indexOf(FRAME_SEPARATOR))) {//* We have found a separator, that means that the previous frame (that may be incomplete or may not) is over and a new one starts
-				console.log(new Date(), "A frame is over")
-				console.log(buffer)
-				console.log(buffer.indexOf(FRAME_SEPARATOR))
-				console.log("pos=", pos)
+				// console.log(new Date(), "A frame is over")
+				// console.log(buffer)
+				// console.log(buffer.indexOf(FRAME_SEPARATOR))
+				// console.log("pos=", pos)
 				if (0 != pos) {//* The separator is not the first char, that means we have an unfinished / incomplete frame just before the current one. Throw it away
 					//* Skip the beginning of the buffer:
 					buffer = buffer.substr(pos, buffer.length) //* If the second parameter is >= the maximum possible length substr can return, substr just returns the maximum length possible, so who cares substracting?
 					//* Once we've skipped the rubbish, we need to re-check that the frame we want to read (the one which actually provides the FRAME_SEPARATOR) is now long enough (>= FRAME_SIZE)
 					//* We do that by skipping the end of the loop and thus re-doing the loop condition:
-					console.log("Throwing away rubbish.")
+					// console.log("Throwing away rubbish.")
 					continue;
 				}
 				frame = buffer.substr(0, FRAME_SIZE) //* We know we have a complete frame (>= FRAME_SIZE and pos == 0) so just cut it off by its length
@@ -69,20 +67,6 @@ function start (db, web_serv, port, allowed_ids) {
 	server.listen(port);
 }
 
-function send_to_sensor (sensor_id, message) {
-	var sock = new net.Socket()
-	sock.connect(get_shared_data('MAIN_SERVER_PORT'), get_shared_data('MAIN_SERVER_IP'), function () { 
-		console.log('Connection to main server established, going to send a message for a sensor', message)
-		sock.write(message, null, function () {
-			console.log('Data sent to main server, disconnecting.')
-			sock.close()
-		})
-	})
-}
-
 exports.start = start
 exports.events = eventEmitter
 exports.SENSOR_FRAME_EVENT = SENSOR_FRAME_EVENT
-exports.PLUG_SWITCH_ON_FRAME = PLUG_SWITCH_ON_FRAME
-exports.PLUG_SWITCH_OFF_FRAME = PLUG_SWITCH_OFF_FRAME
-exports.sendToSensor = send_to_sensor
