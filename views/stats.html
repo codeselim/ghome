@@ -99,8 +99,31 @@ $(function () {
 		<div data-theme="a" data-role="header" data-position="fixed" data-transition="none">
 			<h3>ghome</h3>
 		</div>
-		<p>&nbsp;Stats test module</p>
+		<p></p>
 		<div data-role="content" >
+		
+			<form action="/" method="GET" id="form">
+
+                            <div class="ui-block-a">
+                                <select name="aActor" >
+                                    <option value="">-- Type de Stats --</option>
+                                    {{#deviceTypes}}
+                                    <optgroup label="{{label}}">
+                                        {{#devices}}
+                                        <option value="{{id}}" data-device-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
+                                        {{/devices}}
+                                    </optgroup>
+                                    {{/deviceTypes}}
+                                </select>
+                            </div>
+                            <div class="ui-block-b">
+                                <select name="aAction">
+                                </select>
+                            </div>
+                        </div>
+
+			</form>	
+
 			<div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
 		</div>
 
