@@ -25,6 +25,7 @@ var requestHandlers = {
 	, 'new_task'          : scheduler.newTaskRequestHandler
 	, 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
+	, 'stats'          	  : defaultHtmlRequestHandler
 	, 'postform'		      : postformHandler //test post implementation selim 	
 }
 
