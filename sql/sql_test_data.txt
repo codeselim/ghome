@@ -41,3 +41,5 @@ INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 1, 82, datetime())
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 2, 27, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 3, 07, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 4, 11, datetime());
+
+INSERT INTO `settings` (id, name, value) VALUES (1, 'mode spy', 'ON');
