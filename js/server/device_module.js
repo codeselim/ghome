@@ -69,13 +69,12 @@ var deviceRH = function (req, res, params, responseSender) {
 			q = "INSERT INTO `" + t['s'] + "` (id, name, hardware_id, sensor_type_id) VALUES (NULL, ?, ?, ?)"
 			p = [params.query.equip_label, params.query.equip_id, params.query.equip_type]
 			// console.log("Going to execute query ", q, "with params", p)
-			params.db.select_query(q, p, function (err, rows) {
-				console.log(err, rows)
+			params.db.insert_query(q, p, function (err) {
 				if (null == err) {
 					console.log("Request went well")
 					// res.writeHead(301, {'Location': "/?module=device_management"})
 					// res.end()
-					res.end(JSON.stringify({'id': 'TODO', 'success': true}))
+					res.end(JSON.stringify({'id': this.lastID, 'success': true}))
 				} else {
 					console.error("newDeviceRH: Error when inserting the new device.", err)
 					res.end(JSON.stringify({'msg': err, 'success': false}))
