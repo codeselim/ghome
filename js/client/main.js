@@ -1,3 +1,5 @@
+"use strict"
+
 require.config({ 
 	baseUrl: 'js/client'
 	, paths: {  
@@ -10,8 +12,8 @@ require.config({
 })
 
 
-require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device', 'scheduler', 'jquerymobile'], 
-	function($, /*_,*/ sseListener, devMgmt, new_device, scheduler) {
+require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'jquerymobile'], 
+	function($, /*_,*/ sseListener, devMgmt, device, scheduler) {
 	$(function() {
 
 		//* Hides the body until JQM finishes applying styles
@@ -39,16 +41,16 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device
 		}
 
 		//* Registering the page inits
-		pageinits = {
+		var pageinits = {
 			  'home'      : homePI
 			, 'notif'     : notifPI
 			, 'devMgmt'   : devMgmt.pageInit
-			, 'newDevice' : new_device.pageInit
+			, 'device'    : device.pageInit
 			, 'scheduler' : scheduler.pageInit
-			, 'task'   : scheduler.taskPageInit
+			, 'task'      : scheduler.taskPageInit
 		}
 
-		for( id in pageinits) {
+		for(var id in pageinits) {
 			console.log('applying pageinit for ' + id)
 			$(document).delegate('#' + id, 'pageinit', pageinits[id])	
 		}

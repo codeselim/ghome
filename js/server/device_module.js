@@ -42,26 +42,33 @@ function getDevicesTypesList (db, callback) {
  *                  device: {'id': id, 'type': type_id, 'equip_id': hardware_id, 'equip_label': name}
 */
 function getDeviceInfo (db, deviceid, callback) {
-	getDevicesTypesList(db, function(deviceTypes){ //* Retrieving the list of device types
-		var data = {'devices_types': deviceTypes}
-		var q = "SELECT * FROM " + t['s'] + " s WHERE s.id = ?"
-		db.select_query(q, [deviceid], function (err, rows) {
-			if (null != err) {
-				console.error("SQL Query [1] " + q + " went wrong. Error object: " + JSON.stringify(err))
-				// SQL Query went wrong, don't crash, just don't reply anything
-			} else {
-				if (rows) {
-					console.log("Row " + i, rows[i])
-					data.device = { 'id': rows[0]['id']
-												, 'type': rows[0]['sensor_type_id']
-												, 'equip_label': rows[0]['name']
-												, 'equip_id': rows[0]['hardware_id']}
+	console.log(deviceid)
+	// getDevicesTypesList(db, function(deviceTypes){ //* Retrieving the list of device types
+	var q = "SELECT s.id, s.sensor_type_id, s.name, s.hardware_id, st.name as stname " +
+		"FROM " + t['s'] + " s JOIN " + t['st'] + " st ON s.sensor_type_id=st.id " +
+		"WHERE s.id = ?"
+	db.select_query(q, deviceid, function (err, rows) {
+		var data= {}
+		if (null != err) {
+			console.error("SQL Query [1] " + q + " went wrong. Error object: " + JSON.stringify(err))
+			// SQL Query went wrong, don't crash, just don't reply anything
+		} else {
+			if (rows[0]) {
+				row = rows[0]
+				console.log(JSON.stringify(rows))
+				data = {
+					  'devices_types': [{'id': row.sensor_type_id, 'label': row.stname}]
+					, 'device' : { 
+						  'id': row.id
+						, 'type': row.sensor_type_id
+						, 'equip_label': row.name
+						, 'equip_id': row.hardware_id
+					} 
 				}
 			}
-			callback(data)
-		})
+		}
+		callback(data)
 	})
-
 }
 
 var deviceRH = function (req, res, params, responseSender) {
@@ -70,12 +77,9 @@ var deviceRH = function (req, res, params, responseSender) {
 			// @TODO: run query with the method "run" to get the last inserted ID: https://github.com/developmentseed/node-sqlite3/wiki/API
 			var q = "INSERT INTO `" + t['s'] + "` (id, name, hardware_id, sensor_type_id) VALUES (NULL, ?, ?, ?)"
 			var p = [params.query.equip_label, params.query.equip_id, params.query.equip_type]
-			// console.log("Going to execute query ", q, "with params", p)
 			params.db.insert_query(q, p, function (err) {
 				if (null == err) {
 					console.log("Request went well")
-					// res.writeHead(301, {'Location': "/?module=device_management"})
-					// res.end()
 					res.end(JSON.stringify({'id': this.lastID, 'success': true}))
 				} else {
 					console.error("newDeviceRH: Error when inserting the new device.", q, p, err)
@@ -85,7 +89,17 @@ var deviceRH = function (req, res, params, responseSender) {
 			break
 
 		case 'submit_edit':
-			res.end(JSON.stringify({'msg': 'not implemented yet', 'success': false}))
+			var q = "UPDATE `" + t['s'] + "` SET name=?, hardware_id=? WHERE id=?"
+			var p = [params.query.equip_label, params.query.equip_id, params.query.id]
+			params.db.select_query(q, p, function (err) {
+				if (null == err) {
+					console.log("Request went well")
+					res.end(JSON.stringify({'id': this.lastID, 'success': true}))
+				} else {
+					console.error("newDeviceRH: Error when editing the new device " + params.query.id, err)
+					res.end(JSON.stringify({'msg': err, 'success': false}))
+				}
+			})
 			break;
 
 		case 'new':

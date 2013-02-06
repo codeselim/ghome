@@ -9,7 +9,7 @@
 	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
 </head>
 <body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
-	<div data-role="page" id="newDevice">
+	<div data-role="page" id="device">
 		<div data-theme="a" data-role="header" data-position="fixed">
 			<h3>Nouvel équipement</h3>
 			<a href="/?module=home" data-icon="home" data-iconpos="notext" >Accueil</a>
@@ -22,8 +22,8 @@
 				<ul data-role="listview" data-divider-theme="d" data-inset="true">
 					<li data-role="list-divider">Type</li>
 					<li>
-						<div data-role="fieldcontain">
-							<select name="equip_type" id="equip_type">
+						<div data-role="fieldcontain" {{#device.id}}class='locked'{{/device.id}}>
+							<select name="equip_type" id="equip_type" {{#device.id}}disabled{{/device.id}}>
 								<option value="">-- Choisir --</option>
 								{{#devices_types}}
 								{{#selected}}
