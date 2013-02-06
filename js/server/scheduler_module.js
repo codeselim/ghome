@@ -15,7 +15,7 @@ var schedulerRH  = function (req, res, params, responseSender) {
 		"FROM `" + t.t + "` t " +
 		"INNER JOIN `" + t.s + "` s ON (t.target_id = s.id) " +
 		"INNER JOIN `" + t.st + "` st ON (st.id = s.sensor_type_id) " +
-		"ORDER BY st.name ASC"
+		"ORDER BY st.name, device_name ASC"
 	var p = null
 	console.log(q)
 	params.db.select_query(q, p, function (err, rows) {
