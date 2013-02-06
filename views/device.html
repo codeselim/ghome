@@ -22,8 +22,8 @@
 				<ul data-role="listview" data-divider-theme="d" data-inset="true">
 					<li data-role="list-divider">Type</li>
 					<li>
-						<div data-role="fieldcontain">
-							<select name="equip_type" id="equip_type">
+						<div data-role="fieldcontain" {{#device.id}}class='locked'{{/device.id}}>
+							<select name="equip_type" id="equip_type" {{#device.id}}disabled{{/device.id}}>
 								<option value="">-- Choisir --</option>
 								{{#devices_types}}
 								{{#selected}}
