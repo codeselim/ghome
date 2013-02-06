@@ -54,7 +54,7 @@ function getDeviceInfo (db, deviceid, callback) {
 			// SQL Query went wrong, don't crash, just don't reply anything
 		} else {
 			if (rows[0]) {
-				row = rows[0]
+				var row = rows[0]
 				console.log(JSON.stringify(rows))
 				data = {
 					  'devices_types': [{'id': row.sensor_type_id, 'label': row.stname}]
