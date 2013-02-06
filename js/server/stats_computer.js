@@ -147,7 +147,7 @@ function statsRH(req, res, params, responseSender){
  *@params {string} type_stats, type_sensor, date1, date2
  *@returns
 */
- function get_stats (type_stats,type_sensor, date1, date2) {
+ function get_temperature_stats (type_stats,type_sensor, date1, date2) {
  	var query_str = " select time, value,min, max "+
 					"from ?"+
 					"where time between '?' and '?'"+
@@ -162,7 +162,7 @@ function statsRH(req, res, params, responseSender){
  *@params {string} type_stats, type_sensor, date1, date2
  *@returns
 */
- function get_stats (type_stats,type_sensor, date1, date2) {
+ function get_consumption_stats (type_stats,type_sensor, date1, date2) {
  	var query_str = " select time, value "+
 					"from ?"+
 					"where time between '?' and '?'"+
