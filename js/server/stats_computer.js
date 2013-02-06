@@ -36,8 +36,8 @@ function statsRH(req, res, params, responseSender){
  	var date = new Date();
 	var previous_hour = date.getHours() - 1;
 	//insert the average of temperature of the previous hour in the table hour_stats
-	var query_str = "insert into hour_stats (sensor_type_id,value,time)"+
-				"Select  sensors_types.id, avg(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)"+
+	var query_str = "insert into hour_stats (sensor_type_id,value,min,max,time)"+
+				"Select  sensors_types.id, avg(logs.value),min(logs.value), max(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)"+
 				"from logs,sensors_types,sensors"+
 				"where sensors.sensor_type_id = sensors_types.id and "+
 				"sensors.sensor_type_id = logs.sensor_id and sensors_types.id = 1 and"+
@@ -74,8 +74,8 @@ function statsRH(req, res, params, responseSender){
  function temperature_d ( ) {
  	
 	//insert the average of temperature of the previous day in the table daily_stats
-	var query_str = "insert into daily_stats (sensor_type_id,value,time)"+
-				"Select  sensors_types.id, avg(hour_stats.value),  strftime('%Y-%m-%d', hour_stats.time)"+
+	var query_str = "insert into daily_stats (sensor_type_id,value,min,max,time)"+
+				"Select  sensors_types.id, avg(hour_stats.value),min(hour_stats.value), max(hour_stats.value),  strftime('%Y-%m-%d', hour_stats.time)"+
 				"from hour_stats,sensors_types,sensors"+
 				"where sensors.sensor_type_id = sensors_types.id and "+
 				"sensors.sensor_type_id = hour_stats.sensor_type_id and sensors_types.id = 1 and"+
@@ -111,8 +111,8 @@ function statsRH(req, res, params, responseSender){
  function temperature_m ( ) {
  	
 	//insert the average of temperature of the previous month in the table monthly_stats
-	var query_str = "insert into monthly_stats (sensor_type_id,value,time)"+
-				"Select  sensors_types.id, avg(daily_stats.value),  strftime('%Y-%m-%d', daily_stats.time,'start of month')"+
+	var query_str = "insert into monthly_stats (sensor_type_id,value,min,max,time)"+
+				"Select  sensors_types.id, avg(daily_stats.value),min(daily_stats.value), max(daily_stats.value)  strftime('%Y-%m-%d', daily_stats.time,'start of month')"+
 				"from daily_stats,sensors_types,sensors"+
 				"where sensors.sensor_type_id = sensors_types.id and "+
 				"sensors.sensor_type_id = daily_stats.sensor_type_id and sensors_types.id = 1 and"+
@@ -141,17 +141,32 @@ function statsRH(req, res, params, responseSender){
 
 
 /**
- * Gets stats from hour_stats for a certain type of sensor in [date1,date2]
+ * Gets temperature stats for a certain type of sensor in [date1,date2]
  * dates must be in the following format : YYYY-MM-DD HH:MM:SS
+ * 	type_stats can be {hour_stats,daily_stats,monthly_}
  *@params {string} type_stats, type_sensor, date1, date2
- * 					type_stats can be {hour_stats,daily_stats,monthly_}
+ *@returns
+*/
+ function get_stats (type_stats,type_sensor, date1, date2) {
+ 	var query_str = " select time, value,min, max "+
+					"from ?"+
+					"where time between '?' and '?'"+
+					"and sensor_type_id = 1; "	
+	db.query (query_str, [type_stats,date1,date2,type_sensor], getData (err, rows))
+ }
+
+/**
+ * Gets electricity stats for a certain type of sensor in [date1,date2]
+ * dates must be in the following format : YYYY-MM-DD HH:MM:SS
+ * 	type_stats can be {hour_stats,daily_stats,monthly_}
+ *@params {string} type_stats, type_sensor, date1, date2
  *@returns
 */
  function get_stats (type_stats,type_sensor, date1, date2) {
  	var query_str = " select time, value "+
 					"from ?"+
 					"where time between '?' and '?'"+
-					"and sensor_type_id = ?; "	
+					"and sensor_type_id = 5; "	
 	db.query (query_str, [type_stats,date1,date2,type_sensor], getData (err, rows))
  }
 
