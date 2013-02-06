@@ -70,7 +70,6 @@ function execute_spy(event_id, origin_id) {
 }
 
 function check_spy(event_id, origin_id) {
-	console.log("checkspy")
 	db.select_query("SELECT value FROM settings WHERE id = 1", [], function (err, rows) {
 		for (r in rows){
 			if(rows[r]["value"] == "ON"){
