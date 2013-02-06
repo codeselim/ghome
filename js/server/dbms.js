@@ -9,6 +9,7 @@ function Database() {
 Database.prototype.connect = function(dbName, callback) {
 	dName = dbName;
 	db = new sqlite3.Database("../../sql/"+dbName+".db", callback);
+	this.select_query("PRAGMA foreign_keys = ON;", null, function () {})
 }
 
 Database.prototype.select_query = function(query_str, parameters, callback_func) {
