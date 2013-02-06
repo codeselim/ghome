@@ -1,3 +1,5 @@
+"use strict"
+
 define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 	// var progressbardiv = "<div style='width: 200px; opacity: .75' class='meter'><span style='width: 25%'></span></div>"
 
@@ -121,6 +123,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		data.module = 'device'
 		if (data.id) {
 			data.action = 'submit_edit'
+			delete data.equip_type //* To make sure the event type is not changed
 		} else {
 			data.action = 'submit_new'
 		}
@@ -134,7 +137,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 			console.log(data)
 			if (data.success) {
 				utils.addMessage('success', 'TODO: retourner le nouvel id pour pouvoir passer en mode édition')
-				window.location.href = '/?module=device_management'
+				// window.location.href = '/?module=device_management'
 				// setTimeout('top.location.href = "/?module=scheduler"',2000)
 			} else {
 				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)

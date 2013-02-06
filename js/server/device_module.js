@@ -65,15 +65,12 @@ function getDeviceInfo (db, deviceid, callback) {
 var deviceRH = function (req, res, params, responseSender) {
 	switch (params.query.action) {
 		case 'submit_new':
-			// @TODO: run query with the method "run" to get the last inserted ID: https://github.com/developmentseed/node-sqlite3/wiki/API
 			q = "INSERT INTO `" + t['s'] + "` (id, name, hardware_id, sensor_type_id) VALUES (NULL, ?, ?, ?)"
 			p = [params.query.equip_label, params.query.equip_id, params.query.equip_type]
-			// console.log("Going to execute query ", q, "with params", p)
+			console.log(p)
 			params.db.insert_query(q, p, function (err) {
 				if (null == err) {
 					console.log("Request went well")
-					// res.writeHead(301, {'Location': "/?module=device_management"})
-					// res.end()
 					res.end(JSON.stringify({'id': this.lastID, 'success': true}))
 				} else {
 					console.error("newDeviceRH: Error when inserting the new device.", err)
@@ -83,7 +80,17 @@ var deviceRH = function (req, res, params, responseSender) {
 			break
 
 		case 'submit_edit':
-			res.end(JSON.stringify({'msg': 'not implemented yet', 'success': false}))
+			q = "UPDATE `" + t['s'] + "` SET name=?, hardware_id=? WHERE id=?"
+			p = [params.query.equip_label, params.query.equip_id, params.query.id]
+			params.db.select_query(q, p, function (err) {
+				if (null == err) {
+					console.log("Request went well")
+					res.end(JSON.stringify({'id': this.lastID, 'success': true}))
+				} else {
+					console.error("newDeviceRH: Error when editing the new device " + params.query.id, err)
+					res.end(JSON.stringify({'msg': err, 'success': false}))
+				}
+			})
 			break;
 
 		case 'new':
