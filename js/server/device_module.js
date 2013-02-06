@@ -78,7 +78,7 @@ var deviceRH = function (req, res, params, responseSender) {
 					// res.end()
 					res.end(JSON.stringify({'id': this.lastID, 'success': true}))
 				} else {
-					console.error("newDeviceRH: Error when inserting the new device.", err)
+					console.error("newDeviceRH: Error when inserting the new device.", q, p, err)
 					res.end(JSON.stringify({'msg': JSON.stringify(err), 'success': false}))
 				}
 			})

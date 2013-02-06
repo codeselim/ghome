@@ -50,8 +50,24 @@ INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887
 --------------------------
 -- Dummy task
 
-INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, origin_id, mode_id, max_month, min_month, max_day, min_day, max_hour, min_hour) 
-VALUES (1, "changer minuteuh", 1, 8, 7, -1, 1, 11, 0, 6, 0, 24, 0);
+INSERT INTO tasks (
+	id, 
+	name, 
+	action_type_id, 
+	target_id, 
+	event_type_id, 
+	origin_id, 
+	mode_id
+) 
+VALUES (
+	1, 
+	"changer minuteuh", 
+	1, 
+	8, 
+	7,
+	-1,
+	1
+);
 
 INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (1, "82", 1, 1, 1);
 INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (2, "82", 1, 1, 1);
