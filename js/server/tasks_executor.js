@@ -29,9 +29,6 @@ function start (database){
 function execute_task(event_id, origin_id) {//this function will search the good actions to do and call make_action with the results in order to make the action effective
 
 	var date= new Date()
-	var month = date.getMonth()
-	var day = date.getDay()
-	var hour = date.getHours()
 	var results = new Array();
 	var targets = new Array();
 	var value = null;
@@ -41,10 +38,7 @@ function execute_task(event_id, origin_id) {//this function will search the good
 	console.log(event_id)
 
 	//We get the action type id, the operator, the value to compare, the sensor_id and the target_id from the candidate actions (actions wich are in the right timer for being candidate)
-	db.select_query("SELECT action_type_id, operator, value_to_compare, sensor_id, target_id FROM Tasks AS t INNER JOIN conditions AS c ON c.task_id = t.id INNER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND "
-			+ month + " <= max_month AND " + month + " >= min_month AND "
-			+ day + " <= max_day AND " + day + " >= min_day AND "
-			+ hour + " <= max_hour AND " + hour + " >= min_hour AND origin_id = ?"
+	db.select_query("SELECT action_type_id, operator, value_to_compare, sensor_id, target_id FROM Tasks AS t INNER JOIN conditions AS c ON c.task_id = t.id INNER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND origin_id = ?"
 			, [event_id, origin_id], function (err, rows) { //now we select the proper actions with the operator
 				for (var r in rows) { //creation of a dictionnaire where we put all the candidate actions
 					actions_type[rows[r]["action_type_id"]] = true;
@@ -80,6 +74,35 @@ function execute_task(event_id, origin_id) {//this function will search the good
 						case 5 : // if operator = ">="
 						case 6 : // if operator = "passage de seuil haut"
 						if (parseInt(rows[r]["value_to_compare"]) < parseInt(value)){ //if we have the contrary of the operator, that means that the action have at least one condition wich is not respected, and we can't execute the action
+							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
+						}
+						break;
+
+						//@TODO : s'assurer que les rentrées coté client sont en phase avec les choix du code (si le nombre du mois corespond etc)
+
+						case 8 : //if operator is mois egal
+						if (parseInt(rows[r]["value_to_compare"]) != (date.getMonth() + 1)){
+							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
+						}
+						break;
+						case 9 : //if operator is jour_semaine egal
+						var day = (date.getDay() = 0)? 7 : date.getDay();//formalisation of the day by 1 : monday to 7 : sunday
+						if (parseInt(rows[r]["value_to_compare"]) != day){
+							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
+						}
+						break;
+						case 10 : //if operator is jour_mois egal
+						if (parseInt(rows[r]["value_to_compare"]) != date.getDate()){
+							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
+						}
+						break;
+						case 11 : //if operator is heure egale
+						if (parseInt(rows[r]["value_to_compare"]) != date.getHours()){
+							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
+						}
+						break;
+						case 12 : //if operator is minute egale
+						if (parseInt(rows[r]["value_to_compare"]) != date.getMinutes()){
 							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
 						}
 						break;
