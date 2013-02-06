@@ -1,9 +1,11 @@
-gsd = require('../../shared_data').get_shared_data
-deviceCommunicator = require('../../device_communicator')
+"use strict"
+
+var gsd = require('../../shared_data').get_shared_data
+var deviceCommunicator = require('../../device_communicator')
 //ssd = require('../../shared_data').set_shared_data
 
-poll_tests = gsd('DEVICE_POLL_TESTS')
-satr = gsd('shared_among_tests_requests')
+var poll_tests = gsd('DEVICE_POLL_TESTS')
+var satr = gsd('shared_among_tests_requests')
 
 
 //* Action for device of type 1 = temperature
@@ -25,7 +27,7 @@ poll_tests[4] = function (req, res, params, testid) {
 }
 //* Action for device of type 5 : Power switch plug
 poll_tests[5] = function (req, res, params, testid) {
-	current = new Date()
+	var current = new Date()
 	console.log("We have been waiting for..." + (current - satr[testid]['start_time']) + "ms")
 	if (7000 <= (current - satr[testid]['start_time'])) {// If it's 7 seconds since we switched the plug ON, switch it on right now
 		deviceCommunicator.sendToSensor(params.query.deviceId, "OFF")

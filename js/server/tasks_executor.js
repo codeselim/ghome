@@ -1,3 +1,5 @@
+"use strict"
+
 var db;
 var sensors_server = require("./sensors_server.js");
 var sse_sender = require("./sse_sender.js");
