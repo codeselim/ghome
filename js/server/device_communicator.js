@@ -30,7 +30,7 @@ function sendToSensor (sensor_id, message) {
 	};
 	db.select_query("SELECT sensor_type_id FROM `" + t['s'] + "` WHERE id = ?", [sensor_id], function (err, rows) {
 		if (null == err) {
-			tid = rows[0].sensor_type_id
+			var tid = rows[0].sensor_type_id
 
 			if (tid in communicators) {
 				communicators[tid](sensor_id, message)

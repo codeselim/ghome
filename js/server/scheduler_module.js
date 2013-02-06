@@ -7,26 +7,14 @@ var tpl = require('./template_engine')
 var sutils = require('./sensors')
 // var ss = require('./sensors_server')
 var shared = require('./shared_data')
-var SQL_TABLES_DIC = shared.get_shared_data('SQL_TABLES');
-//OUTPUT: SQL_TABLES_DIC - Just for reference
-// { st: 'sensors_types',
-//   et: 'event_types',
-//   at: 'actions_types',
-//   l: 'logs',
-//   c: 'conditions',
-//   ct: 'condition_types',
-//   m: 'modes',
-//   s: 'sensors',
-//   t: 'tasks' 
-// }
-
+var t = shared.get_shared_data('SQL_TABLES');
 
 var schedulerRH  = function (req, res, params, responseSender) {
 	var tplData = {}
 	var q = "SELECT s.sensor_type_id, st.name, t.id AS id, t.name AS device_name " + // Note : t.name is renamed AS device_name just for compatibility with generate_json_devices_list_from_sql_rows() function
-		"FROM `" + SQL_TABLES_DIC.t + "` t " +
-		"INNER JOIN `" + SQL_TABLES_DIC.s + "` s ON (t.target_id = s.id) " +
-		"INNER JOIN `" + SQL_TABLES_DIC.st + "` st ON (st.id = s.sensor_type_id) " +
+		"FROM `" + t.t + "` t " +
+		"INNER JOIN `" + t.s + "` s ON (t.target_id = s.id) " +
+		"INNER JOIN `" + t.st + "` st ON (st.id = s.sensor_type_id) " +
 		"ORDER BY st.name ASC"
 	var p = null
 	console.log(q)
@@ -43,26 +31,19 @@ var schedulerRH  = function (req, res, params, responseSender) {
 	})
 }
 
-var newTaskRH  = function (req, res, params, responseSender) {
+var taskRH  = function (req, res, params, responseSender) {
 	switch(params.query.action) {
 
 		case 'get_actions' : //* Returns the actions available for a given device type
 		{
 			console.log('get_actions: deviceType=' + params.query.deviceType)
 			//* Required data: for deviceType, list of actions, and for each: {actionlabel: action id}
-			if (params.query.deviceType == 1 ){
-				res.end(JSON.stringify({'Allumer' : 1, 'Eteindre' : 2}))
-			} else if (params.query.deviceType == 2){
-				res.end(JSON.stringify({'Ouvrir 100%' : 1, 'Ouvrir 50%' : 2, 'Fermer' : 3 }))
-			} else if (params.query.deviceType == 2){
-				res.end(JSON.stringify({'Ouvrir 100%' : 1, 'Ouvrir 50%' : 2, 'Fermer' : 3 }))
-			} else {
-				res.end(JSON.stringify({'On' : 1, 'Off' : 2}))
-			}
-
-			// params.db.select_query("SELECT at.id , at.name FROM "+SQL_TABLES_DIC.at+" at WHERE at.sensor_type_id = ?", [params.query.deviceType], function (err, rows){
-			// if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
-
+			var actions = ''
+			params.db.select_query("SELECT at.id , at.name FROM "+t.at+" at WHERE at.sensor_type_id = ? ", [params.query.deviceType], function (err, rows){
+			if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
+			var actions = sutils.generate_json_get_actions_by_device_type(rows)
+			res.end(actions)
+			})
 			break
 		}
 
@@ -71,11 +52,13 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			var data = {}
 			//* Required data: for sourceType, list of events, and for each: {evtlabel: evtid}
 			if (params.query.sourceType == '2' ){
-				data = {
-					  'Passe le seuil ' : 1
+				var data = {
+					  'Passe le seuil en montant' : 1
+					  , 'Passe le seuil en descendant ' : 1
+					  , 'bleh' : 4
 				}
 			} else if (params.query.sourceType == 3 ){
-				data = {
+				var data = {
 					  'Activation' : 11
 					, 'Désactivation' : 12
 				}
@@ -84,43 +67,30 @@ var newTaskRH  = function (req, res, params, responseSender) {
 			break
 		}
 
-		case 'get_event_conditions' : 
-			// TODO: 
-			var data = {}
-			if (params.query.evtType && params.query.evtType < 10 ) {
-				data = {
-					  'TODO' : 1
-					, 'Passe le seuil en montant' : 1
-					, 'Passe le seuil en descendant' : 1 // the ids are equal
-					, 'pony' : 11
-					, 'unicorn' : 12
-					, 'narwhal' : 13
-				}
-			}
-			console.log(data)
-			res.end(JSON.stringify(data))
-			break
-
 		case 'get_condition_types' : //* Returns the condition types for a given event type or sensor type
 		{
 			var data = {}
 			//* Required data: for evtType (resp. sensorType, list of events, and for each: {evtlabel: evtid}
-			if (params.query.evtType && params.query.evtType < 10 ) {
-				data = {
-					  '<' : 1
-					, '>' : 2
-					, 'bleh' : 11
-					, 'plop' : 12
-				}
+			if (params.query.evtType) {
+				var data = {}
+				var q = "SELECT condition_type_id" + 
+					"FROM `" + t['etct'] + "` " +
+					"WHERE event_type_id = ?"
+				var p = [Math.abs(params.query.evtType)]
+				params.db.select_query(q, p, function (err, rows) {
+					for(var i in rows) {
+						data[rows[i]['condition_type_id']] = rows[i]['condition_type_id']
+					}
+				})
 			} else if (params.query.sensorType && params.query.sensorType < 10 ) {
-				data = {
+				var data = {
 					  '<' : 1 
 					, '>' : 2
 					, 'pony' : 11
 					, 'unicorn' : 12
 					, 'narwhal' : 13
 				}
-			}
+			} 
 			// console.log(data)
 			res.end(JSON.stringify(data))
 			break
@@ -130,7 +100,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 		{
 			var data = {}
 			if (params.query.condType < 10) {
-				data = { 'Seuil1' : 1, 'Seuil2' : 2}
+				var data = { 'Seuil1' : 1, 'Seuil2' : 2}
 			}
 			res.end(JSON.stringify(data))
 			break
@@ -163,33 +133,31 @@ var newTaskRH  = function (req, res, params, responseSender) {
 		{
 			res.end(JSON.stringify({success: Math.random() > 0.5}))
 		}
+			break
 
-		default : //* Returns the devices for the action and the event
+		case 'edit':
+		case 'new': //* Returns the devices for the action and the event
 		{
 			var deviceTypes = ''
-			var firsttime = 1
-			var sensor_type_id = -1
-			var number_of_rows = 0
+
 			/**
 			 *@TODO : get the devices that receive actions and adjust the query as well!! 
 			 */
 			params.db.select_query("SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
-							"FROM " + SQL_TABLES_DIC.st + " st " +
-							"JOIN " + SQL_TABLES_DIC.s + " s ON st.id = s.sensor_type_id " +
+							"FROM " + t.st + " st " +
+							"JOIN " + t.s + " s ON st.id = s.sensor_type_id " +
 							"WHERE s.sensor_type_id IN ( " +
 							"	SELECT sensor_type_id " +
-							"	FROM " + SQL_TABLES_DIC.at + " " +
+							"	FROM " + t.at + " " +
 							") " +
 							"ORDER BY s.sensor_type_id", 
 				null, 
 				function (err, rows) {
 					if(null != err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
 					
-					//deviceTypes +=  '"deviceTypes" : ['  //moved down
-					deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
+					var deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
 
-
-					var data = tpl.get_template_result("new_task.html", { 
+					var data = tpl.get_template_result("task.html", { 
 						  'deviceTypes' : deviceTypes
 						  //* Alternative device array
 						  // 'deviceTypes' : [{'label' : 'Prises', 'devices' : [{'label' : 'Prise1', 'value' : 1, 'type' : 1} , {'label' : 'Prise2', 'value' : 2, 'type' : 1} ]}, {'label' : 'Volets', 'devices' : [{'label' : 'Volet1', 'value' : 1, 'type' : 2} , {'label' : 'Volet2', 'value' : 2, 'type' : 2} ]} ]
@@ -209,7 +177,7 @@ var newTaskRH  = function (req, res, params, responseSender) {
 						] 
 					})
 
-					params.fileUrl = 'new_task.html'
+					params.fileUrl = 'task.html'
 					responseSender(req, res, params, data)			
 				})
 			break
@@ -220,4 +188,4 @@ var newTaskRH  = function (req, res, params, responseSender) {
 
 
 exports.schedulerRequestHandler = schedulerRH
-exports.newTaskRequestHandler = newTaskRH
+exports.taskRequestHandler = taskRH

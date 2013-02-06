@@ -29,7 +29,7 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 			thresholds.push(rows[r]["thresholds.value"]);
 		}
 
-		for (t in thresholds) {
+		for(var t in thresholds) {
 			if (lastValues[idSensor] < threshold && value > threshold) {
 		//tasks_executor.execute_task(1);
 		eventEmitter.emit(SENSOR_EVENT, 1, idSensor);
