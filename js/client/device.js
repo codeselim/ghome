@@ -87,7 +87,6 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		})
 		.done(function(data) {
 			testid = data.testid
-			// console.log("testid=" + testid)
 			if (data.msg) {
 				$.mobile.loading('hide')
 				$('#popupContent').html(data.msg)
@@ -136,9 +135,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		.done(function(data) {
 			console.log(data)
 			if (data.success) {
-				utils.addMessage('success', 'TODO: retourner le nouvel id pour pouvoir passer en mode édition')
-				// window.location.href = '/?module=device_management'
-				// setTimeout('top.location.href = "/?module=scheduler"',2000)
+				window.location.href = '/?module=device_management'
 			} else {
 				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
 			}
