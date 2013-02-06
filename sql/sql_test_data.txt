@@ -9,11 +9,22 @@ INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "pass
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "passage de seuil bas", 7, "threshold");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "contact réalisé", 8, "threshold");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "contact non réalisé", 9, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine =", 10, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois =", 11, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois =", 12, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois =", 10, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine =", 11, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois =", 12, "threshold");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure =", 13, "threshold");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute =", 14, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois <", 15, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine <", 16, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois <", 17, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure <", 18, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute <", 19, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois >", 20, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine >", 21, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois >", 22, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure >", 23, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute >", 24, "threshold");
+
 
 INSERT INTO actions_types VALUES (1, "Allumer prise",5, "ON");
 INSERT INTO actions_types VALUES (null, "Eteindre prise",5, "OFF");
