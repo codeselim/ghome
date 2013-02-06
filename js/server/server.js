@@ -1,8 +1,7 @@
+"use strict"
+
 //* Server of the GHome application
 //* Will be launching the network sensors server as well as the web server that deals with the different GUIs
-
-//* Small JS "upgrade"
-ArrayRemove = function(a, index) { a.splice(index, 1); return a;}
 
 // ************ WARNING : KEEP THOSE LINES AT THE TOP, OR SOME DATA WILL BE UNDEFINED ! ***************
 var shared = require('./shared_data')
@@ -16,7 +15,11 @@ set_shared_data('SQL_TABLES', {'st': 'sensors_types',
 								'ct':'condition_types',
 								'm':'modes',
 								's':'sensors',
-								't':'tasks'})
+								't':'tasks',
+								'etct':'event_types_condition_types',
+								'stet':'sensor_types_event_types',
+								'stct':'sensor_types_condition_types'
+							})
 var allowed_ids = [2214883, 346751, 8991608, 112022, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 var connected_ids = allowed_ids.slice(0) // copies the content of allowed_ids
 set_shared_data('ALLOWED_IDS', allowed_ids)
@@ -38,6 +41,7 @@ var device_communicator = require('./device_communicator')
 var tasks_executor = require('./tasks_executor')
 var cp = require('child_process')
 var n = cp.fork(__dirname + '/background_worker.js')
+var spy = require('./spy.js')
 
 //*************** Constants **************
 var SENSORS_SERVER_PORT = 8000
@@ -72,7 +76,7 @@ function update_main_temperatures (frame_data) {
 	// Frame to be used as demo : A55A0B0700003608008933780084
 	if (frame_data.id == get_shared_data('OUT_TEMP_SENSOR_ID')) {
 		console.log('The sensor id of the received frame is the one of the main INSIDE temperature sensor. Updating the server in-memory value.')
-		temp = require('./sensors').decode_data_byte(frame_data)[1].toFixed(1)
+		var temp = require('./sensors').decode_data_byte(frame_data)[1].toFixed(1)
 		set_shared_data('OUT_TEMP', temp)
 		
 	};
@@ -85,8 +89,8 @@ function pre_init () {
 }
 
 function load_plugins () {
-	for(i in plugins) {
-		p = './plugins/' + plugins[i] + '/'
+	for(var i in plugins) {
+		var p = './plugins/' + plugins[i] + '/'
 		require(p + 'poll_tests.js')
 		require(p + 'start_tests.js')
 		require(p + 'end_tests.js')
@@ -113,7 +117,7 @@ function GLOBAL_INIT () {
 		console.log("DB connected.")
 		set_shared_data('IN_TEMP', 0) // @TODO : Get the value from the database instead !
 		set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
-		query = "SELECT sensor_id AS sid, MAX(time), value " +
+		var query = "SELECT sensor_id AS sid, MAX(time), value " +
 		"FROM `" + t['l'] + "` l " +
 		"GROUP BY sensor_id";//* /!\ According to StackOverflow, when using BTree as indexes (which is the case with sqlite), the maximum (key1, key2, key3) tuple will be the one returned by the GROUP BY and thus, for us, the last one in terms of time
 		db.select_query(query, null, function (err, rows) {
@@ -123,7 +127,7 @@ function GLOBAL_INIT () {
 				console.error("And the error is" + err)
 				process.exit()
 			};
-			for(i in rows) {
+			for(var i in rows) {
 				sensors_values[rows[i].sid] = rows[i].value
 			}
 			console.log("Server startup states: " + JSON.stringify(sensors_values))
@@ -140,6 +144,7 @@ function start () {
 	web_serv.start(db, WEB_SERVER_PORT)
 	events_monitor.start(db);
 	tasks_executor.start(db);
+	spy.start(db);
 	android_notif_serv.start(ANDROID_NOTIF_SERVER_PORT, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Well, or test after changing it !) I don't know why, but it's working on port 5000 and not on port 3000 for instance....
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
@@ -148,6 +153,7 @@ function start () {
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, logger.insertLog)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, events_monitor.handleEvent)
 	events_monitor.events.addListener(events_monitor.SENSOR_EVENT, tasks_executor.execute_task)
+	events_monitor.events.addListener(events_monitor.SENSOR_EVENT, spy.check_spy)
 	
 	/** 
 	*

@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (1, "égalité", 1, "threshold");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "inférieur", 2, "threshold");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "supérieur", 3, "threshold");
@@ -7,26 +9,32 @@ INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "pass
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "passage de seuil bas", 7, "threshold");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "contact réalisé", 8, "threshold");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "contact non réalisé", 9, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine =", 10, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois =", 11, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois =", 12, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois =", 10, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine =", 11, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois =", 12, "threshold");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure =", 13, "threshold");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute =", 14, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois <", 15, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine <", 16, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois <", 17, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure <", 18, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute <", 19, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois >", 20, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine >", 21, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois >", 22, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure >", 23, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute >", 24, "threshold");
+
 
 INSERT INTO actions_types VALUES (1, "Allumer prise", 5, "ON");
 INSERT INTO actions_types VALUES (null, "Eteindre prise", 5, "OFF");
 
 INSERT INTO actions_types VALUES (null, "Augmenter Temperature +10C",1, "TRUC");
 INSERT INTO actions_types VALUES (null, "Diminuer Temperature -10C",1, "TRUC");
-INSERT INTO actions_types VALUES (null, "Ouvrir Volet 30%",6, "TRUC");
-INSERT INTO actions_types VALUES (null, "Ouvrir Volet 60%",6, "TRUC");
-INSERT INTO actions_types VALUES (null, "Fermer Volet 30%",6, "TRUC");
-INSERT INTO actions_types VALUES (null, "Fermer Volet 60%",6, "TRUC");
-
-INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, origin_id, mode_id, max_month, min_month, max_day, min_day, max_hour, min_hour) VALUES (1, "changer minuteuh", 1, 8, 7, -1, 1, 11, 0, 6, 0, 24, 0);
-
-INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (1, "82", 1, 1, 1);
-INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (2, "82", 1, 1, 1);
+INSERT INTO actions_types VALUES (null, "Ouvrir Volet 30%", 6, "TRUC");
+INSERT INTO actions_types VALUES (null, "Ouvrir Volet 60%", 6, "TRUC");
+INSERT INTO actions_types VALUES (null, "Fermer Volet 30%", 6, "TRUC");
+INSERT INTO actions_types VALUES (null, "Fermer Volet 60%", 6, "TRUC");
 
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (1, 2214883, 'Temp 1', 1); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 346751, 'Lumi 1', 2); -- @TODO Check that this hardware id actually is of that type
@@ -39,6 +47,16 @@ INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 1150
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887022, 'Volet Chambre 1', 6); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887024, 'Volet Salon RC', 6); -- @TODO Check that this hardware id actually is of that type
 
+--------------------------
+-- Dummy task
+
+INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, origin_id, mode_id, max_month, min_month, max_day, min_day, max_hour, min_hour) 
+VALUES (1, "changer minuteuh", 1, 8, 7, -1, 1, 11, 0, 6, 0, 24, 0);
+
+INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (1, "82", 1, 1, 1);
+INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (2, "82", 1, 1, 1);
+INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (3, "02", 1, 8, 1);
+--------------------------
 
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 1, 42, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 2, 13, datetime());
@@ -49,6 +67,10 @@ INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 2, 27, datetime())
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 3, 07, datetime());
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 4, 11, datetime());
 
+INSERT INTO `settings` (id, name, value) VALUES (1, 'mode spy', 'ON');
+INSERT INTO `settings` (id, name, value) VALUES (2, 'user mail', 'tablette6.insa@gmail.com');
+INSERT INTO `settings` (id, name, value) VALUES (3, 'mdp mail', 'tablette6');
+INSERT INTO `settings` (id, name, value) VALUES (4, 'mail d envoi', 'tablette6.insa@gmail.com');
 -- Join tables data
 
 --  temperature

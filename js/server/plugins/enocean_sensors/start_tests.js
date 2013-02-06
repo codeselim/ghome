@@ -1,10 +1,12 @@
-gsd = require('../../shared_data').get_shared_data
+"use strict"
+
+var gsd = require('../../shared_data').get_shared_data
 //ssd = require('../../shared_data').set_shared_data
-deviceCommunicator = require('../../device_communicator')
+var deviceCommunicator = require('../../device_communicator')
 
 
-start_tests = gsd('DEVICE_START_TESTS')
-satr = gsd('shared_among_tests_requests')
+var start_tests = gsd('DEVICE_START_TESTS')
+var satr = gsd('shared_among_tests_requests')
 
 
 //* Action for device of type 2 
