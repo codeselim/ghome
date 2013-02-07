@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>ghome</title>
+	<link rel="stylesheet/less" type="text/css" href="css/ghome.less" />
+	<script src="js/vendor/less.min.js" type="text/javascript"></script>
+	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
+</head>
+<body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
+	<div data-role="page" id="thresholdList">
+		<div data-theme="a" data-role="header" data-position="fixed">
+			<h3>Seuils</h3>
+			<a href="/?module=home" data-icon="home" data-iconpos="notext" >Accueil</a>
+			<a href="/?module=home" data-icon="back" data-transition="slide" data-direction="reverse" data-iconpos="notext">Parent</a>
+		</div>
+
+		<div data-role="content">
+
+			<ul data-role="listview" data-inset="true" id="messages"></ul>
+			<ul data-role="listview" data-filter="true" data-filter-placeholder="Rerchercher un nom de seuil..." 
+					data-divider-theme="b" data-inset="true">
+				<li data-icon="plus">
+					<a data-transition="fade" href="/?module=threshold&amp;action=new">Nouveau Seuil</a>
+				</li>
+				<li data-role="list-divider">Liste des seuils</li>
+				{{#thresholds}}
+					<li><a data-transition="fade" href="/?module=threshold&amp;action=edit&amp;id={{id}}">
+						<span>{{label}}</span><span style="float: right; width: 30%; text-align:left"> {{value}}</span>
+					</a></li>
+				{{/thresholds}}
+				{{^thresholds}}
+					<li>Il n'y a pas de tâche enregistrée</li>
+				{{/thresholds}}
+			</ul>
+		</div>  <!-- /content -->
+
+	</div>
+</body>
+</html>

@@ -12,8 +12,8 @@ require.config({
 })
 
 
-require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'jquerymobile'], 
-	function($, /*_,*/ sseListener, devMgmt, device, scheduler) {
+require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'threshold', 'jquerymobile'], 
+	function($, /*_,*/ sseListener, devMgmt, device, scheduler, threshold) {
 	$(function() {
 
 		//* Hides the body until JQM finishes applying styles
@@ -42,12 +42,14 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', '
 
 		//* Registering the page inits
 		var pageinits = {
-			  'home'      : homePI
-			, 'notif'     : notifPI
-			, 'devMgmt'   : devMgmt.pageInit
-			, 'device'    : device.pageInit
-			, 'scheduler' : scheduler.pageInit
-			, 'task'      : scheduler.taskPageInit
+			  'home'          : homePI
+			, 'notif'         : notifPI
+			, 'devMgmt'       : devMgmt.pageInit
+			, 'device'        : device.pageInit
+			, 'scheduler'     : scheduler.pageInit
+			, 'task'          : scheduler.taskPageInit
+			, 'thresholdList' : threshold.listPageInit
+			, 'threshold'     : threshold.pageInit
 		}
 
 		for(var id in pageinits) {
