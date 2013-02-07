@@ -21,7 +21,7 @@ var spyRequestHandler = function(req, res, params, responseSender) {
 	console.log(params);
 	console.log("switchSpyMode :" + params.query.switchSpyMode)
 	// Can't use db.insert_query or select_query check with Théo
-	params.db.db.run("UPDATE settings SET value = ? WHERE name = ?", [params.query.switchSpyMode.toUpperCase(), "mode spy"], function(err) {
+	params.db.update_query("UPDATE settings SET value = ? WHERE name = ?", [params.query.switchSpyMode.toUpperCase(), "mode spy"], function(err) {
 		if (err != null) {
 			console.error("spyRequestHandler: Error when updating the spy mode value.", err)
 			res.end(JSON.stringify({'msg': JSON.stringify(err), 'success': false}))
