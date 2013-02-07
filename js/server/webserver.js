@@ -146,48 +146,58 @@ function defaultReqHandler(req, res, params, responseSender) {
 
 function start (db, port) {
 	console.log('Starting webserver')
+
+	var auth = require('http-auth')
+	var basic = auth({
+		authRealm : "GHome Management Console.",
+		authFile : __dirname + '/users.htpasswd'
+	});
+
 	http.createServer(function (req, res) {
 
-		req.setEncoding("utf8"); 
+		basic.apply(req, res, function (username) {
 
-		//* Note : req is an instance of http.ServerRequest and res is an instance of http.ServerResponse
-		try {
-			var urlParams = require('url').parse(req.url, true)
-			urlParams['postData'] = ''
-			if (!urlParams.query.module) {
-				if (urlParams['pathname'] == '/' || urlParams['pathname'].split('.').pop() == 'html') {
-					urlParams.query.module = 'home'
-					} else {
-					urlParams.query.module = 'default'
+			req.setEncoding("utf8"); 
+
+			//* Note : req is an instance of http.ServerRequest and res is an instance of http.ServerResponse
+			try {
+				var urlParams = require('url').parse(req.url, true)
+				urlParams['postData'] = ''
+				if (!urlParams.query.module) {
+					if (urlParams['pathname'] == '/' || urlParams['pathname'].split('.').pop() == 'html') {
+						urlParams.query.module = 'home'
+						} else {
+						urlParams.query.module = 'default'
+						}
 					}
+
+				//handling POST data	
+				if(req.method === "POST") {
+					req.addListener("data", function(postDataChunk) {
+					urlParams['postData'] += postDataChunk;
+					//console.log("Received POST data chunk '"+ postDataChunk + "'.");
+					var json = qs.parse(urlParams.postData);
+					console.log(json);
+					});
 				}
 
-			//handling POST data	
-			if(req.method === "POST") {
-				req.addListener("data", function(postDataChunk) {
-				urlParams['postData'] += postDataChunk;
-				//console.log("Received POST data chunk '"+ postDataChunk + "'.");
-				var json = qs.parse(urlParams.postData);
-				console.log(json);
+				req.addListener("end", function() {
+					if(urlParams.query.module in requestHandlers) {
+						urlParams['db'] = db; // Quick fix, the RH needs access to db but no parameter has been though for that, so inject it there, with urls params, does matter if it's not that clean
+						requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender)
+					} else {
+						console.error(404)
+						res.writeHead(200, {'Content-Type': 'text/html'})
+						res.end(fs.readFileSync('../../views/404.html'))
+						// urlParams.params['fileUrl'] = 
+						// responseSender(req, res, urlParams.params, )
+					}
 				});
+
+			} catch(e) {
+				console.log(e)
 			}
-
-			req.addListener("end", function() {
-				if(urlParams.query.module in requestHandlers) {
-					urlParams['db'] = db; // Quick fix, the RH needs access to db but no parameter has been though for that, so inject it there, with urls params, does matter if it's not that clean
-					requestHandlers[urlParams.query.module](req, res, urlParams, defaultResponseSender)
-				} else {
-					console.error(404)
-					res.writeHead(200, {'Content-Type': 'text/html'})
-					res.end(fs.readFileSync('../../views/404.html'))
-					// urlParams.params['fileUrl'] = 
-					// responseSender(req, res, urlParams.params, )
-				}
-			});
-
-		} catch(e) {
-			console.log(e)
-		}
+		})
 	}).listen(port)
 }
 
