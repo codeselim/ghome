@@ -45,11 +45,14 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device
 			, 'devMgmt'   : devMgmt.pageInit
 			, 'newDevice' : new_device.pageInit
 			, 'scheduler' : scheduler.pageInit
-			, 'newTask'   : scheduler.newTaskPageInit
+			, 'task'   : scheduler.taskPageInit
 			, 'spy'       : function() {
 				// TODO : get recent logs from spy table and create a table with them
 				console.log("SPY FUNCTION INIT");
 			}
+
+			
+
 		}
 
 		for( id in pageinits) {

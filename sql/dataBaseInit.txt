@@ -11,3 +11,4 @@
 .read actions_receivers_view.sql
 .read settings.sql
 .read logs_spy.sql
+.read join_tables.sql
