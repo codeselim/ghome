@@ -65,9 +65,8 @@ function getDeviceInfo (db, deviceid, callback) {
 				}
 			}
 			callback(data)
-		})
+		}
 	})
-
 }
 
 var deviceRH = function (req, res, params, responseSender) {
