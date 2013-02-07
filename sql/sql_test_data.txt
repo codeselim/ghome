@@ -1,29 +1,29 @@
 PRAGMA foreign_keys = ON;
 
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (1, "égalité", 1, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "inférieur", 2, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "supérieur", 3, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "inférieur ou égal", 4, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "supérieur ou égal", 5, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "passage de seuil haut", 6, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "passage de seuil bas", 7, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "contact réalisé", 8, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "contact non réalisé", 9, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois =", 10, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine =", 11, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois =", 12, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure =", 13, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute =", 14, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois <", 15, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine <", 16, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois <", 17, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure <", 18, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute <", 19, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois >", 20, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine >", 21, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois >", 22, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure >", 23, "threshold");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute >", 24, "threshold");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (1, "égalité", 1, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "inférieur", 2, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "supérieur", 3, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "inférieur ou égal", 4, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "supérieur ou égal", 5, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "supérieur au seuil", 6, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "inférieur au seuil", 7, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "contact réalisé", 8, "none");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "contact non réalisé", 9, "none");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois =", 10, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine =", 11, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois =", 12, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure =", 13, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute =", 14, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois <", 15, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine <", 16, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois <", 17, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure <", 18, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute <", 19, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois >", 20, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine >", 21, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois >", 22, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure >", 23, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute >", 24, "list");
 
 
 INSERT INTO actions_types VALUES (1, "Allumer prise", 5, "ON");
@@ -90,12 +90,33 @@ INSERT INTO `settings` (id, name, value) VALUES (4, 'mail d envoi', 'tablette6.i
 -- Join tables data
 
 --  temperature
-INSERT INTO `event_types_condition_types` VALUES(1, 1); -- ascending threshold
-INSERT INTO `event_types_condition_types` VALUES(2, 1);  -- descending threshold
+	-- conditions
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(1, 1); -- ascending threshold
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(2, 1);  -- descending threshold
+	
+	-- events
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(1, 1); -- ascending threshold
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(1, 2); -- descending threshold
 
 -- light
-INSERT INTO `event_types_condition_types` VALUES(1, 2); -- ascending threshold
-INSERT INTO `event_types_condition_types` VALUES(2, 2);  -- descending threshold
+	-- conditions
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(1, 2); -- ascending threshold
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(2, 2);  -- descending threshold
+
+	-- events
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(2, 1); -- ascending threshold
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(2, 2); -- descending threshold
+
+-- presence
+	
+	-- events
+	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(10, 3); -- positive detection 
+	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(11, 3);  -- negative detection
+
+-- contact
+	-- events
+	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(4, 4); -- contact
+	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(3, 4);  -- no contact
 
 
 -- INSERT INTO `event_types_condition_types` VALUES(, );

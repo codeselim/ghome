@@ -68,13 +68,13 @@ function execute_task(event_id, origin_id) {//this function will search the good
 						}
 						break;
 						case 4 : // if operator = "<="
-						case 7 : // if operator = "passage de seuil bas"
+						case 7 : // if operator = "<= threshold"
 						if (parseInt(rows[r]["value_to_compare"]) > parseInt(value)){ //if we have the contrary of the operator, that means that the action have at least one condition wich is not respected, and we can't execute the action
 							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
 						}
 						break;
 						case 5 : // if operator = ">="
-						case 6 : // if operator = "passage de seuil haut"
+						case 6 : // if operator = ">= threshold"
 						if (parseInt(rows[r]["value_to_compare"]) < parseInt(value)){ //if we have the contrary of the operator, that means that the action have at least one condition wich is not respected, and we can't execute the action
 							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
 						}
