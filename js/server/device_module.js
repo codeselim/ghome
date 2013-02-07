@@ -89,8 +89,18 @@ var deviceRH = function (req, res, params, responseSender) {
 			break
 
 		case 'submit_edit':
-			res.end(JSON.stringify({'msg': 'not implemented yet', 'success': false}))
-			break;
+			var q = "UPDATE `" + t['s'] + "` SET name=?, hardware_id=? WHERE id=?"
+			var p = [params.query.equip_label, params.query.equip_id, params.query.id]
+			params.db.select_query(q, p, function (err) {
+				if (null == err) {
+					console.log("Request went well")
+					res.end(JSON.stringify({'id': this.lastID, 'success': true}))
+				} else {
+					console.error("newDeviceRH: Error when editing the new device " + params.query.id, err)
+					res.end(JSON.stringify({'msg': err, 'success': false}))
+				}
+			})
+		break;
 
 		case 'new':
 			//* Loads required data and sends the filled template
