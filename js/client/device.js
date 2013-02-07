@@ -135,7 +135,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		.done(function(data) {
 			console.log(data)
 			if (data.success) {
-				window.location.href = '/?module=device_management'
+				window.location.href = '/?module=device_management&msg='+encodeURIComponent(data.msg)
 			} else {
 				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
 			}

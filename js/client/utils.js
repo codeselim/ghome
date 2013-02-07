@@ -28,11 +28,21 @@ define(function(){
 		return query_string
 	}
 
+
+
 	var initMessages = function() {
-		$('#messages').hide()
+		var $msg = $('#messages')
+		if ($msg.find('li').length == 0) {
+			$msg.hide()
+		} else {
+			$msg.find('li a').each(function(index, $item) {
+				$(this).click(removeMessage)
+			})
+		}
 	}
 
 	var removeMessage = function(){
+		console.log('remove!')
 		$(this).parent().parent().parent().remove()
 		var $msg = $('#messages')
 		$msg.listview('refresh')
