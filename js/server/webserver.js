@@ -6,7 +6,8 @@ var shared    = require('./shared_data')
 var sseSender = require('./sse_sender')
 var device    = require('./device_module')
 var scheduler = require('./scheduler_module')
-var qs 		    = require('querystring');
+var qs 		  = require('querystring');
+var spy_webm  = require('./spy_web_module');
 
 
 var webdir = '../..'
@@ -20,6 +21,7 @@ var requestHandlers = {
 	  'home'              : homeReqHandler
 	, 'device_management' : device.devMgmtRequestHandler
 	, 'device'            : device.deviceRequestHandler
+	, 'spy'               : spy_webm.spyRequestHandler
 	, 'device_test'       : device.deviceTestRH
 	, 'scheduler'         : scheduler.schedulerRequestHandler
 	, 'new_task'          : scheduler.newTaskRequestHandler
