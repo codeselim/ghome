@@ -33,6 +33,13 @@ Database.prototype.insert_query = function (query_str, parameters, callback_func
 	})
 }
 
+Database.prototype.update_query = function (query_str, parameters, callback_func) {
+	this.prepare_statement(query_str, parameters, function (statement, pa) {
+		statement.run(pa, callback_func)
+		statement.finalize()
+	})
+}
+
 Database.prototype.prepare_statement = function(query_str, parameters, spec_func) {
 	var self = this
 	this.db.serialize(function() {
