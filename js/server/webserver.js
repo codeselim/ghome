@@ -124,8 +124,12 @@ var temp2color = function(temperature_value) {
  * @return{undefined} undefined
 */
 function defaultResponseSender(req, res, params, data) {
-	res.writeHead(200, {'Content-Type': mime.lookup(params.fileUrl)})
-	res.end(data)
+	if (params.error404) {
+		res.end(fs.readFileSync('../../views/404.html'))
+	} else {
+		res.writeHead(200, {'Content-Type': mime.lookup(params.fileUrl)})
+		res.end(data)
+	}
 }
 
 /** @TODO to be documented */

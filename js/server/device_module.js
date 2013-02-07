@@ -78,11 +78,9 @@ var deviceRH = function (req, res, params, responseSender) {
 			params.db.insert_query(q, p, function (err) {
 				if (null == err) {
 					console.log("Request went well")
-					// res.writeHead(301, {'Location': "/?module=device_management"})
-					// res.end()
-					res.end(JSON.stringify({'id': this.lastID, 'success': true}))
+					res.end(JSON.stringify({'id': this.lastID, 'success': true, 'msg' : 'Le nouvel équipement a été ajouté avec succès.'}))
 				} else {
-					console.error("newDeviceRH: Error when inserting the new device.", q, p, zerr)
+					console.error("deviceRH: Error when inserting the new device.", q, p, zerr)
 					res.end(JSON.stringify({'msg': JSON.stringify(err), 'success': false}))
 				}
 			})
@@ -94,9 +92,9 @@ var deviceRH = function (req, res, params, responseSender) {
 			params.db.select_query(q, p, function (err) {
 				if (null == err) {
 					console.log("Request went well")
-					res.end(JSON.stringify({'id': this.lastID, 'success': true}))
+					res.end(JSON.stringify({'id': this.lastID, 'success': true, 'msg' : 'Votre équipement a été modifié avec succès.'}))
 				} else {
-					console.error("newDeviceRH: Error when editing the new device " + params.query.id, err)
+					console.error("deviceRH: Error when editing the new device " + params.query.id, err)
 					res.end(JSON.stringify({'msg': err, 'success': false}))
 				}
 			})
@@ -196,9 +194,13 @@ var deviceManagementRH  = function (req, res, params, responseSender) {
 			
 			var deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
 
-			var data = tpl.get_template_result("device_management.html", { 
-				  'device_types' : deviceTypes
-			})
+			var tplParams = {'device_types' : deviceTypes}
+
+			if (params.query.msg) {
+				tplParams.msg = decodeURIComponent(params.query.msg)
+			}
+
+			var data = tpl.get_template_result("device_management.html", tplParams)
 
 			params.fileUrl = 'device_management.html'
 			responseSender(req, res, params, data)			
