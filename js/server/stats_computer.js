@@ -23,6 +23,19 @@ function statsRH(req, res, params, responseSender){
 					" and sensor_type_id = 1; "	
 	params.db.select_query (query_str, null, 
 		function (err, rows){
+
+			var xaxis_data = [];
+			var maximum_data = null;
+			var moyenne_data = null;
+			var minimum_data = null;
+
+			var actions = '{'
+			if (rows.length > 0){
+				for (var i = 0 ; i < rows.length - 1 ;i++) {
+				xaxis_data.push(rows[i].time.trim().toString())
+				}
+			}
+			
 			var stats_data = {'chart': {
                  				'renderTo': "container",
                  				'type': "line",
@@ -34,7 +47,7 @@ function statsRH(req, res, params, responseSender){
                 				'x': -20 //center
              				},
              			'xAxis': {
-                		'categories': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                		'categories': xaxis_data
             				},            			
             			'yAxis': {
         	        				'title': {
