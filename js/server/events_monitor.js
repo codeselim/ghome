@@ -8,12 +8,14 @@ var eventToSend;
 var idTimer;
 var tasks_executor = require("./tasks_executor.js");
 var shared_data = require("./shared_data.js");
+var sensors_utils = require('./sensors.js');
 var fs = require("fs");
 var events = require('events');
 // Map with last values of each sensor {id : value, ...}
 var lastValues;
 var SENSOR_EVENT = "newSensorEvent";
 var eventEmitter = new events.EventEmitter();
+var tables = shared_data.get_shared_data('SQL_TABLES');
 
 Date.prototype.getWeek = function() {
 	var onejan = new Date(this.getFullYear(),0,1);
@@ -22,7 +24,7 @@ Date.prototype.getWeek = function() {
 
 
 function checkThresholds(idSensor, sensor_type_id, value) {
-
+	console.log("ERROR WITH "+ lastValues);
 	db.select_query("SELECT value FROM thresholds WHERE sensor_type_id = ?", [sensor_type_id], function(err, rows) {
 		var thresholds = [];
 		for (var r in rows) {
@@ -40,6 +42,7 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 		eventEmitter.emit(SENSOR_EVENT, 2, idSensor);
 	}
 	}
+	console.log("ERROR WITH "+ value);
 	lastValues[idSensor] = value;
 	});
 
@@ -184,7 +187,7 @@ function sendTimeEvent() {
 
 function start(database) {
 	console.log("Starting events_monitor");
-	lastValues = shared_data.get_shared_data("SENSOR_VALUES");
+	lastValues = shared_data.get_shared_data("SENSORS_VALUES");
 	db = database;
 	//getData(2214883, 10);
 	//getData(2214883, 10);
@@ -193,8 +196,7 @@ function start(database) {
 
 function handleEvent(frame_data) {
 
-data = dataSensor;
-console.log("Data received : " + dataSensor + "\nHardware ID sensor : " + idSensor);
+console.log("Data received : " + frame_data.data);
 
 db.select_query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"` WHERE hardware_id = ?", [frame_data.id], function(err, rows) {
 
@@ -204,16 +206,16 @@ db.select_query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"`
       //var sensor_type = rows[r]["sensors_types.name"];
       //var sensor_type_id = rows[r]["sensors_types.id"];
       // If sensor_type_id is associated with a function in dictSensorEvent
-      type = rows[i].sensor_type_id
-	  value = sensors_utils.decode_data_byte(frame_data, type)
-	  sensor_id = rows[i].sensor_id
+      type = rows[r].sensor_type_id
+	  value = sensors_utils.decode_data_byte(type, frame_data)
+	  sensor_id = rows[r].sensor_id
+	  console.log(type);
       if (type in Object.keys(dictSensorEvent)) {
       	//db.query("SELECT id FROM sensors WHERE hardware_id = ? AND sensor_type_id = ?", [idSensor, sensor_type_id], function(err, rows) {
 
-      		for (var r in rows) {
-      			var sensor_id = rows[r]["id"];
-      			dictSensorEvent[type](sensor_id, type, value);
-      		}
+      		
+      	dictSensorEvent[type](sensor_id, type, value);
+      		
       	
       }
       

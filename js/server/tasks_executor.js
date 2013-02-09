@@ -29,7 +29,7 @@ function start (database){
 }
 
 function execute_task(event_id, origin_id) {//this function will search the good actions to do and call make_action with the results in order to make the action effective
-
+	console.log("YOLO")
 	var date= new Date()
 	var results = new Array();
 	var targets = new Array();

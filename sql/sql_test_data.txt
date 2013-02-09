@@ -87,6 +87,11 @@ INSERT INTO `settings` (id, name, value) VALUES (1, 'mode spy', 'ON');
 INSERT INTO `settings` (id, name, value) VALUES (2, 'user mail', 'tablette6.insa@gmail.com');
 INSERT INTO `settings` (id, name, value) VALUES (3, 'mdp mail', 'tablette6');
 INSERT INTO `settings` (id, name, value) VALUES (4, 'mail d envoi', 'tablette6.insa@gmail.com');
+
+
+INSERT INTO `logs_spy` (id, sensor_id, value, time) VALUES (1, 2, 120, datetime());
+INSERT INTO `logs_spy` (id, sensor_id, value, time) VALUES (2, 3, 230, datetime());
+
 -- Join tables data
 
 --  temperature
@@ -120,3 +125,4 @@ INSERT INTO `settings` (id, name, value) VALUES (4, 'mail d envoi', 'tablette6.i
 
 
 -- INSERT INTO `event_types_condition_types` VALUES(, );
+

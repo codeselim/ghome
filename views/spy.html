@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>ghome</title>
+	<link rel="stylesheet/less" type="text/css" href="css/ghome.less" />
+	<script src="js/vendor/less.min.js" type="text/javascript"></script>
+	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
+</head>
+<body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
+	<!-- Notif -->
+	<div data-role="page" id="spy">
+		<div data-theme="a" data-role="header" data-position="fixed">
+			<h3>Mode espion</h3>
+			<a href="/?module=home" data-icon="home" data-iconpos="notext" data-rel="back" >Accueil</a>
+		</div>
+
+		<ul data-role="listview" data-inset="true" id="messages"></ul>
+
+		<div data-role="content">
+
+			<!-- <div data-role="fieldcontain"> -->
+
+			<ul data-role="listview" data-inset="true" data-divider-theme="d" data-split-icon="minus" data-split-theme="d" id="bigList">
+				<li data-role="list-divider" role="heading">
+					Paramètres
+				</li>
+
+
+
+				<li>
+					<form>
+					<fieldset data-role="controlgroup">
+						<label for="switchSpyMode">
+							Mode espion
+						</label>
+						<select name="switchSpyMode" id="sseToggle" data-theme="" data-role="slider" data-mini="true">
+							<option value="off">Off</option>
+							<option value="on">On</option>
+						</select>
+					</fieldset>
+
+
+					
+
+					<div data-role="fieldcontain">
+						<fieldset data-role="controlgroup">
+						Email : <input type="text" name="email">
+						</fieldset>
+					</div>
+						<input type="submit" name="submitEmail" value="Enregistrer">
+					</form>
+				</li>
+
+				<li data-role="list-divider" role="heading">
+					Evènements
+				</li>
+
+				<li>
+					<table class="evtTable">
+						<th class="sensor"> Capteur </th>
+						<th class="sensorType"> Type Capteur </th>
+						<th class="value"> Valeur </th>
+						<th class="date"> Date </th>
+
+						{{#rows}}
+						<tr>
+							<td>{{name}} </td>
+							<td>{{stName}} </td>
+							<td>{{value}} </td>
+							<td>{{time}} </td>
+						</tr>
+						{{/rows}}
+
+					</table>
+
+				</li>
+
+
+
+			</ul>
+
+		</div>
+	</div>
+
+</body>
+</html>
