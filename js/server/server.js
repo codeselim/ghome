@@ -16,9 +16,11 @@ set_shared_data('SQL_TABLES', {'st': 'sensors_types',
 								'm':'modes',
 								's':'sensors',
 								't':'tasks',
+								'th' 'thresholds',
 								'etct':'event_types_condition_types',
 								'stet':'sensor_types_event_types',
-								'stct':'sensor_types_condition_types'
+								'stct':'sensor_types_condition_types',
+								'thst':'thresholds_sensor_types'
 							})
 var allowed_ids = [2214883, 346751, 8991608, 112022, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 var connected_ids = allowed_ids.slice(0) // copies the content of allowed_ids
