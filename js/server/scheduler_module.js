@@ -54,13 +54,14 @@ var taskRH  = function (req, res, params, responseSender) {
 		{
 			var data = {}
 			//* Required data: for sourceType, list of events, and for each: {evtlabel: evtid}
-			var q = "SELECT event_type_id " + 
-					"FROM `" + t['stet'] + "` " +
-					"WHERE sensor_type_id = ?"
+			var q = "SELECT stet.event_type_id, et.name " + 
+					"FROM `" + t['stet'] + "` stet " +
+					"INNER JOIN `" + t['et'] + "` ct ON (et.id = stet.event_type_id) "
+					"WHERE stet.sensor_type_id = ?"
 			var p = [Math.abs(params.query.sourceType)]
 			params.db.select_query(q, p, function (err, rows) {
 				for(var i in rows) {
-					data[rows[i]['event_type_id']] = rows[i]['event_type_id']
+					data[rows[i]['name']] = rows[i]['event_type_id']
 				}
 			})			
 			res.end(JSON.stringify(data))
@@ -73,24 +74,26 @@ var taskRH  = function (req, res, params, responseSender) {
 			//* Required data: for evtType (resp. sensorType, list of events, and for each: {evtlabel: evtid}
 			if (params.query.evtType) { // Getting the conditions types related to a given event_type
 				var data = {}
-				var q = "SELECT condition_type_id " + 
-						"FROM `" + t['etct'] + "` " +
-						"WHERE event_type_id = ?"
+				var q = "SELECT etct.condition_type_id, ct.name " + 
+						"FROM `" + t['etct'] + "` etct " +
+						"INNER JOIN `" + t['ct'] + "` ct ON (ct.id = etct.condition_type_id) "
+						"WHERE etct.event_type_id = ?"
 				var p = [Math.abs(params.query.evtType)]
 				params.db.select_query(q, p, function (err, rows) {
 					for(var i in rows) {
-						data[rows[i]['condition_type_id']] = rows[i]['condition_type_id']
+						data[rows[i]['name']] = rows[i]['condition_type_id']
 					}
 				})
 			} else if (params.query.sensorType) { // Getting the conditions types related to a given sensor_type
 				var data = {}
-				var q = "SELECT condition_type_id " + 
-						"FROM `" + t['stct'] + "` " +
-						"WHERE sensor_type_id = ?"
+				var q = "SELECT stct.condition_type_id, ct.name " + 
+						"FROM `" + t['stct'] + "` stct " +
+						"INNER JOIN `" + t['ct'] + "` ct ON (ct.id = stct.condition_type_id) "
+						"WHERE stct.sensor_type_id = ?"
 				var p = [Math.abs(params.query.sensorType)]
 				params.db.select_query(q, p, function (err, rows) {
 					for(var i in rows) {
-						data[rows[i]['condition_type_id']] = rows[i]['condition_type_id']
+						data[rows[i]['name']] = rows[i]['condition_type_id']
 					}
 				})
 			} 
