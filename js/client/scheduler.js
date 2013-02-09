@@ -1,3 +1,5 @@
+"use strict"
+
 define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 
 	var initCache = function(cache) {

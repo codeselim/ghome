@@ -4,13 +4,13 @@ CREATE TABLE `event_types` (
 );
 
 INSERT INTO event_types VALUES (1, "Dépassement de seuil en front montant");
-INSERT INTO event_types VALUES (null, "Dépassement de seuil en front descendant");
-INSERT INTO event_types VALUES (null, "Contact réalisé");
-INSERT INTO event_types VALUES (null, "Contact rompu");
-INSERT INTO event_types VALUES (null, "Changement de jour");
-INSERT INTO event_types VALUES (null, "Changement d'heure");
-INSERT INTO event_types VALUES (null, "Changement de minute");
-INSERT INTO event_types VALUES (null, "Changement de semaine");
-INSERT INTO event_types VALUES (null, "Changement de mois");
-INSERT INTO event_types VALUES (null, "Présence détectée");
-INSERT INTO event_types VALUES (null, "Absence détectée");
+INSERT INTO event_types VALUES (2, "Dépassement de seuil en front descendant");
+INSERT INTO event_types VALUES (3, "Contact réalisé");
+INSERT INTO event_types VALUES (4, "Contact rompu");
+INSERT INTO event_types VALUES (5, "Changement de jour");
+INSERT INTO event_types VALUES (6, "Changement d'heure");
+INSERT INTO event_types VALUES (7, "Changement de minute");
+INSERT INTO event_types VALUES (8, "Changement de semaine");
+INSERT INTO event_types VALUES (9, "Changement de mois");
+INSERT INTO event_types VALUES (10, "Présence détectée");
+INSERT INTO event_types VALUES (11, "Absence détectée");

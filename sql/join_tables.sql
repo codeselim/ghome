@@ -1,3 +1,4 @@
+-- Used to link the event type to possibles operators as the first mandatory condition (for instance: ascending threshold -> greater or equal to a threshold)
 CREATE TABLE `event_types_condition_types` (
 	`event_type_id` INT NOT NULL,
 	`condition_type_id` INT NOT NULL,
@@ -6,6 +7,7 @@ CREATE TABLE `event_types_condition_types` (
 	PRIMARY KEY(`event_type_id`, `condition_type_id`)
 );
 
+-- Used to link sensor_types to event types. That is to say, which event can we use for a given sensor type
 CREATE TABLE `sensor_types_event_types` (
 	`sensor_type_id` INT NOT NULL,
 	`event_type_id` INT NOT NULL,
@@ -14,6 +16,7 @@ CREATE TABLE `sensor_types_event_types` (
 	PRIMARY KEY(`sensor_type_id`, `event_type_id`)
 );
 
+-- Used to link sensor types to condition types: That is to say, except the case of the first mandatory condition, which conditions/operators can we use on the value of a given device ?
 CREATE VIEW `sensor_types_condition_types` AS 
 	SELECT sensor_type_id, condition_type_id 
 	FROM event_types_condition_types etct 

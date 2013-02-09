@@ -4,3 +4,4 @@ sql/dat.db
 requirejs/
 r.js
 build.js
+lastExecutionTimer.txt
