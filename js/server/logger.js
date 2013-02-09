@@ -18,7 +18,7 @@ function insertLog(frame_data) {
 	// First, check if this frame might be containing or not multiple values information (when sensors can monitor for multiple dimmensions)
 	db.select_query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"` WHERE hardware_id = ?", [frame_data.id], function (err, rows) {
 		if (null == err) {// if no error
-			for(i in rows) {
+			for(var i in rows) {
 				type = rows[i].sensor_type_id
 				value = sensors_utils.decode_data_byte(frame_data, type)
 				db.select_query("INSERT INTO " + tables.l + " VALUES (?, ?, ?, datetime() )", ["NULL", rows[i].sensor_id, value], function (err, rows){

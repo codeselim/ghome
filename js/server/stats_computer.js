@@ -14,9 +14,13 @@ function statsRH(req, res, params, responseSender){
 		// , 'TEST_DATA'		 : params.postData
 		// , 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
 		// , 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
-		
+			STATS_DATA :"chart: { renderTo: 'container', type: 'line', marginRight: 130, marginBottom: 25 },"
+
+
+			//JSON.parse('{ "chart": {    "renderTo": "container",  "type": "line", "marginRight": 130,  "marginBottom": 25 }}')
 		}
 
+console.log(params)
 
 	var data = tpl.get_template_result("stats.html", templateData)
 	console.log(params['pathname'])

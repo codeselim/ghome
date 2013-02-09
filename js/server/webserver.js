@@ -1,3 +1,5 @@
+"use strict"
+
 var http      = require('http')
 var fs        = require('fs')
 var mime      = require('mime')
@@ -8,7 +10,7 @@ var device    = require('./device_module')
 var scheduler = require('./scheduler_module')
 var qs 		  			= require('querystring')
 var stats_computer 	  	= require('./stats_computer')
-
+var spy_webm  = require('./spy_web_module');
 
 var webdir = '../..'
 /**
@@ -21,9 +23,10 @@ var requestHandlers = {
 	  'home'              : homeReqHandler
 	, 'device_management' : device.devMgmtRequestHandler
 	, 'device'            : device.deviceRequestHandler
+	, 'spy'               : spy_webm.spyRequestHandler
 	, 'device_test'       : device.deviceTestRH
 	, 'scheduler'         : scheduler.schedulerRequestHandler
-	, 'new_task'          : scheduler.newTaskRequestHandler
+	, 'task'              : scheduler.taskRequestHandler
 	, 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
 	, 'postform'		  : postformHandler //test post implementation selim 	
@@ -94,21 +97,21 @@ function homeReqHandler(req, res, params, responseSender) {
 var temp2color = function(temperature_value) {
 	var color = ''
 	if (temperature_value >= 32) {
-		color = 'red1'
+		var color = 'red1'
 	} else if (temperature_value >= 25) {
-		color = 'green3'
+		var color = 'green3'
 	} else if (temperature_value >= 19) {
-		color = 'green2'
+		var color = 'green2'
 	} else if (temperature_value >= 10) {
-		color = 'green1'
+		var color = 'green1'
 	} else if (temperature_value >= 5) {
-		color = 'blue1'
+		var color = 'blue1'
 	} else if (temperature_value >= 0) {
-		color = 'blue2'
+		var color = 'blue2'
 	} else if (temperature_value >= -5) {
-		color = 'blue3'
+		var color = 'blue3'
 	} else if (temperature_value <= -10) {
-		color = 'blue4'
+		var color = 'blue4'
 	}
 	return color
 }

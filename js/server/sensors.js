@@ -1,3 +1,5 @@
+"use strict"
+
 //* Library of sensors-related functions
 
 /**
@@ -40,19 +42,19 @@ function decode_frame (frame) {
 function decode_data_byte (type_s, frame_data) {
 	switch (type_s) {
 		case 1 ://temperature
-			value = Math.abs((frame_data.data[2] * 40 /255) - 40 ) ;//temperature sensor
+			var value = Math.abs((frame_data.data[2] * 40 /255) - 40 ) ;//temperature sensor
 			return value;
 		case 2 ://light
-			value = frame_data.data[1] * 510 / 255;//luminosity value
+			var value = frame_data.data[1] * 510 / 255;//luminosity value
 			return value;
 		case 3 ://presence
-			value = frame_data.data[3] & 2;
+			var value = frame_data.data[3] & 2;
 			return value;
 		case 4 ://contact
-			value = frame_data.data[3] & 1;
+			var value = frame_data.data[3] & 1;
 			return value;
 		case 5 : //electricity : value of power consumption in a minute in Wh
-			value = parseFloat (frame_data.data[2]+"."+frame_data.data[3]);
+			var value = parseFloat (frame_data.data[2]+"."+frame_data.data[3]);
 			   //value of power consumption in a minute in Wh
 			return value;
 		default:
@@ -64,13 +66,13 @@ function decode_data_byte (type_s, frame_data) {
 
 function check_frame_checksum (frame_data, framestr) {
 	//* Note: The checksum is the least significat Byte of the sum of all the values except the sync bytes (the "separator") and the checksum itself
-	s = 0
+	var s = 0
 	for (var i = framestr.length - 3; i >= 4; i -= 2) {
 		s += parseIntFromHexSlice(framestr, i-1, 2)
 	};
 	// s = (frame_data.hseq_length + frame_data.org + frame_data.data[0] + frame_data.data[1] + frame_data.data[2] + frame_data.data[3] + frame_data.id + frame_data.status)
 	console.log("Sum:", s)
-	checksum = s & 0xFF 
+	var checksum = s & 0xFF 
 	console.log("Computed checksum:", checksum)
 	return (checksum == frame_data.checksum)
 
@@ -84,7 +86,7 @@ function generate_json_devices_list_from_sql_rows (rows) {
 					
 	for (var r in rows) {
 		if(sensor_type_id != rows[r].sensor_type_id) {	
-			sensor_type_id = rows[r].sensor_type_id
+			var sensor_type_id = rows[r].sensor_type_id
 			deviceTypes += ']},'
 			deviceTypes += '{"label" : "'+rows[r].name.trim()+'", "devices" : [ '    
 			deviceTypes += '{"label" : "'+rows[r].device_name.trim()+'", "id" : "'+ rows[r].id +'", "type" : "'+rows[r].sensor_type_id+'"}'
@@ -97,9 +99,9 @@ function generate_json_devices_list_from_sql_rows (rows) {
 		var temp = '['  //	temp =  '"deviceTypes" : ['
 		temp += deviceTypes.substr(3) //pour enlever les premier  ]},
 		temp += ']}  ]'
-		deviceTypes = JSON.parse(temp)
+		var deviceTypes = JSON.parse(temp)
 	} else {
-		deviceTypes = []
+		var deviceTypes = []
 	}
 	return deviceTypes
 }

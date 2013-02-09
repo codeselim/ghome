@@ -17,13 +17,13 @@
 		<div data-role="content">
 			<ul data-role="listview" data-divider-theme="b" data-inset="true">
 				<li data-icon="plus">
-					<a data-transition="fade" href="/?module=new_task"> Nouvelle tâche</a>
+					<a data-transition="fade" href="/?module=task&amp;action=new"> Nouvelle tâche</a>
 				</li>
 				<li data-role="list-divider">Liste des tâches</li>
 				{{#tasks}}
 					<li data-role="list-divider">{{label}}</li>
 					{{#devices}}
-					<li><a data-transition="fade" href="/?module=tasks&amp;action=edit&amp;id={{id}}">{{label}}</a></li>
+					<li><a data-transition="fade" href="/?module=task&amp;action=edit&amp;id={{id}}">{{label}}</a></li>
 					{{/devices}}
 				{{/tasks}}
 				{{^tasks}}

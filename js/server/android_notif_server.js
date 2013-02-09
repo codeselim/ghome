@@ -11,7 +11,7 @@ var NOTIF_PREFIX = "notif: "
 // var ANDROID_NOTIF_EVENT = "pushAndroidNotif"
 
 function start (port, ip) {
-	server = net.createServer(function(stream) {
+	var server = net.createServer(function(stream) {
 		var stop = false
 		var myStreamId = streamId++
 		streams[myStreamId] = stream
@@ -34,7 +34,7 @@ function start (port, ip) {
 
 		function shutdown () {
 			console.log("Closing connection to Android device number", myStreamId)
-			stop = true
+			var stop = true
 			// clearInterval(a)
 			delete streams[myStreamId]
 		}
@@ -53,7 +53,7 @@ function start (port, ip) {
 }
 
 function push_android_notif (notifText) {
-	for(streamId in streams) {
+	for(var streamId in streams) {
 		streams[streamId].write(NOTIF_PREFIX + notifText)
 	}
 }

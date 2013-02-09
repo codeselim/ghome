@@ -1,9 +1,7 @@
 require.config({ 
 	baseUrl: 'js/client'
 	, paths: { 
-		  'highcharts'  : '../vendor/highcharts'
-		, 'exporting' : '../vendor/exporting'
-		,  'jquerymobile': '../vendor/jquery.mobile-1.2.0.min'
+		  'jquerymobile': '../vendor/jquery.mobile-1.2.0.min'
 		, 'jqvalidate': '../vendor/jquery.validate.min'
 	}
 	, shim : {
@@ -12,15 +10,13 @@ require.config({
 			'exports' : 'Highcharts'
 			, 'deps' : ['jquery']
 		}
-		, 'stats' : {
-			'exports' : 'stats'
-		}
 	}
 })
 
 
-require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device', 'scheduler', 'stats', 'jquerymobile'], 
-	function($, /*_,*/ sseListener, devMgmt, new_device, scheduler, stats) {
+require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device', 'scheduler', 'utils',  'jquerymobile'], 
+	function($, /*_,*/ sseListener, devMgmt, new_device, scheduler, utils) {
+
 	$(function() {
 
 		//* Hides the body until JQM finishes applying styles
@@ -51,11 +47,66 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device
 		pageinits = {
 			  'home'      : homePI
 			, 'notif'     : notifPI
-			, 'stats'     : stats.pageInit
 			, 'devMgmt'   : devMgmt.pageInit
 			, 'newDevice' : new_device.pageInit
 			, 'scheduler' : scheduler.pageInit
-			, 'newTask'   : scheduler.newTaskPageInit
+			, 'task'   : scheduler.taskPageInit
+			, 'spy'       : function() {
+				// TODO : get recent logs from spy table and create a table with them
+				utils.initMessages();
+					var submitForm = function submitForm() {
+
+		var data = utils.queryStringToHash($.param($('input:not([type=button],[type=submit]),select')))
+		console.log(data)
+		data.module = 'spy'
+
+		data.action = 'submit_parameters'
+		
+
+		$.ajax({
+				'url'      : "/"
+			, 'dataType' : 'json'
+			, 'data'     : data
+		})
+		.done(function(data) {
+			console.log(data)
+			if (data.success) {
+				utils.addMessage('success', 'TODO: retourner le nouvel id pour pouvoir passer en mode édition')
+				window.location.href = '/?module=spy'
+				// setTimeout('top.location.href = "/?module=scheduler"',2000)
+			} else {
+				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
+			}
+		})
+		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
+	}
+
+						$("form").validate({
+			  rules: { 
+					  email: {required:true, email:true}
+				} 
+			, messages: { 
+					  email: {
+					  	required : "Email requis",
+					  	email : "Email non valide"
+					  }
+					
+				}
+			, errorPlacement: function(error, element) {
+				//* Needed to place the error message out of the select menu.
+				if (element.is('select')) {
+					error.insertAfter($(element).parent())
+				} else {
+					error.insertAfter(element)
+				}
+			}
+			, submitHandler: submitForm
+		})
+
+			}
+
+			
+
 		}
 
 		for( id in pageinits) {

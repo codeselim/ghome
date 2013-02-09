@@ -1,3 +1,5 @@
+"use strict"
+
 //* Server that deals with the data from the sensors
 
 
@@ -10,8 +12,8 @@ var check_checksum = sensors_utils.check_frame_checksum
 var eventEmitter = new events.EventEmitter();
 var SENSOR_FRAME_EVENT = "newSensorFrame"
 var FRAME_SEPARATOR = "A55A"
+var FRAME_SIZE = 28
 function start (db, web_serv, port, allowed_ids) {
-	FRAME_SIZE = 28
 	console.log(new Date(), "Starting Sensors server")
 	var server = net.createServer(function(stream) {
 
@@ -40,9 +42,9 @@ function start (db, web_serv, port, allowed_ids) {
 					// console.log("Throwing away rubbish.")
 					continue;
 				}
-				frame = buffer.substr(0, FRAME_SIZE) //* We know we have a complete frame (>= FRAME_SIZE and pos == 0) so just cut it off by its length
+				var frame = buffer.substr(0, FRAME_SIZE) //* We know we have a complete frame (>= FRAME_SIZE and pos == 0) so just cut it off by its length
 				buffer = buffer.substr(FRAME_SIZE, buffer.length) //* Crops the current buffer, we don't need the data from the previous frame anymore
-				frame_data = decode(frame)
+				var frame_data = decode(frame)
 				console.log("Sensor id=", frame_data.id)
 				if (-1 != allowed_ids.indexOf(frame_data.id)) {
 					console.log("This sensor is one of ours && the checksum is correct.")
