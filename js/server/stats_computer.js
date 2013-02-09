@@ -25,14 +25,17 @@ function statsRH(req, res, params, responseSender){
 		function (err, rows){
 
 			var xaxis_data = [];
-			var maximum_data = null;
-			var moyenne_data = null;
-			var minimum_data = null;
+			var maximum_data = [];
+			var average_data = [];
+			var minimum_data = [];
 
 			var actions = '{'
 			if (rows.length > 0){
 				for (var i = 0 ; i < rows.length - 1 ;i++) {
 				xaxis_data.push(rows[i].time.trim().toString())
+				// minimum_data.push(rows[i].min)
+				average_data.push(rows[i].value)
+				// maximum_data.push(rows[i].max)
 				}
 			}
 			
@@ -72,13 +75,13 @@ function statsRH(req, res, params, responseSender){
             				},
            				'series': [{
                 				'name': 'Maximum',
-                				'data': [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6] 
+                				'data': maximum_data
                 					}, {
                 				'name': 'Moyenne',
-                				'data': [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
+                				'data': average_data
             						}, {
                 				'name': 'Minimum',
-                				'data': [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
+                				'data': minimum_data
             					}]
             		}
 		
