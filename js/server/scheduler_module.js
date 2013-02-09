@@ -158,7 +158,6 @@ var taskRH  = function (req, res, params, responseSender) {
 				"ORDER BY st.name, device_name ASC",
 				null, 
 				function (err, rows) {
-					console.log(rows)
 					if(null != err) {
 						console.log("[scheduler_module reported SQL_ERROR] : " + err)
 					}
@@ -166,29 +165,35 @@ var taskRH  = function (req, res, params, responseSender) {
 					var actionDevices = sutils.generate_json_devices_list_from_sql_rows(rows)
 
 					params.db.select_query(
-						"SELECT st.name AS name, stet.sensor_type_id AS sensor_type_id, stet.id AS id, stet.name AS device_name " +
+						"SELECT st.name AS name, elv.sensor_type_id AS sensor_type_id, elv.id AS id, elv.name AS device_name " +
 						"FROM " + t.st + " st " +
-						"INNER JOIN `" + t['stet'] + "` stet ON (st.id = stet.sensor_type_id) " +
+						"INNER JOIN `" + t['elv'] + "` elv ON (st.id = elv.sensor_type_id) " +
 						"ORDER BY st.name, device_name ASC",
 						null,
 						function (err, rows) {
+							console.log(rows)
 							var evtSources = sutils.generate_json_devices_list_from_sql_rows(rows)
-							
+							console.log(evtSources)
+
 							var tplData = {
 								 'actionDevices' : actionDevices,
 								 'evtSourceTypes' : [
 									{
 										'label' : 'Sources spéciales', 
-										'sensors' : [
-											{'label' : 'Date', 'value' : -1, 'type' : -1},
-											{'label' : 'Météo', 'value' : 2, 'type' : -2}
+										'devices' : [
+											{'label' : 'Date', 'id' : -1, 'type' : -1},
+											{'label' : 'Météo', 'id' : 2, 'type' : -2}
 										]
 									}
 								]
 							}
 
-							tplData.evtSourceTypes.concat(evtSources)
+							tplData.evtSourceTypes = tplData.evtSourceTypes.concat(evtSources)
 							console.log(tplData.evtSourceTypes)
+							for(var i in tplData.evtSourceTypes) {
+								console.log(tplData.evtSourceTypes[i])
+							}
+
 
 							var html = tpl.get_template_result("task.html", tplData)
 
