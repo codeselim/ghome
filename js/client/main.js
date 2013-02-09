@@ -1,9 +1,7 @@
 require.config({ 
 	baseUrl: 'js/client'
 	, paths: { 
-		  'highcharts'  : '../vendor/highcharts'
-		, 'exporting' : '../vendor/exporting'
-		,  'jquerymobile': '../vendor/jquery.mobile-1.2.0.min'
+		  'jquerymobile': '../vendor/jquery.mobile-1.2.0.min'
 		, 'jqvalidate': '../vendor/jquery.validate.min'
 	}
 	, shim : {
@@ -12,15 +10,12 @@ require.config({
 			'exports' : 'Highcharts'
 			, 'deps' : ['jquery']
 		}
-		, 'stats' : {
-			'exports' : 'stats'
-		}
 	}
 })
 
 
-require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device', 'scheduler', 'utils',  'stats', 'jquerymobile'], 
-	function($, /*_,*/ sseListener, devMgmt, new_device, scheduler, utils, stats) {
+require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device', 'scheduler', 'utils',  'jquerymobile'], 
+	function($, /*_,*/ sseListener, devMgmt, new_device, scheduler, utils) {
 
 	$(function() {
 
@@ -52,7 +47,6 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device
 		pageinits = {
 			  'home'      : homePI
 			, 'notif'     : notifPI
-			, 'stats'     : stats.pageInit
 			, 'devMgmt'   : devMgmt.pageInit
 			, 'newDevice' : new_device.pageInit
 			, 'scheduler' : scheduler.pageInit
