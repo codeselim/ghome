@@ -19,6 +19,14 @@ CREATE VIEW `sensor_types_condition_types` AS
 	FROM event_types_condition_types etct 
 	INNER JOIN sensor_types_event_types stet ON (etct.event_type_id = stet.event_type_id);
 
+
+CREATE TABLE `thresholds_sensor_types` (
+	`threshold_id` INT NOT NULL,
+	`sensor_type_id` INT NOT NULL,
+	PRIMARY KEY(`threshold_id`, `sensor_type_id`)
+);
+
+
 -- CREATE TABLE `event_type_condition_types` (
 -- 	`` INT NOT NULL,
 -- 	`` INT NOT NULL,
