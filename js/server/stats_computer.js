@@ -195,6 +195,10 @@ console.log(params)
 					"where time between '?' and '?'"+
 					"and sensor_type_id = 1; "	
 	db.query (query_str, [table,date1,date2,type_sensor], getData (err, rows))
+	if (err != NULL)
+		return rows
+	else 
+		return NULL
  }
 
 /**
