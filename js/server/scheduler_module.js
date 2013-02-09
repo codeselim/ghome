@@ -60,7 +60,7 @@ var taskRH  = function (req, res, params, responseSender) {
 					"FROM `" + t['stet'] + "` stet " +
 					"INNER JOIN `" + t['et'] + "` et ON (et.id = stet.event_type_id) " +
 					"WHERE stet.sensor_type_id = ?"
-			var p = [Math.abs(params.query.sourceType)]
+			var p = [parseInt(params.query.sourceType)]
 			params.db.select_query(q, p, function (err, rows) {
 				for(var i in rows) {
 					data[rows[i]['name']] = rows[i]['event_type_id']
@@ -80,7 +80,7 @@ var taskRH  = function (req, res, params, responseSender) {
 						"FROM `" + t['etct'] + "` etct " +
 						"INNER JOIN `" + t['ct'] + "` ct ON (ct.id = etct.condition_type_id) " +
 						"WHERE etct.event_type_id = ?"
-				var p = [Math.abs(params.query.evtType)]
+				var p = [parseInt(params.query.evtType)]
 				params.db.select_query(q, p, function (err, rows) {
 					for(var i in rows) {
 						data[rows[i]['name']] = rows[i]['condition_type_id']
@@ -93,7 +93,8 @@ var taskRH  = function (req, res, params, responseSender) {
 						"FROM `" + t['stct'] + "` stct " +
 						"INNER JOIN `" + t['ct'] + "` ct ON (ct.id = stct.condition_type_id) "
 						"WHERE stct.sensor_type_id = ?"
-				var p = [Math.abs(params.query.sensorType)]
+				var st = parseInt(params.query.sensorType)
+				var p = [st]
 				params.db.select_query(q, p, function (err, rows) {
 					for(var i in rows) {
 						data[rows[i]['name']] = rows[i]['condition_type_id']
@@ -180,7 +181,7 @@ var taskRH  = function (req, res, params, responseSender) {
 										'label' : 'Sources spéciales', 
 										'devices' : [
 											{'label' : 'Date', 'id' : -1, 'type' : -1},
-											{'label' : 'Météo', 'id' : 2, 'type' : -2}
+											{'label' : 'Météo', 'id' : -2, 'type' : -2}
 										]
 									}
 								]

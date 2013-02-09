@@ -57,6 +57,102 @@ INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887024, 'Volet Salon RC', 6); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 9999991, 'Radiateur 2', 7); -- @TODO Check that this hardware id actually is of that type
 
+INSERT INTO thresholds VALUES (1,"threshold !!!", "42");
+
+INSERT INTO thresholds_sensor_types VALUES (1,1);
+
+--------------------------
+
+INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 1, 42, datetime());
+INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 2, 13, datetime());
+INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 3, 32, datetime());
+INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 4, 45, datetime());
+INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 1, 82, datetime());
+INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 2, 27, datetime());
+INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 3, 07, datetime());
+INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 4, 11, datetime());
+
+INSERT INTO `settings` (id, name, value) VALUES (1, 'mode spy', 'ON');
+INSERT INTO `settings` (id, name, value) VALUES (2, 'user mail', 'tablette6.insa@gmail.com');
+INSERT INTO `settings` (id, name, value) VALUES (3, 'mdp mail', 'tablette6');
+INSERT INTO `settings` (id, name, value) VALUES (4, 'mail d envoi', 'tablette6.insa@gmail.com');
+
+
+INSERT INTO `logs_spy` (id, sensor_id, value, time) VALUES (1, 2, 120, datetime());
+INSERT INTO `logs_spy` (id, sensor_id, value, time) VALUES (2, 3, 230, datetime());
+
+INSERT INTO event_types VALUES (1, "Dépassement de seuil en front montant");
+INSERT INTO event_types VALUES (2, "Dépassement de seuil en front descendant");
+INSERT INTO event_types VALUES (3, "Contact réalisé");
+INSERT INTO event_types VALUES (4, "Contact rompu");
+INSERT INTO event_types VALUES (5, "Changement de jour");
+INSERT INTO event_types VALUES (6, "Changement d'heure");
+INSERT INTO event_types VALUES (7, "Changement de minute");
+INSERT INTO event_types VALUES (8, "Changement de semaine");
+INSERT INTO event_types VALUES (9, "Changement de mois");
+INSERT INTO event_types VALUES (10, "Présence détectée");
+INSERT INTO event_types VALUES (11, "Absence détectée");
+
+-- Join tables data
+
+-- events to conditions mapping
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(1, 6); -- ascending threshold : >= threshold
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(2, 7);  -- descending threshold : <= threshold
+
+-- sensors to events
+	--  temperature
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(1, 1); -- ascending threshold
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(1, 2); -- descending threshold
+
+	-- light
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(2, 1); -- ascending threshold
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(2, 2); -- descending threshold
+
+	-- presence
+	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(10, 3); -- positive detection 
+	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(11, 3);  -- negative detection
+
+	-- contact
+	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(4, 4); -- contact
+	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(3, 4);  -- no contact
+
+-- Auto populating a part of the stct table from events to condition mapping
+INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) 
+	SELECT sensor_type_id, condition_type_id 
+	FROM event_types_condition_types etct 
+	INNER JOIN sensor_types_event_types stet ON (etct.event_type_id = stet.event_type_id);
+
+-- clock
+	-- Your are going to see something you must forget immediately:
+	PRAGMA foreign_keys = OFF;
+
+	-- events
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(-1, 5); -- day change
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(-1, 6); -- h change
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(-1, 7); -- m change
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(-1, 8); -- week change
+	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(-1, 9); -- month change
+	
+	-- clock events conditions
+	-- nothing : For clock events, we don't force the user to put a first mandatory condition
+
+	-- clock conditions
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 10);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 11);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 12);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 13);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 14);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 15);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 16);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 17);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 18);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 19);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 20);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 21);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 22);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 23);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 24);
+
 --------------------------
 -- Dummy task
 
@@ -83,61 +179,7 @@ INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUE
 INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (2, "82", 1, 1, 1);
 INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (3, "02", 1, 8, 1);
 
-INSERT INTO thresholds VALUES (1,"threshold !!!", "42");
-
-INSERT INTO thresholds_sensor_types VALUES (1,1);
 
 --------------------------
-
-INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 1, 42, datetime());
-INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 2, 13, datetime());
-INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 3, 32, datetime());
-INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 4, 45, datetime());
-INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 1, 82, datetime());
-INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 2, 27, datetime());
-INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 3, 07, datetime());
-INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 4, 11, datetime());
-
-INSERT INTO `settings` (id, name, value) VALUES (1, 'mode spy', 'ON');
-INSERT INTO `settings` (id, name, value) VALUES (2, 'user mail', 'tablette6.insa@gmail.com');
-INSERT INTO `settings` (id, name, value) VALUES (3, 'mdp mail', 'tablette6');
-INSERT INTO `settings` (id, name, value) VALUES (4, 'mail d envoi', 'tablette6.insa@gmail.com');
-
-
-INSERT INTO `logs_spy` (id, sensor_id, value, time) VALUES (1, 2, 120, datetime());
-INSERT INTO `logs_spy` (id, sensor_id, value, time) VALUES (2, 3, 230, datetime());
-
--- Join tables data
-
---  temperature
-	-- conditions
-	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(1, 1); -- ascending threshold
-	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(2, 1);  -- descending threshold
-	
-	-- events
-	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(1, 1); -- ascending threshold
-	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(1, 2); -- descending threshold
-
--- light
-	-- conditions
-	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(1, 2); -- ascending threshold
-	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(2, 2);  -- descending threshold
-
-	-- events
-	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(2, 1); -- ascending threshold
-	INSERT INTO `sensor_types_event_types` (sensor_type_id, event_type_id) VALUES(2, 2); -- descending threshold
-
--- presence
-	
-	-- events
-	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(10, 3); -- positive detection 
-	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(11, 3);  -- negative detection
-
--- contact
-	-- events
-	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(4, 4); -- contact
-	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(3, 4);  -- no contact
-
-
--- INSERT INTO `event_types_condition_types` VALUES(, );
+	PRAGMA foreign_keys = ON; -- Alright, you've just forgot what you've seen, already!
 
