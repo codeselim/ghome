@@ -232,34 +232,34 @@ function statsRH(req, res, params, responseSender){
  *@params {string} type_sensor, date1, date2
  *@returns
 */
-<<<<<<< HEAD
- function get_temperature_stats (type_sensor, date1, date2) {
- 	var d1 = new Date(date1);
- 	var d2 = new Date(date2);
- 	var diff = d2 - d1;
- 	var table = "";
- 	if (diff < 172800000 ) //difference between date2 and date1 is less than 2 days
-		table = "hour_stats"
- 	else if (diff > 172800000 && diff < 3888000000 ) //difference between date2 and date1 is more than 2 days and less than 45 days
-		table = "daily_stats"
- 	else 
-		table = "monthly_stats"
+
+ // function get_temperature_stats (type_sensor, date1, date2) {
+ // 	var d1 = new Date(date1);
+ // 	var d2 = new Date(date2);
+ // 	var diff = d2 - d1;
+ // 	var table = "";
+ // 	if (diff < 172800000 ) //difference between date2 and date1 is less than 2 days
+	// 	table = "hour_stats"
+ // 	else if (diff > 172800000 && diff < 3888000000 ) //difference between date2 and date1 is more than 2 days and less than 45 days
+	// 	table = "daily_stats"
+ // 	else 
+	// 	table = "monthly_stats"
  
- 	var query_str = " select time, value,min, max "+
-					"from ?"+
-					"where time between '?' and '?'"+
-					"and sensor_type_id = 1; "	
-	db.query (query_str, [table,date1,date2,type_sensor], getData (err, rows))
-	if (err != NULL)
-		return rows
-	else 
-		return NULL
- }
-=======
+ // 	var query_str = " select time, value,min, max "+
+	// 				"from ?"+
+	// 				"where time between '?' and '?'"+
+	// 				"and sensor_type_id = 1; "	
+	// db.query (query_str, [table,date1,date2,type_sensor], getData (err, rows))
+	// if (err != NULL)
+	// 	return rows
+	// else 
+	// 	return NULL
+ // }
+
  function get_temperature_stats (date1, date2) {
  	
  } //end get_temperature_stats 
->>>>>>> 1ea4a33de2cb7e3f71daa720e6723844a86a5abf
+
 
 /**
  * Gets electricity stats for a certain type of sensor in [date1,date2]
