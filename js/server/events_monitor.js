@@ -25,7 +25,12 @@ Date.prototype.getWeek = function() {
 
 function checkThresholds(idSensor, sensor_type_id, value) {
 	console.log("ERROR WITH "+ lastValues);
-	db.select_query("SELECT value FROM thresholds WHERE sensor_type_id = ?", [sensor_type_id], function(err, rows) {
+	db.select_query("SELECT th.value " +
+					"FROM `" +  tables['th'] + "` th " +
+					"INNER JOIN `"+ tables['thst'] + "` thst ON (thst.threshold_id = th.id) " +
+					"WHERE thst.sensor_type_id = ?",
+	[sensor_type_id], 
+	function(err, rows) {
 		var thresholds = [];
 		for (var r in rows) {
 			thresholds.push(rows[r]["thresholds.value"]);
@@ -33,19 +38,17 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 
 		for(var t in thresholds) {
 			if (lastValues[idSensor] < threshold && value > threshold) {
-		//tasks_executor.execute_task(1);
-		eventEmitter.emit(SENSOR_EVENT, 1, idSensor);
-
-	}    
-	if (lastValues[idSensor] > threshold && value < threshold) {
-		//tasks_executor.execute_task(2);
-		eventEmitter.emit(SENSOR_EVENT, 2, idSensor);
-	}
-	}
-	console.log("ERROR WITH "+ value);
-	lastValues[idSensor] = value;
+				//tasks_executor.execute_task(1);
+				eventEmitter.emit(SENSOR_EVENT, 1, idSensor);
+			}
+			if (lastValues[idSensor] > threshold && value < threshold) {
+				//tasks_executor.execute_task(2);
+				eventEmitter.emit(SENSOR_EVENT, 2, idSensor);
+			}
+		}
+		console.log("ERROR WITH "+ value);
+		lastValues[idSensor] = value;
 	});
-
 }
 
 
