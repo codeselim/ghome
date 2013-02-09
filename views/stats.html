@@ -17,8 +17,9 @@
 $(function () {
     var chart;
     $(document).ready(function() {
+        {{#DONT_DRAW}}
         chart = new Highcharts.Chart(  {{{STATS_DATA}}}   ) 
-
+        {{/DONT_DRAW}}
             // subtitle: {
             //     //text: 'Source: WorldClimate.com',
             //     //x: -20
@@ -65,32 +66,25 @@ $(function () {
 		
 			<form action="/?module=stats" method="post" id="form" data-ajax="false">
                 <input type="hidden" name="module" value="stats">
-                <table>
-                    <tr>
-                        <td>
+  
                            <div class="ui-block-a">
-                                <select name="aActor" >
-                                    <option value="0">-- Type de Statistiques --</option>
+                                <select name="typedestatistiques" >
+                                    <option value="n/a">-- Type de Statistiques --</option>
                                     <option value="temperature">Température</option>
                                     <option value="electricity">Électricité</option>
                                 </select>
                             </div>
-                        </td>
-                        <td>
+  
                             <input type="text" name="datefrom" />
-                        </td>
-                        <td>
+
                             <input type="text" name="dateto" />
-                        </td>
-                        <td>
+
                             <input type="submit" value="Valider" name="submit" />
-                        </td>
-                    </tr>
             </form> 
 
 
             <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
-        </div>
+            </div>
 
           </div>
                                         

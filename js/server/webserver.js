@@ -187,7 +187,7 @@ function start (db, port) {
 					urlParams['postData'] += postDataChunk;
 					//console.log("Received POST data chunk '"+ postDataChunk + "'.");
 					var json = qs.parse(urlParams.postData);
-					console.log(json);
+					console.log("POST data sent");
 					});
 				}
 
