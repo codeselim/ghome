@@ -1,5 +1,14 @@
 PRAGMA foreign_keys = ON;
 
+INSERT INTO sensors_types VALUES (1, "Température");
+INSERT INTO sensors_types VALUES (2, "Lumière");
+INSERT INTO sensors_types VALUES (3, "Présence");
+INSERT INTO sensors_types VALUES (4, "Contact");
+INSERT INTO sensors_types VALUES (5, "Prise électrique");
+INSERT INTO sensors_types VALUES (6, "Volet");
+INSERT INTO sensors_types VALUES (7, "Thermostat radiateur");
+
+
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (1, "égalité", 1, "free");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "inférieur", 2, "free");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "supérieur", 3, "free");
@@ -29,8 +38,8 @@ INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minu
 INSERT INTO actions_types VALUES (1, "Allumer prise", 5, "ON");
 INSERT INTO actions_types VALUES (null, "Eteindre prise", 5, "OFF");
 
-INSERT INTO actions_types VALUES (null, "Augmenter Temperature +10C",1, "TRUC");
-INSERT INTO actions_types VALUES (null, "Diminuer Temperature -10C",1, "TRUC");
+INSERT INTO actions_types VALUES (null, "Augmenter Temperature +10C", 7, "+10");
+INSERT INTO actions_types VALUES (null, "Diminuer Temperature -10C", 7, "-10");
 INSERT INTO actions_types VALUES (null, "Ouvrir Volet 30%", 6, "TRUC");
 INSERT INTO actions_types VALUES (null, "Ouvrir Volet 60%", 6, "TRUC");
 INSERT INTO actions_types VALUES (null, "Fermer Volet 30%", 6, "TRUC");
@@ -46,6 +55,7 @@ INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 1150
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 115003, 'Prise élec 2', 5); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887022, 'Volet Chambre 1', 6); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887024, 'Volet Salon RC', 6); -- @TODO Check that this hardware id actually is of that type
+INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 9999991, 'Radiateur 2', 7); -- @TODO Check that this hardware id actually is of that type
 
 --------------------------
 -- Dummy task

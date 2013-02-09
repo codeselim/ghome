@@ -52,19 +52,21 @@ var taskRH  = function (req, res, params, responseSender) {
 
 		case 'get_event_types' : //* Returns the events available for a given sensor type
 		{
+			console.log("SCHMOD: Getting event types from sensor_type")
+			console.log(params)
 			var data = {}
 			//* Required data: for sourceType, list of events, and for each: {evtlabel: evtid}
 			var q = "SELECT stet.event_type_id, et.name " + 
 					"FROM `" + t['stet'] + "` stet " +
-					"INNER JOIN `" + t['et'] + "` et ON (et.id = stet.event_type_id) "
+					"INNER JOIN `" + t['et'] + "` et ON (et.id = stet.event_type_id) " +
 					"WHERE stet.sensor_type_id = ?"
 			var p = [Math.abs(params.query.sourceType)]
 			params.db.select_query(q, p, function (err, rows) {
 				for(var i in rows) {
 					data[rows[i]['name']] = rows[i]['event_type_id']
 				}
+				res.end(JSON.stringify(data))
 			})			
-			res.end(JSON.stringify(data))
 			break
 		}
 
@@ -73,19 +75,20 @@ var taskRH  = function (req, res, params, responseSender) {
 			var data = {}
 			//* Required data: for evtType (resp. sensorType, list of events, and for each: {evtlabel: evtid}
 			if (params.query.evtType) { // Getting the conditions types related to a given event_type
-				var data = {}
+				console.log("SCHMOD: Getting conditions types from event_type")
 				var q = "SELECT etct.condition_type_id, ct.name " + 
 						"FROM `" + t['etct'] + "` etct " +
-						"INNER JOIN `" + t['ct'] + "` ct ON (ct.id = etct.condition_type_id) "
+						"INNER JOIN `" + t['ct'] + "` ct ON (ct.id = etct.condition_type_id) " +
 						"WHERE etct.event_type_id = ?"
 				var p = [Math.abs(params.query.evtType)]
 				params.db.select_query(q, p, function (err, rows) {
 					for(var i in rows) {
 						data[rows[i]['name']] = rows[i]['condition_type_id']
 					}
+					res.end(JSON.stringify(data))
 				})
 			} else if (params.query.sensorType) { // Getting the conditions types related to a given sensor_type
-				var data = {}
+				console.log("SCHMOD: Getting conditions types from sensor_type")
 				var q = "SELECT stct.condition_type_id, ct.name " + 
 						"FROM `" + t['stct'] + "` stct " +
 						"INNER JOIN `" + t['ct'] + "` ct ON (ct.id = stct.condition_type_id) "
@@ -95,10 +98,9 @@ var taskRH  = function (req, res, params, responseSender) {
 					for(var i in rows) {
 						data[rows[i]['name']] = rows[i]['condition_type_id']
 					}
+					res.end(JSON.stringify(data))
 				})
 			} 
-			// console.log(data)
-			res.end(JSON.stringify(data))
 			break
 		}
 
@@ -149,27 +151,23 @@ var taskRH  = function (req, res, params, responseSender) {
 			/**
 			 *@TODO : get the devices that receive actions and adjust the query as well!! 
 			 */
-			params.db.select_query("SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
+			params.db.select_query( 
+							"SELECT st.name, arv.sensor_type_id, arv.id, arv.name AS device_name " +
 							"FROM " + t.st + " st " +
-							"JOIN " + t.s + " s ON st.id = s.sensor_type_id " +
-							"WHERE s.sensor_type_id IN ( " +
-							"	SELECT sensor_type_id " +
-							"	FROM " + t.at + " " +
-							") " +
-							"ORDER BY s.sensor_type_id", 
+							"INNER JOIN `" + t['arv'] + "` arv ON (st.id = arv.sensor_type_id) " +
+							"ORDER BY st.name, device_name ASC"
+							,
 				null, 
 				function (err, rows) {
 					if(null != err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
 					
-					var deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
+					var actionDevices = sutils.generate_json_devices_list_from_sql_rows(rows)
 
 					var data = tpl.get_template_result("task.html", { 
-						  'deviceTypes' : deviceTypes
-						  //* Alternative device array
-						  // 'deviceTypes' : [{'label' : 'Prises', 'devices' : [{'label' : 'Prise1', 'value' : 1, 'type' : 1} , {'label' : 'Prise2', 'value' : 2, 'type' : 1} ]}, {'label' : 'Volets', 'devices' : [{'label' : 'Volet1', 'value' : 1, 'type' : 2} , {'label' : 'Volet2', 'value' : 2, 'type' : 2} ]} ]
+						  'actionDevices' : actionDevices
 						, 'evtSourceTypes' : [
 							{'label' : 'Sources spéciales', 'sensors' : [
-							    {'label' : 'Date', 'value' : 1, 'type' : 51}
+							    {'label' : 'Date', 'value' : 1, 'type' : -1}
 								, {'label' : 'Météo', 'value' : 2, 'type' : 52}
 							]},
 							{'label' : 'Capteurs Température', 'sensors' : [
