@@ -1,5 +1,3 @@
-"use strict"
-
 var db;
 var sensors_server = require("./sensors_server.js");
 var sse_sender = require("./sse_sender.js");
@@ -29,13 +27,15 @@ function start (database){
 }
 
 function execute_task(event_id, origin_id) {//this function will search the good actions to do and call make_action with the results in order to make the action effective
-	console.log("YOLO")
+
 	var date= new Date()
 	var results = new Array();
 	var targets = new Array();
 	var value = null;
 	var actions_type = {}
 	var actions_target = {}
+	var current_action = null;
+	var current_sensor_id = null;
 	console.log("event id :")
 	console.log(event_id)
 
@@ -48,6 +48,8 @@ function execute_task(event_id, origin_id) {//this function will search the good
 				}
 				for (var r in rows){
 					value = sensors_values[rows[r]["sensor_id"]];//we catch the value corresponding to the current sensor
+					current_action = rows[r]["action_type_id"]
+					current_sensor_id = rows[r]["sensor_id"]
 
 					switch (rows[r]["operator"]){
 						case 1 : // if operator = "="
@@ -68,16 +70,32 @@ function execute_task(event_id, origin_id) {//this function will search the good
 						}
 						break;
 						case 4 : // if operator = "<="
-						case 7 : // if operator = "passage de seuil bas"
 						if (parseInt(rows[r]["value_to_compare"]) > parseInt(value)){ //if we have the contrary of the operator, that means that the action have at least one condition wich is not respected, and we can't execute the action
 							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
 						}
 						break;
 						case 5 : // if operator = ">="
-						case 6 : // if operator = "passage de seuil haut"
 						if (parseInt(rows[r]["value_to_compare"]) < parseInt(value)){ //if we have the contrary of the operator, that means that the action have at least one condition wich is not respected, and we can't execute the action
 							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
 						}
+						break;
+						case 6 : // if operator = "passage de seuil haut"
+						db.select_query("SELECT value FROM thresholds AS t INNER JOIN thresholds_sensor_types AS tst ON t.id = tst.threshold_id INNER JOIN sensor_types AS st ON st.id = tst.sensor_type_id INNER JOIN sensors AS s ON s.sensor_type_id = st.id INNER JOIN conditions AS c ON c.sensor_type_id = s.id WHERE c.sensor_id = ?",[current_sensor_id], function (rows, err){
+							for(var r in rows) {
+								if(parseInt(rows[r]["value"]) < parseInt(value)){
+									actions_type[current_action] = false; //so we put the corresponding value to false = not executable
+								}
+							}
+						})
+						break;
+						case 7 : // if operator = "passage de seuil bas"
+						db.select_query("SELECT value FROM thresholds AS t INNER JOIN thresholds_sensor_types AS tst ON t.id = tst.threshold_id INNER JOIN sensor_types AS st ON st.id = tst.sensor_type_id INNER JOIN sensors AS s ON s.sensor_type_id = st.id INNER JOIN conditions AS c ON c.sensor_type_id = s.id WHERE c.sensor_id = ?",[current_sensor_id], function (rows, err){
+							for (var r in rows){
+								if(parseInt(rows[r]["value"]) > parseInt(value)){
+									actions_type[current_action] = false; //so we put the corresponding value to false = not executable
+								}	
+							}	
+						})
 						break;
 
 						//@TODO : s'assurer que les rentrées coté client sont en phase avec les choix du code (si le nombre du mois corespond etc)
