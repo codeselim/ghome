@@ -76,6 +76,24 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device
 		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
 	}
 
+	var data2 = utils.queryStringToHash($.param({test : "yolo"}))
+	data2.action = "get_parameters"
+	console.log(data2)
+
+	$.ajax({
+		'url'      : "/"
+		, 'dataType' : 'json'
+		, 'data'     : data2
+	}).done(function(data) {
+		console.log(data.email)
+		$('#sseToggle').val(data.switchStatus).slider('refresh')
+		$('input[name=email]').val(data.email)
+	})
+				
+					
+				
+			
+
 						$("form").validate({
 			  rules: { 
 					  email: {required:true, email:true}

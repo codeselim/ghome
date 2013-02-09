@@ -14,7 +14,7 @@ function errCallBack(err) {
 }
 
 var spyRequestHandler = function(req, res, params, responseSender) {
-
+	console.log(params.query.action)
 	switch (params.query.action) {
 
 	case "submit_parameters":
@@ -42,7 +42,25 @@ var spyRequestHandler = function(req, res, params, responseSender) {
 	
 	break;
 
+	case "get_parameters":
+	console.log("GET_PARAMETERS QUERY")
+	var dataResp = {}
+	params.db.select_query("SELECT value FROM settings WHERE name = ?",["mode spy"], function(err, rows) {
+		for(r in rows) {
+			data.statusSwitch = rows[r].toLowerCase()
+		}
+		params.db.select_query("SELECT value FROM settings WHERE name = ?", ["mail d envoi"], function(err, rows) {
+			for(r in rows) {
+				data.email = rows[r]
+			}
+				res.end(JSON.stringify(data))
+		})
+	}) 
+
+
 	default:
+
+	//params.db.select_query
 	
 	params.db.select_query("SELECT sensors.name, sensors_types.name AS stName, logs_spy.value, logs_spy.time " +
 		"FROM logs_spy JOIN sensors ON logs_spy.sensor_id = sensors.id JOIN sensors_types ON " +
