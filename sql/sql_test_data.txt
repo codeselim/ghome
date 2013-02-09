@@ -72,6 +72,11 @@ VALUES (
 INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (1, "82", 1, 1, 1);
 INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (2, "82", 1, 1, 1);
 INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (3, "02", 1, 8, 1);
+
+INSERT INTO thresholds VALUES (1,"threshold !!!", "42");
+
+INSERT INTO thresholds_sensor_types VALUES (1,1);
+
 --------------------------
 
 INSERT INTO `logs` (id, sensor_id, value, time) VALUES (null, 1, 42, datetime());
