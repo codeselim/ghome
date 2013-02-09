@@ -17,6 +17,7 @@ function statsRH(req, res, params, responseSender){
 		
 		}
 
+console.log(params)
 
 	var data = tpl.get_template_result("stats.html", templateData)
 	console.log(params['pathname'])

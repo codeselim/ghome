@@ -102,30 +102,40 @@ $(function () {
 		<p></p>
 		<div data-role="content" >
 		
-			<form action="/" method="GET" id="form">
-
-                            <div class="ui-block-a">
+			<form action="/?module=stats" method="GET" id="form">
+                <table>
+                    <tr>
+                        <td>
+                           <div class="ui-block-a">
                                 <select name="aActor" >
-                                    <option value="">-- Type de Stats --</option>
-                                    {{#deviceTypes}}
-                                    <optgroup label="{{label}}">
-                                        {{#devices}}
-                                        <option value="{{id}}" data-device-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
-                                        {{/devices}}
-                                    </optgroup>
-                                    {{/deviceTypes}}
+                                    <option value="0">-- Type de Statistiques --</option>
+                                    <option value="temperature">Température</option>
+                                    <option value="electricity">Électricité</option>
                                 </select>
                             </div>
-                            <div class="ui-block-b">
-                                <select name="aAction">
-                                </select>
-                            </div>
-                        </div>
+                        </td>
+                        <td>
+                            <input type="text" name="datefrom" />
+                        </td>
+                        <td>
+                            <input type="text" name="dateto" />
+                        </td>
+                        <td>
+                            <input type="submit" value="Valider" name="submit" />
+                        </td>
+                    </tr>
+            </form> 
 
-			</form>	
 
-			<div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
-		</div>
+            <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+        </div>
+
+          </div>
+                                        
+
+
+
+
 
 </body>
 </html>
