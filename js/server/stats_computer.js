@@ -8,14 +8,23 @@ var SQL_TABLES_DIC = shared.get_shared_data('SQL_TABLES');
 
 
 function statsRH(req, res, params, responseSender){
+		var temp = {
+					'chart': {
+                 			'renderTo': "container",
+                 			'type': "line",
+                 			'marginRight': 130,
+                 			'marginBottom': 25
+             				},
+					}
+
 		var templateData = {
 		// 'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
 		// , 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
 		// , 'TEST_DATA'		 : params.postData
 		// , 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
 		// , 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
-			STATS_DATA :"chart: { renderTo: 'container', type: 'line', marginRight: 130, marginBottom: 25 },"
-
+			//STATS_DATA :"chart: { renderTo: 'container', type: 'line', marginRight: 130, marginBottom: 25 },"
+			STATS_DATA :  JSON.stringify(temp)
 
 			//JSON.parse('{ "chart": {    "renderTo": "container",  "type": "line", "marginRight": 130,  "marginBottom": 25 }}')
 		}
