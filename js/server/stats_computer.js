@@ -14,7 +14,15 @@ function statsRH(req, res, params, responseSender){
                  			'type': "line",
                  			'marginRight': 130,
                  			'marginBottom': 25
-             				},
+             			},
+             		'title': {
+             			    'text': 'Température',
+                			'x': -20 //center
+             			}
+             		'xAxis': {
+                	'categories': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            			},
 					}
 
 		var templateData = {
