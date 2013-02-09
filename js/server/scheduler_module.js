@@ -152,37 +152,51 @@ var taskRH  = function (req, res, params, responseSender) {
 			 *@TODO : get the devices that receive actions and adjust the query as well!! 
 			 */
 			params.db.select_query( 
-							"SELECT st.name, arv.sensor_type_id, arv.id, arv.name AS device_name " +
-							"FROM " + t.st + " st " +
-							"INNER JOIN `" + t['arv'] + "` arv ON (st.id = arv.sensor_type_id) " +
-							"ORDER BY st.name, device_name ASC"
-							,
+				"SELECT st.name AS name, arv.sensor_type_id AS sensor_type_id, arv.id AS id, arv.name AS device_name " +
+				"FROM " + t.st + " st " +
+				"INNER JOIN `" + t['arv'] + "` arv ON (st.id = arv.sensor_type_id) " +
+				"ORDER BY st.name, device_name ASC",
 				null, 
 				function (err, rows) {
-					if(null != err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
+					console.log(rows)
+					if(null != err) {
+						console.log("[scheduler_module reported SQL_ERROR] : " + err)
+					}
 					
 					var actionDevices = sutils.generate_json_devices_list_from_sql_rows(rows)
 
-					var data = tpl.get_template_result("task.html", { 
-						  'actionDevices' : actionDevices
-						, 'evtSourceTypes' : [
-							{'label' : 'Sources spéciales', 'sensors' : [
-							    {'label' : 'Date', 'value' : 1, 'type' : -1}
-								, {'label' : 'Météo', 'value' : 2, 'type' : 52}
-							]},
-							{'label' : 'Capteurs Température', 'sensors' : [
-							    {'label' : 'Capteur Température1', 'value' : 1, 'type' : 2}
-								, {'label' : 'Capteur Température2', 'value' : 2, 'type' : 2}
-							]},
-							{'label' : 'Capteurs Présence', 'sensors' : [
-							    {'label' : 'Capteur Présence1', 'value' : 1, 'type' : 3}
-								, {'label' : 'Capteur Présence2', 'value' : 2, 'type' : 3}
-							]}
-						] 
-					})
+					params.db.select_query(
+						"SELECT st.name AS name, stet.sensor_type_id AS sensor_type_id, stet.id AS id, stet.name AS device_name " +
+						"FROM " + t.st + " st " +
+						"INNER JOIN `" + t['stet'] + "` stet ON (st.id = stet.sensor_type_id) " +
+						"ORDER BY st.name, device_name ASC",
+						null,
+						function (err, rows) {
+							var evtSources = sutils.generate_json_devices_list_from_sql_rows(rows)
+							
+							var tplData = {
+								 'actionDevices' : actionDevices,
+								 'evtSourceTypes' : [
+									{
+										'label' : 'Sources spéciales', 
+										'sensors' : [
+											{'label' : 'Date', 'value' : -1, 'type' : -1},
+											{'label' : 'Météo', 'value' : 2, 'type' : -2}
+										]
+									}
+								]
+							}
 
-					params.fileUrl = 'task.html'
-					responseSender(req, res, params, data)			
+							tplData.evtSourceTypes.concat(evtSources)
+							console.log(tplData.evtSourceTypes)
+
+							var html = tpl.get_template_result("task.html", tplData)
+
+							params.fileUrl = 'task.html'
+							responseSender(req, res, params, html)			
+						}
+					)
+
 				})
 			break
 		}
