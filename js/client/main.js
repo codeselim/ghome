@@ -12,8 +12,8 @@ require.config({
 })
 
 
-require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'jquerymobile'], 
-	function($, /*_,*/ sseListener, devMgmt, device, scheduler) {
+require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'utils', 'jquerymobile'], 
+	function($, /*_,*/ sseListener, devMgmt, device, scheduler, utils) {
 	$(function() {
 
 		//* Hides the body until JQM finishes applying styles
