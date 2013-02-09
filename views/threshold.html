@@ -22,7 +22,7 @@
 					<li data-role="list-divider">Nom du seuil</li>
 					<li>
 						<div data-role="fieldcontain" {{#threshold.id}}class='locked'{{/threshold.id}}>
-							<input type="text" name="name" value="{{threshold.label}}">
+							<input type="text" name="name" value="{{threshold.thresholdName}}">
 						</div>
 					</li>
 					<li data-role="list-divider">Valeur du seuil</li>
@@ -39,7 +39,7 @@
 							<fieldset data-role="controlgroup">
 								{{#sensors}}
 									<input type="checkbox" name="{{id}}" id="cb-sensor-{{id}}" value="{{id}}" {{#selected}}checked{{/selected}} />
-									<label for="cb-sensor-{{id}}">{{label}}</label>
+									<label for="cb-sensor-{{id}}">{{sensorName}}</label>
 								{{/sensors}}
 							</fieldset>
 						</div>

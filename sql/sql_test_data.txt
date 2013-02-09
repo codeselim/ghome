@@ -1,12 +1,12 @@
 PRAGMA foreign_keys = ON;
 
-INSERT INTO sensors_types VALUES (1, "Température");
-INSERT INTO sensors_types VALUES (2, "Lumière");
-INSERT INTO sensors_types VALUES (3, "Présence");
-INSERT INTO sensors_types VALUES (4, "Contact");
-INSERT INTO sensors_types VALUES (5, "Prise électrique");
-INSERT INTO sensors_types VALUES (6, "Volet");
-INSERT INTO sensors_types VALUES (7, "Thermostat radiateur");
+INSERT INTO sensors_types VALUES (1, "Température", 1);
+INSERT INTO sensors_types VALUES (2, "Lumière", 1);
+INSERT INTO sensors_types VALUES (3, "Présence", 0);
+INSERT INTO sensors_types VALUES (4, "Contact", 0);
+INSERT INTO sensors_types VALUES (5, "Prise électrique", 0);
+INSERT INTO sensors_types VALUES (6, "Volet", 0);
+INSERT INTO sensors_types VALUES (7, "Thermostat radiateur", 0);
 
 
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (1, "égalité", 1, "free");
