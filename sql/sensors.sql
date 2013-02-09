@@ -3,7 +3,7 @@ CREATE TABLE `sensors` (
   `hardware_id` INTEGER NOT NULL,
   `name` VARCHAR(255) NOT NULL,
   `sensor_type_id` INTEGER NOT NULL,
-   FOREIGN KEY(sensor_type_id) REFERENCES sensors_types(id)
+   FOREIGN KEY(`sensor_type_id`) REFERENCES sensors_types(`id`)
 );
 
 --INSERT INTO sensors VALUES (1, null, "Capteur logiciel temps", 5);
