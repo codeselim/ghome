@@ -39,10 +39,13 @@ var taskRH  = function (req, res, params, responseSender) {
 			console.log('get_actions: deviceType=' + params.query.deviceType)
 			//* Required data: for deviceType, list of actions, and for each: {actionlabel: action id}
 			var actions = ''
-			params.db.select_query("SELECT at.id , at.name FROM "+t.at+" at WHERE at.sensor_type_id = ? ", [params.query.deviceType], function (err, rows){
-			if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
-			var actions = sutils.generate_json_get_actions_by_device_type(rows)
-			res.end(actions)
+			params.db.select_query("SELECT at.id, at.name " +
+									"FROM `" + t.at + "` at " +
+									"WHERE at.sensor_type_id = ? "
+			, [params.query.deviceType], function (err, rows){
+				if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
+				var actions = sutils.generate_json_get_actions_by_device_type(rows)
+				res.end(actions)
 			})
 			break
 		}
@@ -52,8 +55,8 @@ var taskRH  = function (req, res, params, responseSender) {
 			var data = {}
 			//* Required data: for sourceType, list of events, and for each: {evtlabel: evtid}
 			var q = "SELECT event_type_id " + 
-				"FROM `" + t['stet'] + "` " +
-				"WHERE sensor_type_id = ?"
+					"FROM `" + t['stet'] + "` " +
+					"WHERE sensor_type_id = ?"
 			var p = [Math.abs(params.query.sourceType)]
 			params.db.select_query(q, p, function (err, rows) {
 				for(var i in rows) {
@@ -68,25 +71,28 @@ var taskRH  = function (req, res, params, responseSender) {
 		{
 			var data = {}
 			//* Required data: for evtType (resp. sensorType, list of events, and for each: {evtlabel: evtid}
-			if (params.query.evtType) {
+			if (params.query.evtType) { // Getting the conditions types related to a given event_type
 				var data = {}
 				var q = "SELECT condition_type_id " + 
-					"FROM `" + t['etct'] + "` " +
-					"WHERE event_type_id = ?"
+						"FROM `" + t['etct'] + "` " +
+						"WHERE event_type_id = ?"
 				var p = [Math.abs(params.query.evtType)]
 				params.db.select_query(q, p, function (err, rows) {
 					for(var i in rows) {
 						data[rows[i]['condition_type_id']] = rows[i]['condition_type_id']
 					}
 				})
-			} else if (params.query.sensorType && params.query.sensorType < 10 ) {
-				var data = {
-					  '<' : 1 
-					, '>' : 2
-					, 'pony' : 11
-					, 'unicorn' : 12
-					, 'narwhal' : 13
-				}
+			} else if (params.query.sensorType) { // Getting the conditions types related to a given sensor_type
+				var data = {}
+				var q = "SELECT condition_type_id " + 
+						"FROM `" + t['stct'] + "` " +
+						"WHERE sensor_type_id = ?"
+				var p = [Math.abs(params.query.sensorType)]
+				params.db.select_query(q, p, function (err, rows) {
+					for(var i in rows) {
+						data[rows[i]['condition_type_id']] = rows[i]['condition_type_id']
+					}
+				})
 			} 
 			// console.log(data)
 			res.end(JSON.stringify(data))
