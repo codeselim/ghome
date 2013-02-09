@@ -193,7 +193,7 @@ console.log(params)
  	var table = "";
  	if (diff < 172800000 ) //difference between date2 and date1 is less than 2 days
 		table = "hour_stats"
- 	else if (diff > 172800000 and diff < 3888000000 ) //difference between date2 and date1 is more than 2 days and less than 45 days
+ 	else if (diff > 172800000 && diff < 3888000000 ) //difference between date2 and date1 is more than 2 days and less than 45 days
 		table = "daily_stats"
  	else 
 		table = "monthly_stats"
