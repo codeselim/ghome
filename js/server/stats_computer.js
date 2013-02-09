@@ -154,39 +154,63 @@ function statsRH(req, res, params, responseSender){
 /**
  * Gets temperature stats for a certain type of sensor in [date1,date2]
  * dates must be in the following format : YYYY-MM-DD HH:MM:SS
- * 	type_stats can be {hour_stats,daily_stats,monthly_}
- *@params {string} type_stats, type_sensor, date1, date2
+ *@params {string} type_sensor, date1, date2
  *@returns
 */
- function get_temperature_stats (type_stats,type_sensor, date1, date2) {
+ function get_temperature_stats (type_sensor, date1, date2) {
+ 	var d1 = new Date(date1);
+ 	var d2 = new Date(date2);
+ 	var diff = d2 - d1;
+ 	var table = "";
+ 	if (diff < 172800000 ) //difference between date2 and date1 is less than 2 days
+		table = "hour_stats"
+ 	else if (diff > 172800000 and diff < 3888000000 ) //difference between date2 and date1 is more than 2 days and less than 45 days
+		table = "daily_stats"
+ 	else 
+		table = "monthly_stats"
+ 
  	var query_str = " select time, value,min, max "+
 					"from ?"+
 					"where time between '?' and '?'"+
 					"and sensor_type_id = 1; "	
-	db.query (query_str, [type_stats,date1,date2,type_sensor], getData (err, rows))
+	db.query (query_str, [table,date1,date2,type_sensor], getData (err, rows))
  }
 
 /**
  * Gets electricity stats for a certain type of sensor in [date1,date2]
- * dates must be in the following format : YYYY-MM-DD HH:MM:SS
- * 	type_stats can be {hour_stats,daily_stats,monthly_}
- *@params {string} type_stats, type_sensor, date1, date2
+ * dates must be in the following format : YYYY-MM-DD HH:MM
+ *@params {string} type_sensor, date1, date2
  *@returns
 */
- function get_consumption_stats (type_stats,type_sensor, date1, date2) {
+ function get_consumption_stats (type_sensor, date1, date2) {
+ 	var d1 = new Date(date1);
+ 	var d2 = new Date(date2);
+ 	var diff = d2 - d1;
+ 	var table = "";
+ 	if (diff < 172800000 ) //difference between date2 and date1 is less than 2 days
+		table = "hour_stats"
+ 	else if (diff > 172800000 and diff < 3888000000 ) //difference between date2 and date1 is more than 2 days and less than 45 days
+		table = "daily_stats"
+ 	else 
+		table = "monthly_stats"
+
  	var query_str = " select time, value "+
 					"from ?"+
 					"where time between '?' and '?'"+
 					"and sensor_type_id = 5; "	
-	db.query (query_str, [type_stats,date1,date2,type_sensor], getData (err, rows))
+	db.query (query_str, [table,date1,date2,type_sensor], getData (err, rows))
+	if (err != NULL)
+		return rows
+	else 
+		return NULL
  }
 
 
 function getData ( err, rows){
 	var array = [] ;
 	for (var r in rows) {
-    	console.log(r.value);
-    	array.push(r);
+    	//console.log(r.value);
+    	array.push(rows[r]);
     }
 }
 
