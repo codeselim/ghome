@@ -1,3 +1,5 @@
+"use strict"
+
 var fs = require('fs')
 var tpl = require('./template_engine')
 var ss = require('./sensors_server')
@@ -7,16 +9,16 @@ var get_shared_data = require('./shared_data').get_shared_data
 var off = true
 var testid = 0 // The testid can be used by the test start/poll/end handlers to share data among them if they need to, by allowing them to identify a given request
 require('./shared_data').set_shared_data('shared_among_tests_requests', {}) // For each testid, will allow us to shared data among the different poll requests
-satr = get_shared_data('shared_among_tests_requests')
+var satr = get_shared_data('shared_among_tests_requests')
 var sutils = require('./sensors')
-
+var utils = require('./utils')
 
 /**
  * Gets the list of the devices types from the DB and passes it as a parameter to the callback
  * Object passed : [{'value': type_id, 'label': type_name}]
 */
 function getDevicesTypesList (db, callback) {
-	q = "SELECT * FROM " + t['st'] + " ORDER BY name ASC"
+	var q = "SELECT * FROM " + t['st'] + " ORDER BY name ASC"
 	var data = []
 	db.select_query(q, null, function (err, rows) { // Dictionary of the SQL tables names
 		if (null != err) {
@@ -24,7 +26,7 @@ function getDevicesTypesList (db, callback) {
 			// SQL Query went wrong, don't crash, just don't reply anything
 		} else {
 			console.log(rows)
-			for(i in rows) {
+			for(var i in rows) {
 				console.log("Row " + i, rows[i])
 				data.push({'id': rows[i]['id'], 'label': rows[i]['name']})
 			}
@@ -42,7 +44,7 @@ function getDevicesTypesList (db, callback) {
 function getDeviceInfo (db, deviceid, callback) {
 	getDevicesTypesList(db, function(deviceTypes){ //* Retrieving the list of device types
 		var data = {'devices_types': deviceTypes}
-		q = "SELECT * FROM " + t['s'] + " s WHERE s.id = ?"
+		var q = "SELECT * FROM " + t['s'] + " s WHERE s.id = ?"
 		db.select_query(q, [deviceid], function (err, rows) {
 			if (null != err) {
 				console.error("SQL Query [1] " + q + " went wrong. Error object: " + JSON.stringify(err))
@@ -66,8 +68,8 @@ var deviceRH = function (req, res, params, responseSender) {
 	switch (params.query.action) {
 		case 'submit_new':
 			// @TODO: run query with the method "run" to get the last inserted ID: https://github.com/developmentseed/node-sqlite3/wiki/API
-			q = "INSERT INTO `" + t['s'] + "` (id, name, hardware_id, sensor_type_id) VALUES (NULL, ?, ?, ?)"
-			p = [params.query.equip_label, params.query.equip_id, params.query.equip_type]
+			var q = "INSERT INTO `" + t['s'] + "` (id, name, hardware_id, sensor_type_id) VALUES (NULL, ?, ?, ?)"
+			var p = [params.query.equip_label, params.query.equip_id, params.query.equip_type]
 			// console.log("Going to execute query ", q, "with params", p)
 			params.db.insert_query(q, p, function (err) {
 				if (null == err) {
@@ -77,7 +79,7 @@ var deviceRH = function (req, res, params, responseSender) {
 					res.end(JSON.stringify({'id': this.lastID, 'success': true}))
 				} else {
 					console.error("newDeviceRH: Error when inserting the new device.", err)
-					res.end(JSON.stringify({'msg': err, 'success': false}))
+					res.end(JSON.stringify({'msg': JSON.stringify(err), 'success': false}))
 				}
 			})
 			break
@@ -100,7 +102,7 @@ var deviceRH = function (req, res, params, responseSender) {
 				getDeviceInfo(params.db, params.query.id, function (deviceInfo) {
 					console.log(deviceInfo)
 
-					for (i in deviceInfo.devices_types) {
+					for(var i in deviceInfo.devices_types) {
 						var dt = deviceInfo.devices_types[i]
 						console.log(dt)
 						if (dt.id == deviceInfo.device.type) {
@@ -119,11 +121,11 @@ var deviceRH = function (req, res, params, responseSender) {
 }
 
 var deviceTestRH = function (req, res, params, responseSender) {
-	ts = get_shared_data('DEVICE_START_TESTS')
-	te = get_shared_data('DEVICE_END_TESTS')
-	tp = get_shared_data('DEVICE_POLL_TESTS')
-	aids = get_shared_data('ALLOWED_IDS')
-	cids = get_shared_data('CONNECTED_IDS')
+	var ts = get_shared_data('DEVICE_START_TESTS')
+	var te = get_shared_data('DEVICE_END_TESTS')
+	var tp = get_shared_data('DEVICE_POLL_TESTS')
+	var aids = get_shared_data('ALLOWED_IDS')
+	var cids = get_shared_data('CONNECTED_IDS')
 	switch(params.query.action) {
 		case "teststart":
 			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
@@ -131,8 +133,8 @@ var deviceTestRH = function (req, res, params, responseSender) {
 			// Initialize the data structure allowing tests to shared data about this specific test (unique testid)
 			satr[testid] = {}
 			// In case if was already in memory, delete it:
-			ArrayRemove(aids, aids.indexOf(params.query.deviceId))
-			ArrayRemove(cids, cids.indexOf(params.query.deviceId))
+			utils.ArrayRemove(aids, aids.indexOf(params.query.deviceId))
+			utils.ArrayRemove(cids, cids.indexOf(params.query.deviceId))
 			//* Then add it to the allowed ids so that we don't filter it out, but don't add to connected ones, as what we want is to detect connection
 			aids.push(params.query.deviceId)
 			if (params.query.deviceType in ts) {
@@ -178,7 +180,7 @@ var deviceManagementRH  = function (req, res, params, responseSender) {
 		function (err, rows) {
 			if(null != err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
 			
-			deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
+			var deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
 
 			var data = tpl.get_template_result("device_management.html", { 
 				  'device_types' : deviceTypes

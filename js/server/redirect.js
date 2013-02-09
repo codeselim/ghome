@@ -1,5 +1,10 @@
+"use strict"
+
 var net = require('net')
 var sock
+var localhost = null
+var localIsConnected = false
+
 function connectRemote() {
 	sock = net.connect(5000, '134.214.105.28', function () { console.log("Connection to broadcast server estblished")})
 	sock.on("data", redirect);
@@ -7,9 +12,6 @@ function connectRemote() {
 	sock.on("error", function () { console.log("REMOTE connection ERROR, trying to reconnect in 5s"); setTimeout(connectRemote, 5000);})
 }
 
-
-var localhost = null
-var localIsConnected = false
 function connectLocal (argument) {
 	localhost = new net.Socket()
 	localhost.connect(8000, "localhost", function () { console.log("Connection to localhost server estblished"); localIsConnected = true})

@@ -1,8 +1,10 @@
-gsd = require('../../shared_data').get_shared_data
+"use strict"
+
+var gsd = require('../../shared_data').get_shared_data
 //ssd = require('../../shared_data').set_shared_data
 
-end_tests = gsd('DEVICE_END_TESTS')
-satr = gsd('shared_among_tests_requests')
+var end_tests = gsd('DEVICE_END_TESTS')
+var satr = gsd('shared_among_tests_requests')
 
 
 //* Action for device of type 2 
