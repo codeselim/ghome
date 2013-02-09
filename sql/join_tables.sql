@@ -23,6 +23,8 @@ CREATE VIEW `sensor_types_condition_types` AS
 CREATE TABLE `thresholds_sensor_types` (
 	`threshold_id` INT NOT NULL,
 	`sensor_type_id` INT NOT NULL,
+	FOREIGN KEY(threshold_id) REFERENCES thresholds(`id`),
+	FOREIGN KEY(sensor_type_id) REFERENCES sensors_types(`id`),
 	PRIMARY KEY(`threshold_id`, `sensor_type_id`)
 );
 
