@@ -12,7 +12,7 @@ require.config({
 })
 
 
-require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'threshold', 'utils',  'jquerymobile'], 
+require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'threshold', 'utils', 'jquerymobile'], 
 	function($, /*_,*/ sseListener, devMgmt, device, scheduler, threshold, utils) {
 	$(function() {
 

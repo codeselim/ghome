@@ -16,6 +16,7 @@ set_shared_data('SQL_TABLES', {'st': 'sensors_types',
 								'm':'modes',
 								's':'sensors',
 								't':'tasks',
+								'set':'settings',
 								'etct':'event_types_condition_types',
 								'stet':'sensor_types_event_types',
 								'stct':'sensor_types_condition_types'

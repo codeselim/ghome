@@ -56,7 +56,7 @@ var taskRH  = function (req, res, params, responseSender) {
 			//* Required data: for sourceType, list of events, and for each: {evtlabel: evtid}
 			var q = "SELECT stet.event_type_id, et.name " + 
 					"FROM `" + t['stet'] + "` stet " +
-					"INNER JOIN `" + t['et'] + "` ct ON (et.id = stet.event_type_id) "
+					"INNER JOIN `" + t['et'] + "` et ON (et.id = stet.event_type_id) "
 					"WHERE stet.sensor_type_id = ?"
 			var p = [Math.abs(params.query.sourceType)]
 			params.db.select_query(q, p, function (err, rows) {

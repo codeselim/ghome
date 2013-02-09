@@ -20,43 +20,56 @@ Database.prototype.connect = function(dbName, callback) {
 }
 
 Database.prototype.select_query = function(query_str, parameters, callback_func) {
-	this.prepare_statement(query_str, parameters, function (statement, params) {
-		statement.all(params, callback_func);
+	var self = this
+	this.prepare_statement(query_str, parameters, callback_func, function (statement, params) {
+		try {
+			statement.all(params, callback_func);
+		} catch(e) {
+			self.error(e, query_str, callback_func)
+		}
 		statement.finalize();
 	})	
 }
 
 Database.prototype.insert_query = function (query_str, parameters, callback_func) {
-	this.prepare_statement(query_str, parameters, function (statement, params) {
+	this.prepare_statement(query_str, parameters, callback_func, function (statement, params) {
 		statement.run(params, callback_func)
 		statement.finalize()
 	})
 }
 
 Database.prototype.update_query = function (query_str, parameters, callback_func) {
-	this.prepare_statement(query_str, parameters, function (statement, pa) {
+	this.prepare_statement(query_str, parameters, callback_func, function (statement, pa) {
 		statement.run(pa, callback_func)
 		statement.finalize()
 	})
 }
 
-Database.prototype.prepare_statement = function(query_str, parameters, spec_func) {
+Database.prototype.prepare_statement = function(query_str, parameters, callback_func, spec_func) {
 	var self = this
 	this.db.serialize(function() {
-		var statement = self.db.prepare(query_str);
-		statement.on("error", function (err) {
-			if (DBG) {
-				console.error("DBMS: An error occured when executing query \n" + query_str + "\nSQL Error is \n" + err)
-			};
-			spec_func(err, null) // Passing the error to the callback, and null as result
-		});
-
-		if(null == parameters) {
-			parameters = {}
+		try {
+			var statement = self.db.prepare(query_str);
+			statement.on("error", function (err) {
+				self.error(err, query_str, callback_func)
+			});
+			if(null == parameters) {
+				parameters = {}
+			}
+			spec_func(statement, parameters)
+		} catch(e) {
+			self.error(e, query_str, callback_func)
 		}
-		spec_func(statement, parameters)
+
 	});
 }
+
+Database.prototype.error = function(err, query_str, callback_func) {
+	if (DBG) {
+		console.error("DBMS: An error occured when executing query \n" + query_str + "\nSQL Error is \n" + err)
+	};
+	callback_func(err, null) // Passing the error to the callback, and null as result
+};
 
 Database.prototype.disconnect = function() {
 	this.db.close();
