@@ -15,7 +15,7 @@ var schedulerRH  = function (req, res, params, responseSender) {
 		"FROM `" + t.t + "` t " +
 		"INNER JOIN `" + t.s + "` s ON (t.target_id = s.id) " +
 		"INNER JOIN `" + t.st + "` st ON (st.id = s.sensor_type_id) " +
-		"ORDER BY st.name ASC"
+		"ORDER BY st.name, device_name ASC"
 	var p = null
 	console.log(q)
 	params.db.select_query(q, p, function (err, rows) {
@@ -51,18 +51,15 @@ var taskRH  = function (req, res, params, responseSender) {
 		{
 			var data = {}
 			//* Required data: for sourceType, list of events, and for each: {evtlabel: evtid}
-			if (params.query.sourceType == '2' ){
-				var data = {
-					  'Passe le seuil en montant' : 1
-					  , 'Passe le seuil en descendant ' : 1
-					  , 'bleh' : 4
+			var q = "SELECT event_type_id " + 
+				"FROM `" + t['stet'] + "` " +
+				"WHERE sensor_type_id = ?"
+			var p = [Math.abs(params.query.sourceType)]
+			params.db.select_query(q, p, function (err, rows) {
+				for(var i in rows) {
+					data[rows[i]['event_type_id']] = rows[i]['event_type_id']
 				}
-			} else if (params.query.sourceType == 3 ){
-				var data = {
-					  'Activation' : 11
-					, 'Désactivation' : 12
-				}
-			}
+			})			
 			res.end(JSON.stringify(data))
 			break
 		}
@@ -73,7 +70,7 @@ var taskRH  = function (req, res, params, responseSender) {
 			//* Required data: for evtType (resp. sensorType, list of events, and for each: {evtlabel: evtid}
 			if (params.query.evtType) {
 				var data = {}
-				var q = "SELECT condition_type_id" + 
+				var q = "SELECT condition_type_id " + 
 					"FROM `" + t['etct'] + "` " +
 					"WHERE event_type_id = ?"
 				var p = [Math.abs(params.query.evtType)]

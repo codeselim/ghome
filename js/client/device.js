@@ -1,3 +1,5 @@
+"use strict"
+
 define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 	// var progressbardiv = "<div style='width: 200px; opacity: .75' class='meter'><span style='width: 25%'></span></div>"
 
@@ -85,7 +87,6 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		})
 		.done(function(data) {
 			testid = data.testid
-			// console.log("testid=" + testid)
 			if (data.msg) {
 				$.mobile.loading('hide')
 				$('#popupContent').html(data.msg)
@@ -121,6 +122,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		data.module = 'device'
 		if (data.id) {
 			data.action = 'submit_edit'
+			delete data.equip_type //* To make sure the event type is not changed
 		} else {
 			data.action = 'submit_new'
 		}
@@ -133,9 +135,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		.done(function(data) {
 			console.log(data)
 			if (data.success) {
-				utils.addMessage('success', 'TODO: retourner le nouvel id pour pouvoir passer en mode édition')
-				window.location.href = '/?module=device_management'
-				// setTimeout('top.location.href = "/?module=scheduler"',2000)
+				window.location.href = '/?module=device_management&msg='+encodeURIComponent(data.msg)
 			} else {
 				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
 			}

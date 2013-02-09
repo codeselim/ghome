@@ -9,12 +9,19 @@
 	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
 </head>
 <body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
-	<div data-role="page" id="devMgmt">
+	<div data-role="page" id="devMgmt" data-cache="never">
 		<div data-theme="a" data-role="header" data-position="fixed">
 			<h3>Gestion des équipements</h3>
-			<a href="/?module=home" data-icon="home" data-iconpos="notext" data-rel="back" >Accueil</a>
+			<a href="/?module=home" data-icon="home" data-iconpos="notext">Accueil</a>
+			<a href="/?module=home" data-icon="back" data-transition="slide" data-direction="reverse" data-iconpos="notext">Parent</a>
 		</div>
 		<div data-role="content">
+			<ul data-role="listview" data-inset="true" id="messages">
+				{{#msg}}
+					<li data-theme="g" data-icon="delete" ><a href="#"><span class="success">{{msg}}</span></a></li>
+				{{/msg}}
+			</ul>
+
 			<ul data-role="listview" data-divider-theme="b" data-inset="true" id="deviceList">
 				<li data-icon="plus">
 					<a data-transition="fade" href="/?module=device&amp;action=new"> Nouvel équipement </a>

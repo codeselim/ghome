@@ -13,10 +13,11 @@
 	<script src="js/client/highcharts/exporting.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+
 $(function () {
     var chart;
     $(document).ready(function() {
-        chart = new Highcharts.Chart({ {{STATS_DATA}}
+        chart = new Highcharts.Chart(  {{{STATS_DATA}}}   ) 
             // chart: {
             //     renderTo: 'container',
             //     type: 'line',
@@ -72,8 +73,6 @@ $(function () {
         });
     });
     
-});
-//console.log("{{STATS_DATA.name}}")
 </script>
 </head>
 <body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
