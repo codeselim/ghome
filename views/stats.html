@@ -86,7 +86,8 @@ console.log("{{STATS_DATA.name}}")
 		<p></p>
 		<div data-role="content" >
 		
-			<form action="/?module=stats" method="GET" id="form">
+			<form action="/?module=stats" method="GET" id="form" data-ajax="false">
+                <input type="hidden" name="module" value="stats">
                 <table>
                     <tr>
                         <td>
