@@ -27,8 +27,8 @@ Database.prototype.select_query = function(query_str, parameters, callback_func)
 }
 
 Database.prototype.insert_query = function (query_str, parameters, callback_func) {
-	this.prepare_statement(query_str, parameters, function (statement, pa) {
-		statement.run(pa, callback_func)
+	this.prepare_statement(query_str, parameters, function (statement, params) {
+		statement.run(params, callback_func)
 		statement.finalize()
 	})
 }
@@ -52,7 +52,7 @@ Database.prototype.prepare_statement = function(query_str, parameters, spec_func
 		});
 
 		if(null == parameters) {
-			var parameters = {}
+			parameters = {}
 		}
 		spec_func(statement, parameters)
 	});

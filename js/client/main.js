@@ -1,3 +1,5 @@
+"use strict"
+
 require.config({ 
 	baseUrl: 'js/client'
 	, paths: {  
@@ -10,8 +12,8 @@ require.config({
 })
 
 
-require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device', 'scheduler', 'utils', 'jquerymobile'], 
-	function($, /*_,*/ sseListener, devMgmt, new_device, scheduler, utils) {
+require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'jquerymobile'], 
+	function($, /*_,*/ sseListener, devMgmt, device, scheduler) {
 	$(function() {
 
 		//* Hides the body until JQM finishes applying styles
@@ -39,72 +41,66 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device
 		}
 
 		//* Registering the page inits
-		pageinits = {
+		var pageinits = {
 			  'home'      : homePI
 			, 'notif'     : notifPI
 			, 'devMgmt'   : devMgmt.pageInit
-			, 'newDevice' : new_device.pageInit
+			, 'device'    : device.pageInit
 			, 'scheduler' : scheduler.pageInit
 			, 'task'   : scheduler.taskPageInit
 			, 'spy'       : function() {
 				// TODO : get recent logs from spy table and create a table with them
 				utils.initMessages();
-					var submitForm = function submitForm() {
+				var submitForm = function submitForm() {
+					var data = utils.queryStringToHash($.param($('input:not([type=button],[type=submit]),select')))
+					console.log(data)
+					data.module = 'spy'
 
-		var data = utils.queryStringToHash($.param($('input:not([type=button],[type=submit]),select')))
-		console.log(data)
-		data.module = 'spy'
+					data.action = 'submit_parameters'
 
-		data.action = 'submit_parameters'
-		
 
-		$.ajax({
-				'url'      : "/"
-			, 'dataType' : 'json'
-			, 'data'     : data
-		})
-		.done(function(data) {
-			console.log(data)
-			if (data.success) {
-				utils.addMessage('success', 'TODO: retourner le nouvel id pour pouvoir passer en mode édition')
-				window.location.href = '/?module=spy'
-				// setTimeout('top.location.href = "/?module=scheduler"',2000)
-			} else {
-				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
-			}
-		})
-		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
-	}
-
-						$("form").validate({
-			  rules: { 
-					  email: {required:true, email:true}
-				} 
-			, messages: { 
-					  email: {
-					  	required : "Email requis",
-					  	email : "Email non valide"
-					  }
-					
+					$.ajax({
+						'url'      : "/"
+						, 'dataType' : 'json'
+						, 'data'     : data
+					})
+					.done(function(data) {
+						console.log(data)
+						if (data.success) {
+							utils.addMessage('success', 'TODO: retourner le nouvel id pour pouvoir passer en mode édition')
+							window.location.href = '/?module=spy'
+							// setTimeout('top.location.href = "/?module=scheduler"',2000)
+						} else {
+							utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
+						}
+					})
+					.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
 				}
-			, errorPlacement: function(error, element) {
-				//* Needed to place the error message out of the select menu.
-				if (element.is('select')) {
-					error.insertAfter($(element).parent())
-				} else {
-					error.insertAfter(element)
-				}
+
+				$("form").validate({
+					rules: { 
+						email: {required:true, email:true}
+					} 
+					, messages: { 
+						email: {
+							required : "Email requis",
+							email : "Email non valide"
+						}
+					}
+					, errorPlacement: function(error, element) {
+						//* Needed to place the error message out of the select menu.
+						if (element.is('select')) {
+							error.insertAfter($(element).parent())
+						} else {
+							error.insertAfter(element)
+						}
+					}
+					, submitHandler: submitForm
+				})
 			}
-			, submitHandler: submitForm
-		})
-
-			}
-
-			
-
 		}
 
-		for( id in pageinits) {
+		for(var id in pageinits) {
 			console.log('applying pageinit for ' + id)
 			$(document).delegate('#' + id, 'pageinit', pageinits[id])	
 		}
@@ -116,13 +112,11 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'new_device
 		pageinits[$('[data-role="page"]:first').attr('id')]()
 
 		$(document).on('pagehide', 'div', function(event, ui) {
-      var page = $(event.target)
- 
-      if(page.attr('data-cache') == 'never'){
-        page.remove()
-      }
+			var page = $(event.target)
 
+			if(page.attr('data-cache') == 'never'){
+				page.remove()
+			}
 		})
-
 	})
 })
