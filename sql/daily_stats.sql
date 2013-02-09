@@ -1,5 +1,6 @@
 CREATE TABLE `daily_stats` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `sensor_id` INTEGER NOT NULL,
   `sensor_type_id` INTEGER NOT NULL,
   `value` INTEGER NOT NULL,
   `min` INTEGER ,

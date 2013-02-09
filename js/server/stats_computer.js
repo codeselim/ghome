@@ -33,16 +33,19 @@ function statsRH(req, res, params, responseSender){
  *@returns
 */
  function temperature_h ( ) {
+ 	var sensor_id = shared.get_shared_data('IN_TEMP_SENSOR_ID') //id of the main indoor temperature sensor
  	var date = new Date();
 	var previous_hour = date.getHours() - 1;
 	//insert the average of temperature of the previous hour in the table hour_stats
-	var query_str = "insert into hour_stats (sensor_type_id,value,min,max,time)"+
-				"Select  sensors_types.id, avg(logs.value),min(logs.value), max(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)"+
+	var query_str = "insert into hour_stats (sensor_id,sensor_type_id,value,min,max,time)"+
+				"Select  logs.sensor_id, sensors_types.id, avg(logs.value),min(logs.value), max(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)"+
 				"from logs,sensors_types,sensors"+
-				"where sensors.sensor_type_id = sensors_types.id and "+
-				"sensors.sensor_type_id = logs.sensor_id and sensors_types.id = 1 and"+
+				"where logs.sensor_id = ? and"+
+				"sensors.sensor_type_id = sensors_types.id and "+
+				"sensors.id = logs.sensor_id and"+
+				" sensors_types.id = 1 and"+
 				"(strftime('%H',logs.time) = ?) and strftime('%Y-%m-%d', logs.time) = date('now');"
-	db.query (query_str, [previous_hour],NULL)
+	db.query (query_str, [sensor_id,previous_hour],NULL)
  }
 
 
@@ -56,11 +59,12 @@ function statsRH(req, res, params, responseSender){
  	var date = new Date();
 	var previous_hour = date.getHours() - 1;
 	//insert the average of temperature of the previous hour in the table hour_stats
-	var query_str = "insert into hour_stats (sensor_type_id,value,time)"+
-				"Select  sensors_types.id, sum(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)"+
+	var query_str = "insert into hour_stats (sensor_id,sensor_type_id,value,time)"+
+				"Select  logs.sensor_id, enssensors_types.id, sum(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)"+
 				"from logs,sensors_types,sensors"+
 				"where sensors.sensor_type_id = sensors_types.id and "+
-				"sensors.sensor_type_id = logs.sensor_id and sensors_types.id = 5 and"+
+				// "sensors.sensor_type_id = logs.sensor_id and"+
+				" sensors_types.id = 5 and"+
 				"(strftime('%H',logs.time) = ?) and strftime('%Y-%m-%d', logs.time) = date('now');"
 	db.query (query_str, [previous_hour],NULL)
  }
@@ -72,7 +76,7 @@ function statsRH(req, res, params, responseSender){
  *@returns
 */
  function temperature_d ( ) {
- 	
+ 	var sensor_id = shared.get_shared_data('IN_TEMP_SENSOR_ID')
 	//insert the average of temperature of the previous day in the table daily_stats
 	var query_str = "insert into daily_stats (sensor_type_id,value,min,max,time)"+
 				"Select  sensors_types.id, avg(hour_stats.value),min(hour_stats.value), max(hour_stats.value),  strftime('%Y-%m-%d', hour_stats.time)"+
@@ -99,7 +103,7 @@ function statsRH(req, res, params, responseSender){
 				"where sensors.sensor_type_id = sensors_types.id and "+
 				"sensors.sensor_type_id = hour_stats.sensor_type_id and sensors_types.id = 5 and"+
 				"strftime('%Y-%m-%d', hour_stats.time) =  strftime('%Y-%m-%d','now', '-1 day');"
-	db.query (query_str, NULL,NULL)
+	db.query (query_str, [sensor_id],NULL)
  }
 
   /**
@@ -109,7 +113,7 @@ function statsRH(req, res, params, responseSender){
  *@returns
 */
  function temperature_m ( ) {
- 	
+ 	var sensor_id = shared.get_shared_data('IN_TEMP_SENSOR_ID')
 	//insert the average of temperature of the previous month in the table monthly_stats
 	var query_str = "insert into monthly_stats (sensor_type_id,value,min,max,time)"+
 				"Select  sensors_types.id, avg(daily_stats.value),min(daily_stats.value), max(daily_stats.value)  strftime('%Y-%m-%d', daily_stats.time,'start of month')"+
@@ -117,7 +121,7 @@ function statsRH(req, res, params, responseSender){
 				"where sensors.sensor_type_id = sensors_types.id and "+
 				"sensors.sensor_type_id = daily_stats.sensor_type_id and sensors_types.id = 1 and"+
 				"strftime('%Y-%m-%d', daily_stats.day) =  strftime('%Y-%m-%d','now', '-1 day');"
-	db.query (query_str, NULL,NULL)
+	db.query (query_str, [sensor_id],NULL)
  }
 
 
@@ -186,7 +190,8 @@ function start ( ) {
 
 
 exports.start = start 
-exports.get_stats = get_stats
+exports.get_temperature_stats = get_temperature_stats
+exports.get_consumption_stats = get_consumption_stats
 exports.temperature_h = temperature_h
 exports.temperature_d = temperature_d
 exports.temperature_m = temperature_m
