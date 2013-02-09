@@ -22,14 +22,8 @@
 $(function(){
 
     $(document).ready(function(){
-    var now = new Date();
 
-    $('#datefrom').mobiscroll().datetime({
-        minDate: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
-        theme:'android-ics',
-        timeFormat : 'HH:ii',
-        dateFormat : 'yy-mm-dd'
-        });
+
     })    
 });
 
@@ -41,8 +35,19 @@ $(function () {
         {{#DONT_DRAW}}
         chart = new Highcharts.Chart(  {{{STATS_DATA}}}   ) 
         {{/DONT_DRAW}}
+
+        var settings = {
+       // minDate: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+        theme:'android-ics',
+        timeFormat : 'HH:ii',
+        dateFormat : 'yy-mm-dd'
+        }
+        var now = new Date();
+        $('#datefrom').mobiscroll().datetime(settings);
+        $('#dateto').mobiscroll().datetime(settings);
         });
-    });
+});
+
 
 </script>
 </head>
@@ -59,23 +64,33 @@ $(function () {
 			<form action="/?module=stats" method="post" id="form" data-ajax="false">
                 <input type="hidden" name="module" value="stats">
                     
-                           <div class="ui-block-a">
+                <div class="ui-block-a">
                    <table>
-                    
+                    <tr>
+                        <td> 
+                            <select name="typedestatistiques" >
+                                <option value="n/a">-- Type de Statistiques --</option>
+                                <option value="temperature">Température</option>
+                                <option value="electricity">Électricité</option>
+                            </select>                            
+                        </td>
+                        <td>
+                            <input id="datefrom" name="datefrom" placeholder="Select the starting date..." />
+                        </td>
+                        <td>
+                            <input id="dateto" name="dateto" placeholder="Select the ending date..." />
+                        </td>
+                        <td>
+                            <input type="submit" value="Valider" name="submit" />
+                        </td>
+                    </tr>
                    </table>
-                                 <select name="typedestatistiques" >
-                                    <option value="n/a">-- Type de Statistiques --</option>
-                                    <option value="temperature">Température</option>
-                                    <option value="electricity">Électricité</option>
-                                </select>
-                                 <input id="datefrom" name="datefrom" placeholder="Select the starting date..." />
-                            </div>
+                </div>
 
 
                          
-                          <input id="dateto" name="dateto" placeholder="Select the ending date..." />
+                      
 
-                            <input type="submit" value="Valider" name="submit" />
             </form> 
 
 
