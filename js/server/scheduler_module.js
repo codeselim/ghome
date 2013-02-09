@@ -171,9 +171,7 @@ var taskRH  = function (req, res, params, responseSender) {
 						"ORDER BY st.name, device_name ASC",
 						null,
 						function (err, rows) {
-							console.log(rows)
 							var evtSources = sutils.generate_json_devices_list_from_sql_rows(rows)
-							console.log(evtSources)
 
 							var tplData = {
 								 'actionDevices' : actionDevices,
@@ -189,11 +187,6 @@ var taskRH  = function (req, res, params, responseSender) {
 							}
 
 							tplData.evtSourceTypes = tplData.evtSourceTypes.concat(evtSources)
-							console.log(tplData.evtSourceTypes)
-							for(var i in tplData.evtSourceTypes) {
-								console.log(tplData.evtSourceTypes[i])
-							}
-
 
 							var html = tpl.get_template_result("task.html", tplData)
 
