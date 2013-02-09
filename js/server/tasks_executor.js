@@ -36,11 +36,12 @@ function execute_task(event_id, origin_id) {//this function will search the good
 	var actions_target = {}
 	var current_action = null;
 	var current_sensor_id = null;
+	var current_condition_id = null;
 	console.log("event id :")
 	console.log(event_id)
 
 	//We get the action type id, the operator, the value to compare, the sensor_id and the target_id from the candidate actions (actions wich are in the right timer for being candidate)
-	db.select_query("SELECT action_type_id, operator, value_to_compare, sensor_id, target_id FROM Tasks AS t INNER JOIN conditions AS c ON c.task_id = t.id INNER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND origin_id = ?"
+	db.select_query("SELECT action_type_id, operator, value_to_compare, sensor_id, target_id, c.id FROM Tasks AS t INNER JOIN conditions AS c ON c.task_id = t.id INNER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND origin_id = ?"
 			, [event_id, origin_id], function (err, rows) { //now we select the proper actions with the operator
 				for (var r in rows) { //creation of a dictionnaire where we put all the candidate actions
 					actions_type[rows[r]["action_type_id"]] = true;
@@ -50,6 +51,7 @@ function execute_task(event_id, origin_id) {//this function will search the good
 					value = sensors_values[rows[r]["sensor_id"]];//we catch the value corresponding to the current sensor
 					current_action = rows[r]["action_type_id"]
 					current_sensor_id = rows[r]["sensor_id"]
+					current_condition_id = rows[r]["c.id"]
 
 					switch (rows[r]["operator"]){
 						case 1 : // if operator = "="
@@ -80,7 +82,7 @@ function execute_task(event_id, origin_id) {//this function will search the good
 						}
 						break;
 						case 6 : // if operator = "passage de seuil haut"
-						db.select_query("SELECT value FROM thresholds AS t INNER JOIN thresholds_sensor_types AS tst ON t.id = tst.threshold_id INNER JOIN sensors_types AS st ON st.id = tst.sensor_type_id INNER JOIN sensors AS s ON s.sensor_type_id = st.id INNER JOIN conditions AS c ON c.sensor_id = s.id WHERE c.sensor_id = ? GROUP BY values",[current_sensor_id], function (rows, err){
+						db.select_query("SELECT value FROM thresholds AS t INNER JOIN thresholds_sensor_types AS tst ON t.id = tst.threshold_id INNER JOIN sensors_types AS st ON st.id = tst.sensor_type_id INNER JOIN sensors AS s ON s.sensor_type_id = st.id INNER JOIN conditions AS c ON c.sensor_id = s.id WHERE c.sensor_id = ? AND c.id = ?",[current_sensor_id, current_condition_id], function (rows, err){
 							for(var r in rows) {
 								if(parseInt(rows[r]["value"]) < parseInt(value)){
 									actions_type[current_action] = false; //so we put the corresponding value to false = not executable
@@ -89,7 +91,7 @@ function execute_task(event_id, origin_id) {//this function will search the good
 						})
 						break;
 						case 7 : // if operator = "passage de seuil bas"
-						db.select_query("SELECT value FROM thresholds AS t INNER JOIN thresholds_sensor_types AS tst ON t.id = tst.threshold_id INNER JOIN sensors_types AS st ON st.id = tst.sensor_type_id INNER JOIN sensors AS s ON s.sensor_type_id = st.id INNER JOIN conditions AS c ON c.sensor__id = s.id WHERE c.sensor_id = ? GROUP BY values",[current_sensor_id], function (rows, err){
+						db.select_query("SELECT value FROM thresholds AS t INNER JOIN thresholds_sensor_types AS tst ON t.id = tst.threshold_id INNER JOIN sensors_types AS st ON st.id = tst.sensor_type_id INNER JOIN sensors AS s ON s.sensor_type_id = st.id INNER JOIN conditions AS c ON c.sensor_id = s.id WHERE c.sensor_id = ? AND c.id = ?",[current_sensor_id, current_condition_id], function (rows, err){
 							for (var r in rows){
 								if(parseInt(rows[r]["value"]) > parseInt(value)){
 									actions_type[current_action] = false; //so we put the corresponding value to false = not executable
