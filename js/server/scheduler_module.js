@@ -91,11 +91,14 @@ var taskRH  = function (req, res, params, responseSender) {
 				console.log("SCHMOD: Getting conditions types from sensor_type")
 				var q = "SELECT stct.condition_type_id, ct.name " + 
 						"FROM `" + t['stct'] + "` stct " +
-						"INNER JOIN `" + t['ct'] + "` ct ON (ct.id = stct.condition_type_id) "
+						"INNER JOIN `" + t['ct'] + "` ct ON (ct.id = stct.condition_type_id) " +
 						"WHERE stct.sensor_type_id = ?"
 				var st = parseInt(params.query.sensorType)
 				var p = [st]
 				params.db.select_query(q, p, function (err, rows) {
+					if (null != err) {
+					console.error("SCHMOD: SQL Query failed", err)
+					};
 					for(var i in rows) {
 						data[rows[i]['name']] = rows[i]['condition_type_id']
 					}
@@ -117,24 +120,13 @@ var taskRH  = function (req, res, params, responseSender) {
 
 		case 'initCache' : //* Returns the html for a condition, preloaded with the sensors list (more?)
 		{
-			var data = {'conditionTemplate' : tpl.get_template_result("new_device_templates.html", {
-				  'conditionTemplate' : true
-				, 'evtSourceTypes' : [
-					{'label' : 'Sources spéciales', 'sensors' : [
-						  {'label' : 'Date', 'value' : 1, 'type' : 51}
-						, {'label' : 'Météo', 'value' : 2, 'type' : 52}
-					]},
-					{'label' : 'Capteurs Température', 'sensors' : [
-						  {'label' : 'Capteur Température1', 'value' : 1, 'type' : 2}
-						, {'label' : 'Capteur Température2', 'value' : 2, 'type' : 2}
-					]},
-					{'label' : 'Capteurs Présence', 'sensors' : [
-						  {'label' : 'Capteur Présence1', 'value' : 1, 'type' : 13}
-						, {'label' : 'Capteur Présence2', 'value' : 2, 'type' : 13}
-					]}
-				]
-			})}
-			res.end(JSON.stringify(data))
+			getEvtSources(params.db, function (evtSources) {
+				var data = {'conditionTemplate' : tpl.get_template_result("new_device_templates.html", {
+					  'conditionTemplate' : true
+					, 'evtSourceTypes' : evtSources
+				})}
+				res.end(JSON.stringify(data))
+			})
 			break
 		}
 
@@ -165,44 +157,52 @@ var taskRH  = function (req, res, params, responseSender) {
 					
 					var actionDevices = sutils.generate_json_devices_list_from_sql_rows(rows)
 
-					params.db.select_query(
-						"SELECT st.name AS name, elv.sensor_type_id AS sensor_type_id, elv.id AS id, elv.name AS device_name " +
-						"FROM " + t.st + " st " +
-						"INNER JOIN `" + t['elv'] + "` elv ON (st.id = elv.sensor_type_id) " +
-						"ORDER BY st.name, device_name ASC",
-						null,
-						function (err, rows) {
-							var evtSources = sutils.generate_json_devices_list_from_sql_rows(rows)
-
-							var tplData = {
-								 'actionDevices' : actionDevices,
-								 'evtSourceTypes' : [
-									{
-										'label' : 'Sources spéciales', 
-										'devices' : [
-											{'label' : 'Date', 'id' : -1, 'type' : -1},
-											{'label' : 'Météo', 'id' : -2, 'type' : -2}
-										]
-									}
-								]
-							}
-
-							tplData.evtSourceTypes = tplData.evtSourceTypes.concat(evtSources)
-
-							var html = tpl.get_template_result("task.html", tplData)
-
-							params.fileUrl = 'task.html'
-							responseSender(req, res, params, html)			
+					getEvtSources(params.db, function (evtSources) {
+						var tplData = {
+							 'actionDevices' : actionDevices,
+							 'evtSourceTypes' : evtSources
 						}
-					)
 
+						var html = tpl.get_template_result("task.html", tplData)
+
+						params.fileUrl = 'task.html'
+						responseSender(req, res, params, html)
+					})
 				})
 			break
 		}
 	}
 }
 
-
+/** Gets the event sources from the DB and passes them to the specified callback as first argument
+ * @param{dbms.Database} db : The dbms.Database object
+ * @param{function} callback : The callback to be called when the computation is over and to pass the data to
+ * @return{undefined} undefined
+*/
+function getEvtSources(db, callback) {
+	var evtSources = 
+	[
+		{
+			'label' : 'Sources spéciales', 
+			'devices' : [
+				{'label' : 'Date', 'id' : -1, 'type' : -1},
+				{'label' : 'Météo', 'id' : -2, 'type' : -2}
+			]
+		}
+	]
+	db.select_query(
+		"SELECT st.name AS name, elv.sensor_type_id AS sensor_type_id, elv.id AS id, elv.name AS device_name " +
+		"FROM " + t.st + " st " +
+		"INNER JOIN `" + t['elv'] + "` elv ON (st.id = elv.sensor_type_id) " +
+		"ORDER BY st.name, device_name ASC",
+		null,
+		function (err, rows) {
+			var es = sutils.generate_json_devices_list_from_sql_rows(rows)
+			evtSources = evtSources.concat(es)
+			callback(evtSources)
+		}
+	)
+}
 
 exports.schedulerRequestHandler = schedulerRH
 exports.taskRequestHandler = taskRH

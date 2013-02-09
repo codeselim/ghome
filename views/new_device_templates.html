@@ -14,9 +14,9 @@ Condition Template
 					<select name="condSource" data-condition-id="@@condId@@" data-mini="true">
 					{{#evtSourceTypes}}
 					<optgroup label="{{label}}">
-					{{#sensors}}
-					    <option value="{{value}}" data-sensor-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
-					{{/sensors}}
+					{{#devices}}
+					    <option value="{{id}}" data-sensor-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
+					{{/devices}}
 					</optgroup>
 					{{/evtSourceTypes}}
 					</select>

@@ -219,16 +219,16 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		$('[name=evtType]').change(updateCondType)
 		$('#conditionEvt [name=condType]').change(updateCondValue)
 		$('#addCondition').click(function() {
-			$bigList = $('#bigList')
-			$bigList.find('li:last').before(cache.conditionTemplate.replace(/@@condId@@/g, conditionCount++))
-			$newCondition = $bigList.find('li:last').prev('li')
-			$newCondition.find("[name=condType]").change(updateCondValue)
-			$newCondition.find("[name=condSource]").change(updateCondType)
-			$newCondition.find(".removeCondition").click(removeCondition)
+			var bigList = $('#bigList')
+			bigList.find('li:last').before(cache.conditionTemplate.replace(/@@condId@@/g, conditionCount++))
+			var newCondition = bigList.find('li:last').prev('li')
+			newCondition.find("[name=condType]").change(updateCondValue)
+			newCondition.find("[name=condSource]").change(updateCondType)
+			newCondition.find(".removeCondition").click(removeCondition)
 
 			//* Ask JQM to redraw the new elements
-			$newCondition.trigger('create')
-			$bigList.listview('refresh')
+			newCondition.trigger('create')
+			bigList.listview('refresh')
 		})
 
 		$('form').validate({

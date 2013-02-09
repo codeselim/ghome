@@ -33,6 +33,8 @@ INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois >", 22, "list");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure >", 23, "list");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute >", 24, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "présence détectée", 25, "none");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "présence non-détectée", 26, "none");
 
 
 INSERT INTO actions_types VALUES (1, "Allumer prise", 5, "ON");
@@ -121,6 +123,18 @@ INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id)
 	SELECT sensor_type_id, condition_type_id 
 	FROM event_types_condition_types etct 
 	INNER JOIN sensor_types_event_types stet ON (etct.event_type_id = stet.event_type_id);
+
+-- Manually populating for conditions that will not be grabbed by the previous SELECT statement (amongst others, sensors that don't have any conditions mapped to their event (like presence/absence))
+	-- presence
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(3, 25);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(3, 26);
+
+	-- contact
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(4, 8);
+	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(4, 9);
+
+
+
 
 -- clock
 	-- Your are going to see something you must forget immediately:
