@@ -148,7 +148,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		console.log('new device pageInit')
 		utils.initMessages()
 
-		$("#form").validate({
+		$("form").validate({
 			  rules: { 
 					  equip_id: "required"
 					, equip_label: "required"
