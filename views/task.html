@@ -36,13 +36,13 @@
 							<div class="ui-block-a">
 								<select name="aActor" >
 									<option value="">-- Acteur --</option>
-									{{#deviceTypes}}
+									{{#actionDevices}}
 									<optgroup label="{{label}}">
 										{{#devices}}
 									    <option value="{{id}}" data-device-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
 										{{/devices}}
 									</optgroup>
-									{{/deviceTypes}}
+									{{/actionDevices}}
 								</select>
 							</div>
 							<div class="ui-block-b">
@@ -61,9 +61,9 @@
 									<option value="">-- Source --</option>
 									{{#evtSourceTypes}}
 									<optgroup label="{{label}}">
-									{{#sensors}}
-									    <option value="{{value}}" data-sensor-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
-									{{/sensors}}
+									{{#devices}}
+									    <option value="{{id}}" data-sensor-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
+									{{/devices}}
 									</optgroup>
 									{{/evtSourceTypes}}
 								</select>

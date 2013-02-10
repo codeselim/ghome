@@ -12,3 +12,4 @@
 .read settings.sql
 .read logs_spy.sql
 .read join_tables.sql
+.read events_launchers_view.sql
