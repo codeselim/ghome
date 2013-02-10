@@ -157,8 +157,10 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		}
 
 		$('[id^=condition]').each(function(){
-			console.log($(this))
-			params.cond.push(utils.queryStringToHash($.param($(this).find('select'))))
+			var cond = utils.queryStringToHash($.param($(this).find('select')))
+			if (!$.isEmptyObject(cond)) {
+				params.cond.push(cond)
+			}
 		})
 
 		return params
