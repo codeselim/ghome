@@ -97,16 +97,11 @@ function generate_json_devices_list_from_sql_rows (rows) {
 
 function generate_json_get_actions_by_device_type(rows){
 	var number_of_rows = 0
-	var actions = '{'
-	if (rows.length > 0){
-		for (var i = 0 ; i < rows.length - 1 ;i++) {
-			actions += ' "'+rows[i].name.trim()+'" : '+rows[i].id+' , '
-		}
-		actions += ' "'+rows[i].name.trim()+'" : '+rows[i].id
-		actions += ' }'
-		return actions
+	var actions = {}
+	for(var i in rows) {
+		actions[rows[i].name.trim()] = rows[i].id
 	}
-	else return '{}'
+	return actions
 }
 
 exports.decode_frame = decode_frame
