@@ -3,6 +3,7 @@ var tpl = require('./template_engine')
 var shared = require('./shared_data')
 var SQL_TABLES_DIC = shared.get_shared_data('SQL_TABLES');
 
+////
 
 
 function statsRH(req, res, params, responseSender){
