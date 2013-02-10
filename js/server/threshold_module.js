@@ -107,9 +107,10 @@ var submit = function(req, res, params, newMode) {
 }
 
 var editRH = function (req, res, params, responseSender) {
-
-	var data
+	console.log("QUERY : "+params.query)
+	var data = {}
 	switch (params.query.action) {
+
 		case 'submit_new':
 			submit(req, res, params, true)
 			break
@@ -167,8 +168,8 @@ var editRH = function (req, res, params, responseSender) {
 			params.fileUrl = 'threshold.html'
 			// liste types de capteurs
 			data = {
-				  'threshold' : {'id':1, 'thresholdName': 'Seuil1', 'value': 1234}
-				//, 'sensors' : [{'id':1, 'label': 'sensor1'}, {'id':2, 'label': 'sensor2', 'selected':true}]
+				  'threshold' : {'id': null, 'thresholdName': '', 'value': null }
+				
 			}
 			params.db.select_query("SELECT DISTINCT sensor_type_id AS id, st.name AS deviceType "+
 				"FROM " +t['elv']+" AS elv JOIN "+t['st']+" AS st ON "+
@@ -179,6 +180,18 @@ var editRH = function (req, res, params, responseSender) {
 			})
 		
 			break
+
+		case 'check_task':
+		//TODO : 
+		//vérifier si le type de capteur est déjà associé au seuil
+		//si oui -> vérifier si un capteur de type sensorType associé à un seuil d'id id est associé
+		//à une tache
+		  //si oui -> renvoyer success : false
+		  //si non -> renvoyer success : true
+		//si non -> renvoyer success : true
+
+		res.end(JSON.stringify({'success': false}))
+		break
 		
 
 		default:
