@@ -108,20 +108,21 @@ var submit = function(req, res, params, newMode) {
 
 var editRH = function (req, res, params, responseSender) {
 
-	var data = {}
+	var data
 	switch (params.query.action) {
 		case 'submit_new':
 			submit(req, res, params, true)
 			break
 
 		case 'submit_edit':
+			console.log(params.query.value)
 			var q = "UPDATE `" + t['th'] + "` SET name=?, value=? WHERE id=?"
 			var p = [params.query.name, params.query.value, params.query.id]
 			params.db.update_query(q, p, function (err) {
 				if (err == null) {
-					callbackparam.res.end(JSON.stringify({'success': true, 'msg' : 'Le nouvel équipement a été modifié avec succès.'}))
+					res.end(JSON.stringify({'success': true, 'msg' : 'Le nouvel équipement a été modifié avec succès.'}))
 				} else {
-					callbackparam.res.end(JSON.stringify({'msg': JSON.stringify(callbackparam.err), 'success': false}))
+					res.end(JSON.stringify({'msg': JSON.stringify(callbackparam.err), 'success': false}))
 				}
 			})
 			break

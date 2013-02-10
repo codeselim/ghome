@@ -16,6 +16,7 @@ define(['jquery','utils'], function($, utils){
         var dataToSubmit = {}
         dataToSubmit.name = $('[name=name]').val()
         dataToSubmit.value = $('[name=value]').val()
+        dataToSubmit.id = $('[name=id]').val()
 
         dataToSubmit.deviceTypes = utils.queryStringToHash($.param($('input[type=checkbox]:checked')))['stid']
         dataToSubmit.module = 'threshold'
@@ -46,13 +47,11 @@ define(['jquery','utils'], function($, utils){
       }
     })
 
-//"input[type='checkbox']"
-
   $("input[type='checkbox']").change( function(event) {
     if (this.checked == false) {
       alert('Unchecked')
     }
-});
+  });
 
 
 
