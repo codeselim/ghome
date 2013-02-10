@@ -80,28 +80,17 @@ function check_frame_checksum (frame_data, framestr) {
 
 
 function generate_json_devices_list_from_sql_rows (rows) {
-	var sensor_type_id = -1
+	var sensor_type_id = -42
 	var number_of_rows = 0
-	var deviceTypes = ''
+	var deviceTypes = []
 					
 	for (var r in rows) {
 		if(sensor_type_id != rows[r].sensor_type_id) {	
 			var sensor_type_id = rows[r].sensor_type_id
-			deviceTypes += ']},'
-			deviceTypes += '{"label" : "'+rows[r].name.trim()+'", "devices" : [ '    
-			deviceTypes += '{"label" : "'+rows[r].device_name.trim()+'", "id" : "'+ rows[r].id +'", "type" : "'+rows[r].sensor_type_id+'"}'
+			deviceTypes.push({label: rows[r].name.trim(), devices: [{label: rows[r].device_name.trim(), id: rows[r].id, type: rows[r].sensor_type_id}]})
 		} else {
-			deviceTypes += ',{"label" : "'+rows[r].device_name.trim()+'", "id" : "'+ rows[r].id +'", "type" : "'+rows[r].sensor_type_id+'"}'
+			deviceTypes[deviceTypes.length-1].devices.push({label: rows[r].device_name.trim(), id: rows[r].id, type: rows[r].sensor_type_id})
 		} 
-		number_of_rows++
-	}
-	if(number_of_rows) {
-		var temp = '['  //	temp =  '"deviceTypes" : ['
-		temp += deviceTypes.substr(3) //pour enlever les premier  ]},
-		temp += ']}  ]'
-		var deviceTypes = JSON.parse(temp)
-	} else {
-		var deviceTypes = []
 	}
 	return deviceTypes
 }

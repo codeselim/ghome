@@ -163,11 +163,36 @@ var taskRH  = function (req, res, params, responseSender) {
 
 		case 'submit':
 		{
-			console.log('-------------------------------------')
-			console.log(params.query)
-			console.log(JSON.parse(params.query.data))
-			console.log('-------------------------------------')
-			res.end(JSON.stringify({success: false}))
+			var formData = JSON.parse(params.query.data)
+			console.log("SCHMOD", formData)
+
+			var q = "INSERT INTO `" + t['t'] + '` (name, action_type_id, target_id, event_type_id, origin_id) VALUES (?, ?, ?, ?, ?)'
+			var p = [formData.name, formData.act.aAction, formData.act.aActor, formData.evt.evtType, formData.evt.evtSource]
+			console.log(q, p)
+			params.db.insert_query(q, p, function (err) {
+				if (null != err) {
+					console.error("SCHMOD", err)
+					res.end(JSON.stringify({success: false}))
+				} else {
+					var taskId = this.lastID
+					var count = formData.cond.length
+					var cb = function (err) {
+						// Small trick here : We know we have to wait for the last callback to terminate in order to send the response. Thus we have an internal counter and we decrement it.
+						// When it reaches 0, then we're done and we can answer.
+						count--
+						if (0 == count) {
+							res.end(JSON.stringify({success: true}))
+						}
+					}
+					for(var i in formData.cond) {
+						var q1 = "INSERT INTO `" + t['c'] + "` (task_id, sensor_id, type_id, value_to_compare) VALUES (?, ?, ?, ?)"
+						var p1 = [taskId, formData.cond[i].condSource, formData.cond[i].condType, formData.cond[i].condValue]
+						console.log(q1, p1)
+						params.db.insert_query(q1, p1, cb)
+					}
+				}
+			})
+			
 		}
 			break
 
