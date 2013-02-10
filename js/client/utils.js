@@ -3,6 +3,9 @@
 define(function(){
 	//* Returns JSON from a "aa=yy&bb=zz" string 
 	var queryStringToHash = function queryStringToHash  (query) {
+		if (!query) {
+			return {}
+		}
 		var query_string = {}
 		var vars = query.split("&")
 		for (var i=0;i<vars.length;i++) {

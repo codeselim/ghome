@@ -37,10 +37,10 @@
 					<li>
 						<div data-role="fieldcontain">
 							<fieldset data-role="controlgroup">
-								{{#sensors}}
-									<input type="checkbox" name="{{id}}" id="cb-sensor-{{id}}" value="{{id}}" {{#selected}}checked{{/selected}} />
+								{{#device_types}}
+									<input type="checkbox" name="stid" id="cb-sensor-{{id}}" value="{{id}}" {{#selected}}checked{{/selected}} />
 									<label for="cb-sensor-{{id}}">{{sensorName}}</label>
-								{{/sensors}}
+								{{/device_types}}
 							</fieldset>
 						</div>
 

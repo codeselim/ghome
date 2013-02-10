@@ -16,7 +16,7 @@ define(['jquery','utils'], function($, utils){
         var dataToSubmit = {}
         dataToSubmit.name = $('[name=name]').val()
         dataToSubmit.value = $('[name=value]').val()
-        dataToSubmit.sensors = utils.queryStringToHash($.param($('input[type=checkbox]:checked')))
+        dataToSubmit.deviceTypes = utils.queryStringToHash($.param($('input[type=checkbox]:checked')))
         dataToSubmit.module = 'threshold'
         if (dataToSubmit.id) {
           dataToSubmit.action = 'submit_edit'
