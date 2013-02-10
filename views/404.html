@@ -2,6 +2,7 @@
 <head>
 	<title>- ooops! -</title>
 	<!-- <link rel="stylesheet" href="404.css" type="text/css" media="all" /> -->
+    <link type="text/css" rel="stylesheet" href="css/nyan.css" />
 	<style>
 	body {
 		background:#0000aa;
@@ -44,22 +45,112 @@
 </head>
 <body>
 	<div>
-	<span class="neg">ERROR 404</span>
-	<p>
-		
-		The page is missing or never was written. You can wait and<br>
-		see if it becomes available again, or you can restart the<br>
-		device.
-	</p>
-	<p>
-		* Send us an email to notify this and try it later.<br>
+		<span class="neg">ERROR 404</span>
+		<p>
+			The page is missing or has never been written. You can wait and<br>
+			see if it becomes available again, or you can restart the<br>
+			device.
+		</p>
+		<ul>
+			<li> Send us an <a href="mailto:contact@ghome.org" >email</a> to notify this and try it later.</li>
 
-		* Press CTRL+ALT+DEL to restart your computer. If you are<br>
-		&nbsp; using a tablet, throw it away.<br>
+			<li> Press CTRL+ALT+DEL to restart your computer. If you are<br />
+			&nbsp; using a tablet, throw it away.</li>
 
-		* You can also click this <a href="/">link</a>
-	</p>
-
+			<li> You can also click this <a href="/">link</a></li>
+		</ul>
+        <!-- <div id="mainContainer" style='width:506px; margin: auto;'> -->
+            <div id="nyanCat">
+                <div id="wholeHead">
+                    <div class="skin ear"></div>
+                    <div class="skin ear rightEar"></div>
+                    <div id="mainHead" class="skin">
+                        <div class="eye"></div>
+                        <div class="eye rightEye"></div>
+                        <div class="nose"></div>
+                        <div class="chick"></div>
+                        <div class="chick rightChick"></div>
+                        <div class="mouth">E</div>
+                    </div>
+                </div>
+                <div id="toastBody">
+                    <div>
+                        &nbsp;  &nbsp; &nbsp;.&nbsp;&nbsp;.&nbsp; &nbsp; &nbsp;..&nbsp;  &nbsp; &nbsp;.&nbsp;.&nbsp; &nbsp; &nbsp;&nbsp&nbsp&nbsp;..&nbsp;  &nbsp; &nbsp;.&nbsp;&nbsp;.
+                    </div>
+                </div>
+                <div id="wholeTail">
+                    <div class="tail skin"></div>
+                    <div class="tail middleTail skin"></div>
+                    <div class="tail backTail skin"></div>
+                </div>
+                <div id="allYourLegAreBelongToUs">
+                    <div class="skin leg back leftBack"></div>
+                    <div class="skin leg back"></div>
+                    <div class="skin leg front leftFront"></div>
+                    <div class="skin leg front"></div>
+                </div>
+                <div class="rainbow"></div>
+                <div class="rainbow r2"></div>
+                <div class="rainbow r3"></div>
+                <div class="rainbow r4"></div>
+            </div>
+            <div class="star starMovement1">
+                <div number="1"></div>
+                <div number="2"></div>
+                <div number="3"></div>
+                <div number="4"></div>
+                <div number="5"></div>
+                <div number="6"></div>
+                <div number="7"></div>
+                <div number="8"></div>
+            </div>
+            <div class="star starMovement2 backwards">
+                <div number="1"></div>
+                <div number="2"></div>
+                <div number="3"></div>
+                <div number="4"></div>
+                <div number="5"></div>
+                <div number="6"></div>
+                <div number="7"></div>
+                <div number="8"></div>
+            </div>
+            <div class="star starMovement3">
+                <div number="1"></div>
+                <div number="2"></div>
+                <div number="3"></div>
+                <div number="4"></div>
+                <div number="5"></div>
+                <div number="6"></div>
+                <div number="7"></div>
+                <div number="8"></div>
+            </div>
+           <div class="star starMovement4">
+                <div number="1"></div>
+                <div number="2"></div>
+                <div number="3"></div>
+                <div number="4"></div>
+                <div number="5"></div>
+                <div number="6"></div>
+                <div number="7"></div>
+                <div number="8"></div>
+            </div>
+            <div class="star starMovement5">
+                <div number="1"></div>
+                <div number="2"></div>
+                <div number="3"></div>
+                <div number="4"></div>
+                <div number="5"></div>
+                <div number="6"></div>
+                <div number="7"></div>
+                <div number="8"></div>
+            </div>
+        <!-- </div> -->
+        <audio loop="loop" src="sounds/nyancat.ogg" autoplay="true">
+        <script>
+            document.getElementsByTagName('audio')[0].addEventListener('ended', function(){
+                this.currentTime = 0;
+            }, false);
+        </script>
 	</div>
 </body>
 </html>
