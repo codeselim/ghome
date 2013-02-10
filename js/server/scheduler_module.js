@@ -270,7 +270,7 @@ var taskRH  = function (req, res, params, responseSender) {
 		}
 			break
 
-		case 'edit': //@TODO: Test that
+		case 'edit': //@TODO: Finish and test that
 		{
 			console.log("SCHMOD: EDIT MODE")
 			var taskId = parseInt(params.query.id)
