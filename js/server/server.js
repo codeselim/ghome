@@ -100,6 +100,7 @@ function load_plugins () {
 		require(p + 'start_tests.js')
 		require(p + 'end_tests.js')
 		require(p + 'communicators.js')
+		require(p + 'state_displayers.js')
 	}
 }
 

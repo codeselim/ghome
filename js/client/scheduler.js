@@ -157,8 +157,10 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		}
 
 		$('[id^=condition]').each(function(){
-			console.log($(this))
-			params.cond.push(utils.queryStringToHash($.param($(this).find('select'))))
+			var cond = utils.queryStringToHash($.param($(this).find('select')))
+			if (!$.isEmptyObject(cond)) {
+				params.cond.push(cond)
+			}
 		})
 
 		return params
@@ -170,10 +172,9 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
-			, 'data'     : $.extend({'module' : 'task', 'action' : 'submit'}, getFormParams())
+			, 'data'     : {'module' : 'task', 'action' : 'submit', 'data': JSON.stringify(getFormParams())}
 		})
 		.done(function(data) {
-			console.log(data)
 			if (data.success) {
 				utils.addMessage('success', 'Ok! Vous allez être redirigé sur la liste des tâches.')
 				// window.location.href = '/?module=scheduler'
