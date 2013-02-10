@@ -133,12 +133,12 @@ var editRH = function (req, res, params, responseSender) {
 			data = {
 				  'threshold' : {'id':1, 'thresholdName': 'Seuil1', 'value': 1234}
 				}
-			params.db.select_query("SELECT sensor_type_id AS id, st.name AS sensorType"+
+			params.db.select_query("SELECT sensor_type_id AS id, st.name AS deviceType"+
 				" FROM "+t['thst']+" JOIN "+t['st']+" AS st ON sensor_type_id = id WHERE threshold_id = ?", [params.query.id], function(err, rows) {
 					for(var r in rows) {
 						rows[r].selected = true
 					}
-					data.sensors = rows
+					data.device_types = rows
 					responseSender(req, res, params, tpl.get_template_result("threshold.html", data))
 				})
 
