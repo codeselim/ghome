@@ -132,6 +132,9 @@ var taskRH  = function (req, res, params, responseSender) {
 
 		case 'submit':
 		{
+			console.log('-------------------------------------')
+			console.log(params.query)
+			console.log('-------------------------------------')
 			res.end(JSON.stringify({success: Math.random() > 0.5}))
 		}
 			break

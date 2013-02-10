@@ -18,7 +18,11 @@
 
 		<div data-role="content">
 
-			<ul data-role="listview" data-inset="true" id="messages"></ul>
+			<ul data-role="listview" data-inset="true" id="messages">
+				{{#msg}}
+					<li data-theme="g" data-icon="delete" ><a href="#"><span class="success">{{msg}}</span></a></li>
+				{{/msg}}
+			</ul>
 			<ul data-role="listview" data-filter="true" data-filter-placeholder="Rerchercher un nom de seuil..." 
 					data-divider-theme="b" data-inset="true">
 				<li data-icon="plus">
@@ -27,7 +31,7 @@
 				<li data-role="list-divider">Liste des seuils</li>
 				{{#thresholds}}
 					<li><a data-transition="fade" href="/?module=threshold&amp;action=edit&amp;id={{id}}">
-						<span>{{label}}</span><span style="float: right; width: 30%; text-align:left"> {{value}}</span>
+						<span>{{thresholdName}}</span><span style="float: right; width: 30%; text-align:left"> {{value}}</span>
 					</a></li>
 				{{/thresholds}}
 				{{^thresholds}}

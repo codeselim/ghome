@@ -16,25 +16,29 @@ define(['jquery','utils'], function($, utils){
         var dataToSubmit = {}
         dataToSubmit.name = $('[name=name]').val()
         dataToSubmit.value = $('[name=value]').val()
-        dataToSubmit.deviceTypes = utils.queryStringToHash($.param($('input[type=checkbox]:checked')))
+
+        dataToSubmit.deviceTypes = utils.queryStringToHash($.param($('input[type=checkbox]:checked')))['stid']
         dataToSubmit.module = 'threshold'
         if (dataToSubmit.id) {
           dataToSubmit.action = 'submit_edit'
         } else {
           dataToSubmit.action = 'submit_new'
         }
-        console.log(dataToSubmit)
+        console.log(dataToSubmit.deviceTypes)
+        console.log(JSON.stringify(dataToSubmit))
 
         $.ajax({
             'url'      : "/"
           , 'dataType' : 'json'
           , 'data'     : dataToSubmit
+          , contentType: 'application/json'
         })
         .done(function(data) {
           console.log(data)
           if (data.success) {
             window.location.href = '/?module=threshold_list&msg='+encodeURIComponent(data.msg)
           } else {
+            console.log(data.msg)
             utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
           }
         })

@@ -142,7 +142,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 
 	var getFormParams = function() {
 		//* Fixed params
-		params = {
+		var params = {
 				name: $('[name=taskName]').val()
 			, act: utils.queryStringToHash($.param($('#actionArgs select')))
 			, evt: utils.queryStringToHash($.param($('#evtArgs select')))
@@ -159,6 +159,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 
 	var submitNewTask = function() {
 
+		console.log(getFormParams())
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
@@ -185,32 +186,34 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 
 
 	var taskPI = function taskPI() {
+		console.log('taskPI!')
 		var cache = {}
 		var conditionCount = 0
 
 		$('.leftLink').parent().parent().parent().removeClass('ui-btn');
 		$('.leftLink').contents().unwrap();
 
-		$("#form").validate({
-				rules: {
-						'device'          : {'required': true }
-					, 'devAction'       : {'required': true }
-					, 'trigger'         : {'required': true }
-					, 'sensor'          : {'required': true }
-					, 'threshold_type'  : {'required': true }
-					, 'threshold_value' : {'required': true }
-					, 'threshold_event' : {'required': true }
-				} 
-			, messages: {}
-			, errorPlacement: function(error, element) {
-				//* Needed to place the error message out of the select menu.
-				if (element.is('select')) {
-					error.insertAfter($(element).parent())
-				} else {
-					error.insertAfter(element)
-				}
-			}
-		})
+		//* WTF is this shit?
+		// $("form").validate({
+		// 		rules: {
+		// 				'device'          : {'required': true }
+		// 			, 'devAction'       : {'required': true }
+		// 			, 'trigger'         : {'required': true }
+		// 			, 'sensor'          : {'required': true }
+		// 			, 'threshold_type'  : {'required': true }
+		// 			, 'threshold_value' : {'required': true }
+		// 			, 'threshold_event' : {'required': true }
+		// 		} 
+		// 	, messages: {}
+		// 	, errorPlacement: function(error, element) {
+		// 		//* Needed to place the error message out of the select menu.
+		// 		if (element.is('select')) {
+		// 			error.insertAfter($(element).parent())
+		// 		} else {
+		// 			error.insertAfter(element)
+		// 		}
+		// 	}
+		// })
 
 		initCache(cache)
 		utils.initMessages()
@@ -231,6 +234,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 			bigList.listview('refresh')
 		})
 
+		console.log('registering validation!')
 		$('form').validate({
 				rules: { 
 					  taskName: "required" 
