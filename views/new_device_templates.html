@@ -6,12 +6,12 @@ Condition Template
 {{/comments}}
 
 {{#conditionTemplate}}
-<li id="condition@@condId@@">	
+<li id="condition@@condId@@" class="conditionBlock">	
 	<a href="#" onclick="return false;" class="leftLink">
 		<span>
 			<div class="ui-grid-b" >
 				<div class="ui-block-a">
-					<select name="condSource" data-condition-id="@@condId@@" data-mini="true">
+					<select name="condSource" class="condSourceSelect" data-condition-id="@@condId@@" data-mini="true">
 					{{#evtSourceTypes}}
 					<optgroup label="{{label}}">
 					{{#devices}}

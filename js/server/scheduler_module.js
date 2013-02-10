@@ -111,10 +111,41 @@ var taskRH  = function (req, res, params, responseSender) {
 		case 'get_condition_values' : //* Returns the possible values for a given condition type
 		{
 			var data = {}
-			if (params.query.condType < 10) {
-				var data = { 'Seuil1' : 1, 'Seuil2' : 2}
-			}
-			res.end(JSON.stringify(data))
+			var q = 
+			"SELECT input_type " +
+			"FROM `" + t['ct'] + "` ct " +
+			"WHERE id = ?" 
+			var p = [parseInt(params.query.condType)]
+			params.db.select_query(q, p, function (err, rows) {
+				if (null != err) {
+					console.error("SCHMOD: SQL ERROR", err)
+				} else {
+					data['type'] = rows[0].input_type
+					if (data.type == 'list') {
+						q = 
+						"SELECT th.id AS id, th.name AS name " +
+						" FROM `" + t['thst'] + "` thst " +
+						" INNER JOIN `" + t['th'] + "` th ON(th.id = thst.threshold_id)" +
+						" WHERE thst.sensor_type_id = ?"
+						p = [parseInt([params.query.sensorType])]
+						data['values'] = {}
+						params.db.select_query(q, p, function (err, rows) {
+							if (null != err) {
+								console.log("SCHMOD: not a list", JSON.stringify(data))
+							} else {
+								for(var i in rows) {
+									data.values[rows[i]['name']] = rows[i]['id']
+								}
+								console.log("SCHMOD: IS a list", JSON.stringify(data))
+								res.end(JSON.stringify(data))
+							}
+						})
+					} else {
+						console.log("SCHMOD: NOT a list", JSON.stringify(data))
+						res.end(JSON.stringify(data))
+					}
+				}
+			})
 			break
 		}
 

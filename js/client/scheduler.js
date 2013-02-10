@@ -115,6 +115,9 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 	 * Uses the condition-id attribute of the element to edit the right condValue select list
 	 */
 	var updateCondValue = function() {
+		// Grabbing the sensorType so that the server is able to determine which condition thresholds are available to us (as thresholds are set to sensor types)
+		var sensorType = $(this).parents('.conditionBlock').find('select.condSourceSelect').eq(0).find(':selected').eq(0).data('sensor-type')
+		console.log("sensorType=", sensorType)
 		var condType = $(this).val()
 		var condId = $(this).data('condition-id')
 
@@ -122,10 +125,14 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 			$.ajax({
 					'url'      : "/"
 				, 'dataType' : 'json'
-				, 'data'     : {'module' : 'task', 'action' : 'get_condition_values', 'condType' : condType}
+				, 'data'     : {'module' : 'task', 'action' : 'get_condition_values', 'condType' : condType, 'sensorType': sensorType}
 			})
 			.done(function(data) {
-				populateSelectBox($('#condition'+ condId +' [name=condValue]'), data, true)
+				if (data.type == "free") {
+					// @TODO Change the input to a free text input
+				} else if (data.type == "list") {
+					populateSelectBox($('#condition'+ condId +' [name=condValue]'), data.values, true)
+				}
 			})
 		} else {
 			populateSelectBox($('#condition'+ condId +' [name=condValue]'), {})
