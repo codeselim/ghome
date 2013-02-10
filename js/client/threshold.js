@@ -45,6 +45,17 @@ define(['jquery','utils'], function($, utils){
         .fail(function(_,status) { console.log(status); utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
       }
     })
+
+//"input[type='checkbox']"
+
+  $("input[type='checkbox']").change( function(event) {
+    if (this.checked == false) {
+      alert('Unchecked')
+    }
+});
+
+
+
   }
 
   var listPageInit = function() {

@@ -130,19 +130,39 @@ var editRH = function (req, res, params, responseSender) {
 		params.fileUrl = 'threshold.html'
 			// break
 			// Pareil que new sauf vérif id seuil
-			data = {
-				  'threshold' : {'id':1, 'thresholdName': 'Seuil1', 'value': 1234}
-				}
-			params.db.select_query("SELECT sensor_type_id AS id, st.name AS deviceType"+
-				" FROM "+t['thst']+" JOIN "+t['st']+" AS st ON sensor_type_id = id WHERE threshold_id = ?", [params.query.id], function(err, rows) {
-					for(var r in rows) {
-						rows[r].selected = true
-					}
-					data.device_types = rows
-					responseSender(req, res, params, tpl.get_template_result("threshold.html", data))
-				})
+			//data = {
+			//	  'threshold' : {'id':1, 'thresholdName': 'Seuil1', 'value': 1234}
+			//	}
+			data = {}
+			data.device_types = []
+			params.db.select_query("SELECT id, name AS thresholdName, value FROM "+t['th']+
+				" WHERE id = ?", [params.query.id], function(err, rows) {
+					data.threshold = rows[0]
 
+					params.db.select_query("SELECT st.id, st.name AS deviceType"+
+						" FROM "+t['thst']+" JOIN "+t['st']+" AS st ON sensor_type_id = st.id WHERE threshold_id = ?", [params.query.id], function(err, rows) {
+							console.log(data.device_types)
+							for(var r in rows) {
+								rows[r].selected = true
+								data.device_types.push(rows[r])
+							}
+						
+					
+							//data.device_types = rows
+							params.db.select_query("SELECT st.id, st.name AS deviceType FROM "+t['st']+" AS st WHERE id NOT IN(SELECT st.id"+
+						" FROM "+t['thst']+" JOIN "+t['st']+" AS st ON sensor_type_id = id WHERE threshold_id = ?) AND thresholdable = 1", [params.query.id], function(err, rows) {
+							for (var r in rows) { data.device_types.push(rows[r]) }
+							//console.log(data.device_types)
+					
+							responseSender(req, res, params, tpl.get_template_result("threshold.html", data))
+						})
+						})
+
+				})
+			
+	break
 		case 'new':
+		data = {}
 			params.fileUrl = 'threshold.html'
 			// liste types de capteurs
 			data = {
@@ -172,7 +192,7 @@ var editRH = function (req, res, params, responseSender) {
 
 
 var listRH  = function (req, res, params, responseSender) {
-	params.db.select_query("SELECT id, name AS thresholdName, value FROM thresholds", [], function(err, rows) {
+	params.db.select_query("SELECT id, name AS thresholdName, value FROM "+t['th'], [], function(err, rows) {
 		var data = tpl.get_template_result("threshold_list.html", {
 		//liste des seuils
 		  'thresholds' : rows
