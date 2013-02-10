@@ -185,7 +185,7 @@ var taskRH  = function (req, res, params, responseSender) {
 			//* Required data: for deviceType, list of actions, and for each: {actionlabel: action id}
 			
 			getActionsByDeviceType(params.db, parseInt(params.query.deviceType), function (actions) {
-				res.end(actions)
+				res.end(JSON.stringify(actions))
 			})
 			break
 		}
@@ -291,12 +291,14 @@ var taskRH  = function (req, res, params, responseSender) {
 					getEvtSources(params.db, function (evtSources) {
 						var tplData = {
 							 'actionDevices' : actionDevices,
-							 'evtSourceTypes' : evtSources
+							 'evtSourceTypes' : evtSources,
+							 'editMode': true
 						}
 
 						var q = 
-						"SELECT name, action_type_id, target_id, event_type_id, origin_id, type_id, value_to_compare, sensor_id" +
+						"SELECT t.name AS name, action_type_id, target_id, sensor_type_id, event_type_id, origin_id, type_id, value_to_compare, sensor_id" +
 						" FROM `" + t['t'] + "` t " +
+						" INNER JOIN `" + t['s'] + "` s ON(s.id = target_id)" + // WARNING: The join has to be done on the target_id column and NOT on the sensor_id column as we are interested in the type of the target
 						" LEFT OUTER JOIN `" + t['c'] + "` c ON(c.task_id = t.id)" +  //  IMPORTANT the LEFT OUTER JOIN, if you do an INNER JOIN then you will not get anything in the case there is no condition linked to the task (hehe...)
 						" WHERE t.id = ?" 
 						var p = [taskId]
@@ -309,9 +311,10 @@ var taskRH  = function (req, res, params, responseSender) {
 								// console.log("taskId", taskId)
 								// console.log(rows)
 								tplData['taskName'] = rows[0].name
-								var targetId = rows[0].target_id
-								var aTId = rows[0].action_type_id
-								var eTId = rows[0].event_type_id
+								var targetId = parseInt(rows[0].target_id)
+								var aTId = parseInt(rows[0].action_type_id)
+								var eTId = parseInt(rows[0].event_type_id)
+								var sTId = parseInt(rows[0].sensor_type_id)
 
 								//Selecting the right actionDevice
 								for(var i in tplData.actionDevices) {
@@ -323,17 +326,27 @@ var taskRH  = function (req, res, params, responseSender) {
 									}
 								}
 
-								//Selecting the right action
-								// @TODO: Grab all the actions from the DB and then select the right one? Or the client does a request ?
-
 								for(var i in rows) {
 									//@TODO: Treatment for each condition
 								}
-							}
-							var html = tpl.get_template_result("task.html", tplData)
 
-							params.fileUrl = 'task.html'
-							responseSender(req, res, params, html)
+								//Selecting the right action
+								getActionsByDeviceType(params.db, sTId, function (actions) {
+									tplData['actionValues'] = []
+									for(var i in actions) {
+										var sel = ''
+										if (aTId == actions[i]) {
+											sel = 'selected="selected"'
+										}
+										tplData['actionValues'].push({label: i, id: actions[i], selected: sel}) // have to translate this very weird format of pushing data directly as a key, to a format usable in the templates
+									}
+									
+									var html = tpl.get_template_result("task.html", tplData)
+
+									params.fileUrl = 'task.html'
+									responseSender(req, res, params, html)
+								})
+							}
 						})
 					})
 				}

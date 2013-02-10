@@ -46,8 +46,17 @@
 								</select>
 							</div>
 							<div class="ui-block-b">
+								{{#editMode}}
+								<select name="aAction" >
+									{{#actionValues}}
+										<option value="{{id}}" {{{selected}}} >{{label}}</option>
+									{{/actionValues}}
+								</select>								
+								{{/editMode}}
+								{{^editMode}}
 								<select name="aAction" disabled>
 								</select>
+								{{/editMode}}
 							</div>
 						</div>
 					</li>
