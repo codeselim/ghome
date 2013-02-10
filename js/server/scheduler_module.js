@@ -112,7 +112,7 @@ var taskRH  = function (req, res, params, responseSender) {
 		{
 			var data = {}
 			var q = 
-			"SELECT input_type" +
+			"SELECT input_type " +
 			"FROM `" + t['ct'] + "` ct " +
 			"WHERE id = ?" 
 			var p = [parseInt(params.query.condType)]
@@ -123,11 +123,11 @@ var taskRH  = function (req, res, params, responseSender) {
 					data['type'] = rows[0].input_type
 					if (data.type == 'list') {
 						q = 
-						"SELECT th.id AS id, th.name AS name" +
-						"FROM `" + t['thst'] + "` thst " +
-						"INNER JOIN `" + t['th'] + "` th ON(th.id = thst.threshold_id)" +
-						"WHERE thst.sensor_type_id = ?"
-						p = [parseInt([params.db.sensorType])]
+						"SELECT th.id AS id, th.name AS name " +
+						" FROM `" + t['thst'] + "` thst " +
+						" INNER JOIN `" + t['th'] + "` th ON(th.id = thst.threshold_id)" +
+						" WHERE thst.sensor_type_id = ?"
+						p = [parseInt([params.query.sensorType])]
 						data['values'] = {}
 						params.db.select_query(q, p, function (err, rows) {
 							if (null != err) {
