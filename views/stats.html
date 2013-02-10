@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+	<title>ghome</title>
+	<!-- <link rel="stylesheet" href="css/ghome.css"> -->
+	<link rel="stylesheet/less" type="text/css" href="css/ghome.less" />
+
+    <script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
+    <script src="js/client/mobiscroll.datetime-2.4.1.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="js/client/mobiscroll.datetime-2.4.1.min.css" />
+	
+    <script src="js/vendor/less.min.js" type="text/javascript"></script>
+
+	<script src="js/client/highcharts/highcharts.js" type="text/javascript"></script>
+	<script src="js/client/highcharts/exporting.js" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+
+$(function(){
+
+    $(document).ready(function(){
+
+
+    })    
+});
+
+
+
+$(function () {
+    var chart;
+    $(document).ready(function() {
+        {{#DONT_DRAW}}
+        chart = new Highcharts.Chart(  {{{STATS_DATA}}}   ) 
+        {{/DONT_DRAW}}
+
+        var settings = {
+       // minDate: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+        theme:'android-ics',
+        timeFormat : 'HH:ii',
+        dateFormat : 'yy-mm-dd'
+        }
+        var now = new Date();
+        $('#datefrom').mobiscroll().datetime(settings);
+        $('#dateto').mobiscroll().datetime(settings);
+        });
+});
+
+
+</script>
+</head>
+<body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
+
+	<!-- Home -->
+	<div data-role="page" id="home">
+		<div data-theme="a" data-role="header" data-position="fixed" data-transition="none">
+			<h3>ghome {{STATS_DATA.name}}</h3>
+		</div>
+		<p></p>
+		<div data-role="content" >
+		
+			<form action="/?module=stats" method="post" id="form" data-ajax="false">
+                <input type="hidden" name="module" value="stats">
+                    
+                <div class="ui-block-a">
+                   <table>
+                    <tr>
+                        <td> 
+                            <select name="typedestatistiques" >
+                                <option value="n/a">-- Type de Statistiques --</option>
+                                <option value="temperature">Température</option>
+                                <option value="electricity">Électricité</option>
+                            </select>                            
+                        </td>
+                        <td>
+                            <input id="datefrom" name="datefrom" placeholder="Select the starting date..." />
+                        </td>
+                        <td>
+                            <input id="dateto" name="dateto" placeholder="Select the ending date..." />
+                        </td>
+                        <td>
+                            <input type="submit" value="Valider" name="submit" />
+                        </td>
+                    </tr>
+                   </table>
+                </div>
+
+
+                         
+                      
+
+            </form> 
+
+
+            <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+            </div>
+
+          </div>
+                                        
+
+
+
+
+
+</body>
+</html>
