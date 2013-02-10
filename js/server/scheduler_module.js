@@ -165,8 +165,9 @@ var taskRH  = function (req, res, params, responseSender) {
 		{
 			console.log('-------------------------------------')
 			console.log(params.query)
+			console.log(JSON.parse(params.query.data))
 			console.log('-------------------------------------')
-			res.end(JSON.stringify({success: Math.random() > 0.5}))
+			res.end(JSON.stringify({success: false}))
 		}
 			break
 

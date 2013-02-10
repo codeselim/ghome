@@ -170,10 +170,9 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
-			, 'data'     : $.extend({'module' : 'task', 'action' : 'submit'}, getFormParams())
+			, 'data'     : {'module' : 'task', 'action' : 'submit', 'data': JSON.stringify(getFormParams())}
 		})
 		.done(function(data) {
-			console.log(data)
 			if (data.success) {
 				utils.addMessage('success', 'Ok! Vous allez être redirigé sur la liste des tâches.')
 				// window.location.href = '/?module=scheduler'
