@@ -49,8 +49,37 @@ define(['jquery','utils'], function($, utils){
 //"input[type='checkbox']"
 
   $("input[type='checkbox']").change( function(event) {
+    var cb = this
     if (this.checked == false) {
+     
+      //<input type="hidden" name="id" value="{{threshold.id}}" />
+      if ($("div[data-url='/?module=threshold&action=new']").find("form").find("input[name='id']").val() == null) {
+        // Edit mode
+        
       alert('Unchecked')
+      var data = {}
+      data.sensorType = $(this).val()
+      data.action = "check_task"
+      // Résout un problème de form cachée avec l'id d'un seuil édité précédemment mais non validé
+      if($('form').length > 1) {
+      data.id = $('form:not([novalidate])').find("input[name='id']").val()
+    }
+    else {
+      data.id = $("input[name='id']").val()
+    }
+    data.module='threshold'
+      $.ajax({
+            'url'      : "/"
+          , 'dataType' : 'json'
+          , 'data'     : data
+          , contentType: 'application/json'
+        })
+        .done(function(data) {
+          if(!data.success) {
+            $(cb).attr("checked",true).checkboxradio("refresh");
+          }
+      })
+      }
     }
 });
 
