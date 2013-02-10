@@ -51,8 +51,10 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', '
 			, 'thresholdList' : threshold.listPageInit
 			, 'threshold'     : threshold.pageInit
 			, 'spy'       : function() {
+				
 				// TODO : get recent logs from spy table and create a table with them
 				utils.initMessages();
+
 				var submitForm = function submitForm() {
 					var data = utils.queryStringToHash($.param($('input:not([type=button],[type=submit]),select')))
 					console.log(data)
@@ -77,6 +79,7 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', '
 						}
 					})
 					.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
+
 				}
 
 				$("form").validate({
