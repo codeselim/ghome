@@ -3,13 +3,32 @@ var tpl = require('./template_engine')
 var shared = require('./shared_data')
 var SQL_TABLES_DIC = shared.get_shared_data('SQL_TABLES');
 
-////
-
 
 function statsRH(req, res, params, responseSender){
 	//Gethering POST data
 	var postData = qs.parse(params.postData)
 	console.log(postData.datefrom+"  "+postData.dateto+" "+postData.typedestatistiques)
+
+	var _datefrom = null
+	var _dateto = null
+	var _tempstats = null
+	var _electstats = null
+    postData.datefrom != null ? _datefrom = postData.datefrom : _datefrom = null
+    postData.dateto != null ? _dateto = postData.dateto : _dateto = null		
+    switch (postData.typedestatistiques){
+    	case 'temperature':
+    	_tempstats = 1
+    	_electstats= 0
+    	break
+    	case 'electricity':
+    	_tempstats = 0
+    	_electstats = 1
+    	break
+    	default:
+    	_tempstats = 0 
+    	_electstats = 0
+    	break
+    }
 
 	var d1 = new Date(postData.datefrom);
  	var d2 = new Date(postData.dateto);
@@ -46,7 +65,7 @@ function statsRH(req, res, params, responseSender){
 					var maximum_data = [];
 					var average_data = [];
 					var minimum_data = [];
-					console.log("aaaaaaaah",rows)
+					console.log("Temperature rows:",rows)
 					console.log(err)
 					
 					var actions = '{'
@@ -108,6 +127,10 @@ function statsRH(req, res, params, responseSender){
 			var templateData = {
 			STATS_DATA :  JSON.stringify(stats_data)
 			,DONT_DRAW : 1
+			,DATEFROM_VALUE : _datefrom
+			,DATETO_VALUE : _dateto
+			,TEMP_STAT : _tempstats
+			,ELECT_STAT: _electstats
 			}
 			var data = tpl.get_template_result("stats.html", templateData)
 			console.log(params['pathname'])
@@ -178,10 +201,17 @@ function statsRH(req, res, params, responseSender){
                 				'data': average_data
             					}]
             		}
-		
+			
+			
+			
+
 			var templateData = {
 			STATS_DATA :  JSON.stringify(stats_data)
 			,DONT_DRAW : 1
+			,DATEFROM_VALUE : _datefrom
+			,DATETO_VALUE : _dateto
+			,TEMP_STAT : _tempstats
+			,ELECT_STAT: _electstats
 			}
 			var data = tpl.get_template_result("stats.html", templateData)
 			console.log(params['pathname'])
@@ -193,7 +223,11 @@ function statsRH(req, res, params, responseSender){
 		
 		default:
 			var templateData = {
-			DONT_DRAW : 0
+			 DONT_DRAW : 0
+			,DATEFROM_VALUE : _datefrom
+			,DATETO_VALUE : _dateto
+			,TEMP_STAT : _tempstats
+			,ELECT_STAT: _electstats
 			}
 			var data = tpl.get_template_result("stats.html", templateData)
 			console.log(params['pathname'])

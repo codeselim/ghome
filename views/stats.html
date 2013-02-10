@@ -19,16 +19,6 @@
 
 <script type="text/javascript">
 
-$(function(){
-
-    $(document).ready(function(){
-
-
-    })    
-});
-
-
-
 $(function () {
     var chart;
     $(document).ready(function() {
@@ -70,15 +60,15 @@ $(function () {
                         <td> 
                             <select name="typedestatistiques" >
                                 <option value="n/a">-- Type de Statistiques --</option>
-                                <option value="temperature">Température</option>
-                                <option value="electricity">Électricité</option>
+                                <option value="temperature" {{#TEMP_STAT}} selected="selected" {{/TEMP_STAT}} >Température</option>
+                                <option value="electricity" {{#ELECT_STAT}} selected="selected" {{/ELECT_STAT}}>Électricité</option>
                             </select>                            
                         </td>
                         <td>
-                            <input id="datefrom" name="datefrom" placeholder="Select the starting date..." />
+                            <input id="datefrom" name="datefrom"  value="{{DATEFROM_VALUE}}" placeholder="Select the starting date..." />
                         </td>
                         <td>
-                            <input id="dateto" name="dateto" placeholder="Select the ending date..." />
+                            <input id="dateto" name="dateto" value="{{DATETO_VALUE}}" placeholder="Select the ending date..." />
                         </td>
                         <td>
                             <input type="submit" value="Valider" name="submit" />
