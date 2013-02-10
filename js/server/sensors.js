@@ -2,6 +2,9 @@
 
 //* Library of sensors-related functions
 
+//* States's displayers dictionary, used register them and to call them
+var stateDisplayers = {}
+
 /**
  * Function to parse a slice of the str as an hexadecimal number
  * @param {string} str The string to be considered (at least locally) as an hexadecimal number
@@ -61,8 +64,6 @@ function decode_data_byte (type_s, frame_data) {
 			return null;
 	}
 }
-	
-
 
 function check_frame_checksum (frame_data, framestr) {
 	//* Note: The checksum is the least significat Byte of the sum of all the values except the sync bytes (the "separator") and the checksum itself
@@ -78,6 +79,25 @@ function check_frame_checksum (frame_data, framestr) {
 
 }
 
+function getDisplayableState (typeId, value) {
+	if (typeId in stateDisplayers) {
+		return stateDisplayers[typeId](value)
+	} else {
+		return 'Unable to get the sensor\'s state'
+	}
+}
+
+/** Used to register a stateDisplayer. That is to say, a function that will, depending on the raw value from the device/sensor, return a state string that we can display to the user
+ * @param{int} typeId
+ * @param{function} stateDisplayer
+*/
+function addStateDisplayer (typeId, stateDisplayer) {
+	if (typeId in stateDisplayers) {
+		console.error("SENSORS: Error, trying to override an existing stateDisplayer")
+	} else {
+		stateDisplayers[typeId] = stateDisplayer
+	}
+}
 
 function generate_json_devices_list_from_sql_rows (rows) {
 	var sensor_type_id = -42
@@ -87,7 +107,7 @@ function generate_json_devices_list_from_sql_rows (rows) {
 	for (var r in rows) {
 		if(sensor_type_id != rows[r].sensor_type_id) {	
 			var sensor_type_id = rows[r].sensor_type_id
-			deviceTypes.push({label: rows[r].name.trim(), devices: [{label: rows[r].device_name.trim(), id: rows[r].id, type: rows[r].sensor_type_id}]})
+			deviceTypes.push({label: rows[r].name.trim(), id: sensor_type_id, devices: [{label: rows[r].device_name.trim(), id: rows[r].id, type: rows[r].sensor_type_id}]})
 		} else {
 			deviceTypes[deviceTypes.length-1].devices.push({label: rows[r].device_name.trim(), id: rows[r].id, type: rows[r].sensor_type_id})
 		} 
@@ -109,3 +129,5 @@ exports.check_frame_checksum = check_frame_checksum
 exports.decode_data_byte = decode_data_byte
 exports.generate_json_devices_list_from_sql_rows = generate_json_devices_list_from_sql_rows
 exports.generate_json_get_actions_by_device_type = generate_json_get_actions_by_device_type
+exports.getDisplayableState = getDisplayableState
+exports.addStateDisplayer = addStateDisplayer
