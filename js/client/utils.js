@@ -31,6 +31,29 @@ define(function(){
 		return query_string
 	}
 
+	var getFieldsValues = function($nodes) {
+		var fields = {}
+		$nodes.each(function() {
+			var nodeVal = $(this).val()
+			var floatVal
+			if ( (floatVal = parseFloat(nodeVal)) ) {
+				nodeVal = floatVal
+			}
+			var nodeName = $(this).attr('name')
+			if (nodeVal && nodeName) {
+				if (typeof fields[nodeName] === "undefined") { // no value
+					fields[nodeName] = nodeVal
+				} else if (typeof fields[nodeName] === "object") { // array exists
+					fields[nodeName].push(nodeVal)
+				} else { //* Other value: number or string: create an array
+					var tmpArray = [fields[nodeName], nodeVal]
+					fields[nodeName] = tmpArray
+				}
+			}
+		})
+		return fields
+	}
+
 
 
 	var initMessages = function() {
@@ -79,5 +102,6 @@ define(function(){
 		, initMessages:initMessages
 		, removeMessage:removeMessage
 		, addMessage:addMessage
+		, getFieldsValues: getFieldsValues
 	}
 })

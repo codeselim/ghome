@@ -75,11 +75,12 @@ var diff = function(referenceArray, newArray) {
 		}
 		
 	}
+	//* referenceArray now contains only the removed values	
 
 	console.log(JSON.stringify({'added': added, 'removed': referenceArray}))
+	console.log('====================')
 
 	return {'added': added, 'removed': referenceArray}
-	//* referenceArray now contains only the removed values	
 }
 
 var submit = function(req, res, params, newMode) {
@@ -93,21 +94,23 @@ var submit = function(req, res, params, newMode) {
 	}
 
 	//* Function Start
+	try{
+		params.query.deviceTypes = JSON.parse(params.query.deviceTypesJSON)
+	} catch(err) {
+		console.log(err)
+	}
 	console.log(params.query)
-	console.log(params.query.deviceTypes)
-	if (!params.query.deviceTypes && !params.query['deviceTypes[]']) {
+	if (!params.query.deviceTypes) {
 		res.end(JSON.stringify({'msg': 'Le seuil doit être lié à au moins un type de capteur', 'success': false}))
 	} else {
 		//* Setup
-		var p,q       //* SQL Params and Query
+		var p = [],q  //* SQL Params and Query
 		var dtArray   //* Device Type array
-		if (params.query.deviceTypes) {
+		if (Object.prototype.toString.call(params.query.deviceTypes) === '[object Array]') {
+			dtArray = params.query.deviceTypes
+		} else {
 			dtArray = [params.query.deviceTypes]
-		} else if (params.query['deviceTypes[]']) {
-			dtArray = params.query['deviceTypes[]']
 		}
-		var thst = [] //* Contains the threshold id and the sensor type id, for the thst queries
-
 
 		if (newMode) { // Creation
 			q = "INSERT INTO `" + t['th'] + "` (id, name, value) VALUES (NULL, ?, ?)"
@@ -115,15 +118,15 @@ var submit = function(req, res, params, newMode) {
 
 			params.db.insert_query(q, p, function (err) {
 				if (null == err) {
-					//* Preparing the queries
-					thst.length = dtArray.length
-					for (var i = 0; i < thst.length; i++) {
-						thst[i] = [this.lastID, dtArray[i]]
-					}
-					console.log(thst)
 					console.log("Threshold inserted at index "+ this.lastID)
-					repeatQuery(params.db, "INSERT INTO `" + t['thst'] + "` (threshold_id, sensor_type_id) VALUES (?, ?)",
-							thst, {res:res}, submitSuccess, submitError)
+					//* Preparing the queries
+					p.length = dtArray.length
+					for (var i = 0; i < p.length; i++) {
+						p[i] = [this.lastID, dtArray[i]]
+					}
+					console.log(p)
+					q = "INSERT INTO `" + t['thst'] + "` (threshold_id, sensor_type_id) VALUES (?, ?)"
+					repeatQuery(params.db, q,	p, {res:res}, submitSuccess, submitError)
 
 				} else {
 					console.error("threshold_module: Error when inserting the new threshold.", q, p, zerr)
@@ -142,7 +145,7 @@ var submit = function(req, res, params, newMode) {
 
 					//* First, retrive the current entries
 					params.db.select_query("SELECT sensor_type_id FROM `" +t['thst']+ "` WHERE threshold_id=?", params.query.id, function(err, rows) {
-						if (err != null) submitError({err: err, res: res})
+						if (err != null) submitError({err: err, res: res}) //* Query failure
 						else { // Query success
 							//* Removing the column name
 							var cleanRows = []
@@ -152,30 +155,31 @@ var submit = function(req, res, params, newMode) {
 							}
 
 							//* Finding the added and removed elements
-							var diffRes = diff(cleanRows, dtArray )
+							var diffRes = diff(cleanRows, dtArray)
 
-							thst.length = diffRes.added.length + diffRes.removed.length
 							q = []
-							q.length = thst.length
-							var i,j=0
-
+							q.length = p.length = diffRes.added.length + diffRes.removed.length
 							var insert_query = "INSERT INTO `" + t['thst'] + "` (threshold_id, sensor_type_id) VALUES (?, ?)"
 							var delete_query = "DELETE FROM `" + t['thst'] + "` WHERE threshold_id = ? AND sensor_type_id = ?"
+							
+							var i,j = 0
 							for (var i = 0; i < diffRes.removed.length; i++) {
-								thst[j++] = [params.query.id, diffRes.removed[i]]
-								q[j++] = delete_query
+								p[j] = [params.query.id, diffRes.removed[i]]
+								q[j] = delete_query
+								j++
 							}
 							for (var i = 0; i < diffRes.added.length; i++) {
-								thst[j++] = [params.query.id, diffRes.added[i]]
-								q[j++] = insert_query
+								p[j] = [params.query.id, diffRes.added[i]]
+								q[j] = insert_query
+								j++
 							}
 							//* Diff between the current entries and the submitted ones
-							console.log('== thst =================')
-							console.log(thst)
+							console.log('== query params =========')
+							console.log(p)
 							console.log('=========================')
 
 							//* Run the queries
-							repeatQuery(params.db, q,	thst, {res:res}, submitSuccess, submitError)
+							repeatQuery(params.db, q,	p, {res:res}, submitSuccess, submitError)
 						}
 					})
 				} else {
