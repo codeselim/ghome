@@ -8,6 +8,13 @@ var sensors_values = {}
 
 var nodemailer = require("nodemailer");
 
+var regiseredEvents = {
+	  3  : 'Contact réalisé'
+	, 4  : 'Contact rompu'
+	, 10 : 'Présence détectée'
+	, 11 : 'Absence détectée'
+}
+
 function start (database){//start the database in order to make requests
 	db = database;
 	sensors_values = get_shared_data('SENSORS_VALUES');
@@ -73,7 +80,8 @@ function check_spy(event_id, origin_id) { //this is the first called function, i
 	db.select_query("SELECT value FROM settings WHERE id = 1", [], function (err, rows) {
 		for (r in rows){
 			if(rows[r]["value"] == "ON"){//check if spy is activated
-				if(event_id == 3 || event_id == 4 || event_id == 10 || event_id == 11){//if the event is type of contact or presence
+
+				if(event_id in regiseredEvents){
 					execute_spy(event_id, origin_id);//mode spy is executed
 				}
 			}
