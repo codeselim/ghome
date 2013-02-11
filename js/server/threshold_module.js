@@ -277,7 +277,7 @@ var editRH = function (req, res, params, responseSender) {
 		  //si non -> renvoyer success : true
 		//si non -> renvoyer success : true
 
-		res.end(JSON.stringify({'success': true}))
+		res.end(JSON.stringify({'success': false}))
 		break
 		
 
