@@ -150,7 +150,7 @@ function statsRH(req, res, params, responseSender){
 				function (err, rows){
 
 					var xaxis_data = [];
-					var average_data = [];
+					var sum_data = [];
 					console.log("aaaaaaaah",rows)
 					console.log(err)
 					
@@ -158,7 +158,7 @@ function statsRH(req, res, params, responseSender){
 					if (rows.length > 0){
 						for (var i = 0 ; i < rows.length - 1 ;i++) {
 						xaxis_data.push(rows[i].time.trim().toString())
-						average_data.push(rows[i].value)
+						sum_data.push(rows[i].value)
 						}
 			}
 			
@@ -197,8 +197,8 @@ function statsRH(req, res, params, responseSender){
                 				'borderWidth': 0
             				},
            					'series': [{
-                				'name': 'Moyenne',
-                				'data': average_data
+                				'name': 'Somme',
+                				'data': sum_data
             					}]
             		}
 			
