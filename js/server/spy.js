@@ -34,10 +34,10 @@ function execute_spy(event_id, origin_id) {
 				for (r in rows){
 					var to = rows[r]["value"];
 					var mailOptions = { //create the mail to send 
-					    from: "Mode spy", // sender address
+					    from: "mode.spy@ghome.com", // sender address
 					    to: to, // list of receivers
 					    subject: "Notification GHome", // Subject line
-					    text: "", // plaintext body
+					    text: "", // plaintext body 
 					}
 				}
 				db.select_query("SELECT name FROM event_types WHERE id = ?", [event_id], function (err, rows) {//search the name of the event wich happened

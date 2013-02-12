@@ -8,7 +8,9 @@ var sensors_values = {}
 
 function send_message(target, action){
 	db.select_query("SELECT message_to_sensor FROM actions_types WHERE id = ?", [action], function (err, rows) {
+		console.log("YOUPI")
 		for (var r in rows){
+			console.log("YOUPISUPER")
 			device_communicator.sendToSensor (target, rows[r]["message_to_sensor"]);
 		}
 	})
@@ -43,11 +45,20 @@ function execute_task(event_id, origin_id) {//this function will search the good
 	//We get the action type id, the operator, the value to compare, the sensor_id and the target_id from the candidate actions (actions wich are in the right timer for being candidate)
 	db.select_query("SELECT action_type_id, operator, value_to_compare, sensor_id, target_id, c.id FROM Tasks AS t INNER JOIN conditions AS c ON c.task_id = t.id INNER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND origin_id = ?"
 			, [event_id, origin_id], function (err, rows) { //now we select the proper actions with the operator
+				/*if(event_id == 5){//change of day
+
+				} else if (event_id == 6) {//change of hour
+
+				} else if (event_id == 7) {//change of minute
+
+				}*/
+
 				for (var r in rows) { //creation of a dictionnaire where we put all the candidate actions
 					actions_type[rows[r]["action_type_id"]] = true;
 					actions_target[rows[r]["action_type_id"]] = rows[r]["target_id"];
 				}
 				for (var r in rows){
+					console.log("operator :", rows[r]["operator"])
 					value = sensors_values[rows[r]["sensor_id"]];//we catch the value corresponding to the current sensor
 					current_action = rows[r]["action_type_id"]
 					current_sensor_id = rows[r]["sensor_id"]
