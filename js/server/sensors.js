@@ -60,6 +60,21 @@ function decode_data_byte (type_s, frame_data) {
 		case 5 : //electricity : value of power consumption in a minute in Wh
 			var value = parseFloat (frame_data.data[2]+"."+frame_data.data[3]);
 			   //value of power consumption in a minute in Wh
+
+		case 8 : //switch
+			switch (frame_data.data[0] >> 4){
+				case 1 : 
+				 	return 1; //bottom right
+				 case 3 :
+				 	return 2; // top right
+				 case 5 :
+				 	return 3; // top left
+				 case 7 :
+				 	return 4; //bottom left
+				 default:
+				 	return -1;
+
+			}
 			return value;
 		default:
 			return -1
