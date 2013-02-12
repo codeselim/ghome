@@ -69,7 +69,7 @@ public class TrollService extends Service {
 
 //		private static final String IP_ADDR = "192.168.0.13";
 
-		private static final int PORT = 5000;
+		private static final int PORT = 4500;
 
 		private int mId;
 
