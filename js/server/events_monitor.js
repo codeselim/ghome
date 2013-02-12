@@ -5,6 +5,7 @@
 
 var db;
 var eventTypeId;
+var dictSensorEvent = {}
 var data;
 var eventToSend;
 var idTimer;
@@ -53,79 +54,6 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 		lastValues[idSensor] = value;
 	});
 }
-
-
-function tempEvent(idSensor, sensor_type_id, value) {
-	checkThresholds(idSensor, sensor_type_id, value);
-}
-function lumEvent(idSensor, sensor_type_id, value) {
-	checkThresholds(idSensor, sensor_type_id, value);
-}
-function contEvent(idSensor, sensor_type_id, value) {
-	// Contact performed
-	if(value == 1) {
-		//tasks_executor.execute_task(3);
-		eventEmitter.emit(SENSOR_EVENT, 3, idSensor);
-	}
-
-	// Contact removed
-	if(value == 0) {
-		//tasks_executor.execute_task(4);
-		eventEmitter.emit(SENSOR_EVENT, 4, idSensor);
-	}
-
-	lastValues[idSensor] = value;
-
-}
-function preEvent(idSensor, sensor_type_id, value) {
-	// Occupancy PIR ON
-	if (value == 0) {
-		//tasks_executor.execute_task(10);
-		eventEmitter.emit(SENSOR_EVENT, 10, idSensor);
-	}
-	// Occupancy PIR OFF
-	if (value == 1) {
-		//tasks_executor.execute_task(11);
-		eventEmitter.emit(SENSOR_EVENT, 11, idSensor);
-	}
-
-	lastValues[idSensor] = value;
-}
-
-function switchEvent(idSensor, sensor_type_id, value) {
-	switch(value) {
-
-		case 1:
-		// Bouton interr droit bas
-		eventEmitter.emit(SENSOR_EVENT, 15, idSensor)
-		break
-
-		case 2:
-		// Bouton interr droit haut
-		eventEmitter.emit(SENSOR_EVENT, 14, idSensor)
-		break
-
-		case 3:
-		// Bouton interr gauche haut
-		eventEmitter.emit(SENSOR_EVENT, 12, idSensor)
-		break
-
-		case 4:
-		// Bouton interr gauche bas
-		eventEmitter.emit(SENSOR_EVENT, 13, idSensor)
-		break
-
-		default:
-		break
-	}
-}
-
-var dictSensorEvent = { 1 : tempEvent,
-	2 : lumEvent,
-	4 : contEvent,
-	3 : preEvent,
-	8 : switchEvent
-	};
 
 function sendTimeEvent() {
 	var currentTime = new Date();
@@ -233,6 +161,10 @@ function handleEvent(frame_data) {
 	console.log("EM_Data received from : " + frame_data.id);
 	console.log("EM_Data : " + frame_data.data);
 
+	if (0x07 == frame_data.org) {
+		//teach-in
+
+	};
 	db.select_query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"` WHERE hardware_id = ?", [frame_data.id], function(err, rows) {
 
 	// For every type of the sensor (a sensor can have many types)
@@ -242,13 +174,13 @@ function handleEvent(frame_data) {
 			//var sensor_type = rows[r]["sensors_types.name"];
 			//var sensor_type_id = rows[r]["sensors_types.id"];
 			// If sensor_type_id is associated with a function in dictSensorEvent
-			var type = rows[r].sensor_type_id
-			var value = sensors_utils.decode_data_byte(type, frame_data)
+			var sensor_type = rows[r].sensor_sensor_type_id
+			var value = sensors_utils.decode_data_byte(sensor_type, frame_data)
 			var sensor_id = rows[r].sensor_id
-			 console.log("EM_TYPE SENSOR : " + type);
-			if (type in dictSensorEvent) {
+			 console.log("EM_sensor_type SENSOR : " + sensor_type);
+			if (sensor_type in dictSensorEvent) {
 				console.log("EM_SEND EVENT")
-				dictSensorEvent[type](sensor_id, type, value);
+				dictSensorEvent[sensor_type](sensor_id, sensor_type, value)
 			}
 	  	}
 
@@ -257,7 +189,12 @@ function handleEvent(frame_data) {
 	});
 }
 
+function addEventHandler (sensor_type, eventHandler) {
+	dictSensorEvent[sensor_type] = eventHandler
+}
+
 exports.start = start;
 exports.handleEvent = handleEvent;
 exports.events = eventEmitter;
 exports.SENSOR_EVENT = SENSOR_EVENT;
+exports.addEventHandler = addEventHandler

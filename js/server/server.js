@@ -88,6 +88,7 @@ function load_plugins () {
 		require(p + 'end_tests.js')
 		require(p + 'communicators.js')
 		require(p + 'state_displayers.js')
+		require(p + 'events_handlers.js')
 	}
 }
 
