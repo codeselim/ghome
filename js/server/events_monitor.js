@@ -97,13 +97,13 @@ function switchEvent(idSensor, sensor_type_id, value) {
 	switch(value) {
 
 		case 1:
-		// Bouton interr droit bas
-		eventEmitter.emit(SENSOR_EVENT, 15, idSensor)
+		// Bouton interr droit haut
+		eventEmitter.emit(SENSOR_EVENT, 14, idSensor)
 		break
 
 		case 2:
-		// Bouton interr droit haut
-		eventEmitter.emit(SENSOR_EVENT, 14, idSensor)
+		// Bouton interr droit bas
+		eventEmitter.emit(SENSOR_EVENT, 15, idSensor)
 		break
 
 		case 3:
