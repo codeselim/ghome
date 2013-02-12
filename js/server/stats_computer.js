@@ -258,7 +258,7 @@ function statsRH(req, res, params, responseSender){
 					"select logs.sensor_id, sensors.sensor_type_id,avg(logs.value),min(logs.value), max(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)  "+
 					"from logs inner join sensors on logs.sensor_id =  sensors.id  "+
 					"where sensors.sensor_type_id  = 1 and  "+
-					"sensors.hardware_id =   '"+sensor_id+"' and  "+
+					"sensors.hardware_id =   "+sensor_id+" and  "+
 					"strftime('%Y-%m-%d', logs.time) = date('now') and  "+
 					"(strftime('%H',logs.time) = ' "+previous_hour+"') ;"			
 	db.select_query (query_str, null,function (err,rows){ console.log(err)})
