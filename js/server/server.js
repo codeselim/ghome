@@ -5,6 +5,7 @@
 
 // ************ WARNING : KEEP THOSE LINES AT THE TOP, OR SOME DATA WILL BE UNDEFINED ! ***************
 var shared = require('./shared_data')
+var utils = require('./utils')
 var get_shared_data = shared.get_shared_data
 var set_shared_data = shared.set_shared_data
 set_shared_data('SQL_TABLES', {'st': 'sensors_types',
@@ -45,7 +46,6 @@ var events_monitor = require('./events_monitor')
 var device_communicator = require('./device_communicator')
 var tasks_executor = require('./tasks_executor')
 var cp = require('child_process')
-var n = cp.fork(__dirname + '/background_worker.js')
 var spy = require('./spy.js')
 
 //*************** Constants **************
@@ -53,24 +53,6 @@ var SENSORS_SERVER_PORT = 8000
 var WEB_SERVER_PORT = 80
 var ANDROID_NOTIF_SERVER_PORT = 5000
 //****************************************
-
-//* Handling messages FROM the child
-n.on('message', function(m) {
-  console.log('PARENT got message:', m)
-});
-
-
-/**
- * frame_processor : Processes a new sensor frame
- * @param {Dictionary} frame The new frame
- * @returns nothing
- */
-function frame_processor (frame) {
-	console.log("Sending the frame to the bg worker")
-	n.send({newSensorFrame: frame})
-	console.log("A new sensor frame has been completed : ")
-	console.log(frame)
-}
 
 function frame_to_android_notif (frame_data) {
 	android_notif_serv.push_android_notif(JSON.stringify(frame_data))
@@ -80,11 +62,14 @@ function frame_to_android_notif (frame_data) {
 function update_main_temperatures (frame_data) {
 	// Frame to be used as demo : A55A0B0700003608008933780084
 	if (frame_data.id == get_shared_data('OUT_TEMP_SENSOR_ID')) {
-		console.log('The sensor id of the received frame is the one of the main INSIDE temperature sensor. Updating the server in-memory value.')
+		console.log('The sensor id of the received frame is the one of the main OUTSIDE temperature sensor. Updating the server in-memory value.')
 		var temp = require('./sensors').decode_data_byte(frame_data)[1].toFixed(1)
 		set_shared_data('OUT_TEMP', temp)
-		
-	};
+	} else if (frame_data.id == get_shared_data('IN_TEMP_SENSOR_ID')) {
+		console.log('The sensor id of the received frame is the one of the main INSIDE temperature sensor. Updating the server in-memory value.')
+		var temp = require('./sensors').decode_data_byte(frame_data)[1].toFixed(1)
+		set_shared_data('IN_TEMP', temp)
+	}
 }
 
 function pre_init () {
@@ -112,7 +97,9 @@ var db = null
 var sensors_values = {}
 function GLOBAL_INIT () {
 	console.log("Starting Initializing data...")
-	set_shared_data('MAIN_SERVER_IP', '134.214.105.28')
+	var ip = utils.getLocalPublicIpAddress(["eth0", "p2p1"])
+	set_shared_data('MAIN_SERVER_IP', ip)
+	set_shared_data('WEB_UI_HOME', 'http://' + ip + "/")
 	set_shared_data('MAIN_SERVER_PORT', 5000)
 	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
 	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
@@ -152,7 +139,6 @@ function start () {
 	tasks_executor.start(db);
 	spy.start(db);
 	android_notif_serv.start(ANDROID_NOTIF_SERVER_PORT, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Well, or test after changing it !) I don't know why, but it's working on port 5000 and not on port 3000 for instance....
-	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_processor)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)

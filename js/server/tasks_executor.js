@@ -55,8 +55,6 @@ function execute_task(event_id, origin_id) {//this function will search the good
 
 					switch (rows[r]["operator"]){
 						case 1 : // if operator = "="
-						console.log("operateur est égal à égal")
-						console.log(rows[r]["value_to_compare"], parseInt(value))
 						if (parseInt(rows[r]["value_to_compare"]) != parseInt(value)){ //if we have the contrary of the operator, that means that the action have at least one condition wich is not respected, and we can't execute the action
 							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
 						}
@@ -82,7 +80,7 @@ function execute_task(event_id, origin_id) {//this function will search the good
 						}
 						break;
 						case 6 : // if operator = "passage de seuil haut"
-						db.select_query("SELECT value FROM thresholds AS t INNER JOIN thresholds_sensor_types AS tst ON t.id = tst.threshold_id INNER JOIN sensors_types AS st ON st.id = tst.sensor_type_id INNER JOIN sensors AS s ON s.sensor_type_id = st.id INNER JOIN conditions AS c ON c.sensor_id = s.id WHERE c.sensor_id = ? AND c.id = ?",[current_sensor_id, current_condition_id], function (rows, err){
+						db.select_query("SELECT value FROM thresholds AS t INNER JOIN thresholds_sensor_types AS tst ON t.id = tst.threshold_id INNER JOIN sensors_types AS st ON st.id = tst.sensor_type_id INNER JOIN sensors AS s ON s.sensor_type_id = st.id INNER JOIN conditions AS c ON c.sensor_id = s.id WHERE c.sensor_id = ? AND c.id = ? AND t.id = ?",[current_sensor_id, current_condition_id, rows[r]["value_to_compare"]], function (rows, err){
 							for(var r in rows) {
 								if(parseInt(rows[r]["value"]) < parseInt(value)){
 									actions_type[current_action] = false; //so we put the corresponding value to false = not executable
@@ -91,7 +89,7 @@ function execute_task(event_id, origin_id) {//this function will search the good
 						})
 						break;
 						case 7 : // if operator = "passage de seuil bas"
-						db.select_query("SELECT value FROM thresholds AS t INNER JOIN thresholds_sensor_types AS tst ON t.id = tst.threshold_id INNER JOIN sensors_types AS st ON st.id = tst.sensor_type_id INNER JOIN sensors AS s ON s.sensor_type_id = st.id INNER JOIN conditions AS c ON c.sensor_id = s.id WHERE c.sensor_id = ? AND c.id = ?",[current_sensor_id, current_condition_id], function (rows, err){
+						db.select_query("SELECT value FROM thresholds AS t INNER JOIN thresholds_sensor_types AS tst ON t.id = tst.threshold_id INNER JOIN sensors_types AS st ON st.id = tst.sensor_type_id INNER JOIN sensors AS s ON s.sensor_type_id = st.id INNER JOIN conditions AS c ON c.sensor_id = s.id WHERE c.sensor_id = ? AND c.id = ? AND t.id = ?",[current_sensor_id, current_condition_id, rows[r]["value_to_compare"]], function (rows, err){
 							for (var r in rows){
 								if(parseInt(rows[r]["value"]) > parseInt(value)){
 									actions_type[current_action] = false; //so we put the corresponding value to false = not executable

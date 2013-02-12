@@ -39,7 +39,6 @@ INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "pré
 
 INSERT INTO actions_types VALUES (1, "Allumer prise", 5, "ON");
 INSERT INTO actions_types VALUES (null, "Eteindre prise", 5, "OFF");
-
 INSERT INTO actions_types VALUES (null, "Augmenter Temperature +10C", 7, "+10");
 INSERT INTO actions_types VALUES (null, "Diminuer Temperature -10C", 7, "-10");
 INSERT INTO actions_types VALUES (null, "Ouvrir Volet 30%", 6, "TRUC");
@@ -58,7 +57,6 @@ INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 1150
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887022, 'Volet Chambre 1', 6); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887024, 'Volet Salon RC', 6); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 9999991, 'Radiateur 2', 7); -- @TODO Check that this hardware id actually is of that type
-
 
 -- Predefined thresholds
 -- Temperature (stId=1)
@@ -237,33 +235,5 @@ INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id)
 	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 23);
 	INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) VALUES(-1, 24);
 
---------------------------
--- Dummy task
-
-INSERT INTO tasks (
-	id, 
-	name, 
-	action_type_id, 
-	target_id, 
-	event_type_id, 
-	origin_id, 
-	mode_id
-) 
-VALUES (
-	1, 
-	"changer minuteuh", 
-	1, 
-	8, 
-	7,
-	-1,
-	1
-);
-
-INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (1, "82", 1, 1, 1);
-INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (2, "82", 1, 1, 1);
-INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (3, "02", 1, 8, 1);
-
-
---------------------------
 	PRAGMA foreign_keys = ON; -- Alright, you've just forgot what you've seen, already!
 
