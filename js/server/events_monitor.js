@@ -29,19 +29,19 @@ Date.prototype.getWeek = function() {
 function checkThresholds(idSensor, sensor_type_id, value) {
 	//console.log("ERROR WITH "+ lastValues);
 	db.select_query("SELECT th.value " +
-					"FROM `" +  tables['th'] + "` th " +
-					"INNER JOIN `"+ tables['thst'] + "` thst ON (thst.threshold_id = th.id) " +
-					"WHERE thst.sensor_type_id = ?",
-	[sensor_type_id], 
-	function(err, rows) {
-		var thresholds = [];
-		for (var r in rows) {
-			thresholds.push(rows[r]["th.value"]);
-		}
+		"FROM `" +  tables['th'] + "` th " +
+		"INNER JOIN `"+ tables['thst'] + "` thst ON (thst.threshold_id = th.id) " +
+		"WHERE thst.sensor_type_id = ?",
+		[sensor_type_id], 
+		function(err, rows) {
+			var thresholds = [];
+			for (var r in rows) {
+				thresholds.push(rows[r]["th.value"]);
+			}
 
-		for(var t in thresholds) {
-			var threshold = thresholds[t]
-			if (lastValues[idSensor] < threshold && value > threshold) {
+			for(var t in thresholds) {
+				var threshold = thresholds[t]
+				if (lastValues[idSensor] < threshold && value > threshold) {
 				//tasks_executor.execute_task(1);
 				eventEmitter.emit(SENSOR_EVENT, 1, idSensor);
 			}
@@ -55,78 +55,6 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 	});
 }
 
-
-function tempEvent(idSensor, sensor_type_id, value) {
-	checkThresholds(idSensor, sensor_type_id, value);
-}
-function lumEvent(idSensor, sensor_type_id, value) {
-	checkThresholds(idSensor, sensor_type_id, value);
-}
-function contEvent(idSensor, sensor_type_id, value) {
-	// Contact performed
-	if(value == 1) {
-		eventEmitter.emit(SENSOR_EVENT, 3, idSensor);
-	}
-
-	// Contact removed
-	if(value == 0) {
-		eventEmitter.emit(SENSOR_EVENT, 4, idSensor);
-	}
-
-	lastValues[idSensor] = value;
-
-}
-function preEvent(idSensor, sensor_type_id, value) {
-	// Occupancy PIR ON
-	if (value == 0) {
-		//tasks_executor.execute_task(10);
-		eventEmitter.emit(SENSOR_EVENT, 10, idSensor);
-	}
-	// Occupancy PIR OFF
-	if (value == 1) {
-		//tasks_executor.execute_task(11);
-		eventEmitter.emit(SENSOR_EVENT, 11, idSensor);
-	}
-
-	lastValues[idSensor] = value;
-}
-
-function switchEvent(idSensor, sensor_type_id, value) {
-	console.log("VALUE SWITCH :", value)
-	switch(value) {
-
-		case 1:
-		// Bouton interr droit haut
-		eventEmitter.emit(SENSOR_EVENT, 14, idSensor)
-		break
-
-		case 2:
-		// Bouton interr droit bas
-		eventEmitter.emit(SENSOR_EVENT, 15, idSensor)
-		break
-
-		case 3:
-		// Bouton interr gauche haut
-		eventEmitter.emit(SENSOR_EVENT, 12, idSensor)
-		break
-
-		case 4:
-		// Bouton interr gauche bas
-		eventEmitter.emit(SENSOR_EVENT, 13, idSensor)
-		break
-
-		default:
-		break
-	}
-}
-
-var dictSensorEvent = { 1 : tempEvent,
-	2 : lumEvent,
-	4 : contEvent,
-	3 : preEvent,
-	8 : switchEvent
-	};
-
 function sendTimeEvent() {
 	var currentTime = new Date();
 	//console.log("Minute changed = " + currentTime.getMinutes());
@@ -134,8 +62,8 @@ function sendTimeEvent() {
 	var lastExecutionStr = null;
 	var previousTime = null;
 	if (fs.existsSync("lastExecutionTimer.txt")) {
-	 lastExecutionStr = fs.readFileSync("lastExecutionTimer.txt", "utf8");
-	 previousTime = new Date(lastExecutionStr);
+		lastExecutionStr = fs.readFileSync("lastExecutionTimer.txt", "utf8");
+		previousTime = new Date(lastExecutionStr);
 	}
 	//tasks_executor.execute_task(7);
 
@@ -211,7 +139,7 @@ function sendTimeEvent() {
 	}
 
 			
-*/
+	*/
 	// Save date of last execution
 	var fileLastExecution = fs.openSync("lastExecutionTimer.txt", "w");
 	fs.writeSync(fileLastExecution, currentTime.toLocaleString(), 0);
@@ -224,8 +152,6 @@ function start(database) {
 	console.log("EM_Starting events_monitor");
 	lastValues = shared_data.get_shared_data("SENSORS_VALUES");
 	db = database;
-	//getData(2214883, 10);
-	//getData(2214883, 10);
 	idTimer = setInterval(sendTimeEvent, 15000);
 }
 
@@ -233,15 +159,11 @@ function handleEvent(frame_data) {
 	console.log("EM_Data received from : " + frame_data.id);
 	console.log("EM_Data : " + frame_data.data);
 
-	if (0x07 == frame_data.org) {
-		//teach-in
-
-	};
 	db.select_query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"` WHERE hardware_id = ?", [frame_data.id], function(err, rows) {
 
 	// For every type of the sensor (a sensor can have many types)
 
-		 for (var r in rows) {
+	for (var r in rows) {
 			//console.log(rows[r]["sensors_types.name"]);
 			//var sensor_type = rows[r]["sensors_types.name"];
 			//var sensor_type_id = rows[r]["sensors_types.id"];
@@ -255,10 +177,7 @@ function handleEvent(frame_data) {
 				console.log("EM_SEND EVENT")
 				dictSensorEvent[sensor_type](sensor_id, sensor_type, value)
 			}
-	  	}
-
-
-
+		}
 	});
 }
 
