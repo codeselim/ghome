@@ -111,10 +111,6 @@ function GLOBAL_INIT () {
 	set_shared_data('MAIN_SERVER_IP', "134.214.105.28")
 	set_shared_data('WEB_UI_HOME', 'http://' + ip + "/")
 	set_shared_data('MAIN_SERVER_PORT', 5000)
-	set_shared_data('IN_TEMP_SENSOR_ID', 1)
-	set_shared_data('OUT_TEMP_SENSOR_ID', 1)
-	set_shared_data('IN_TEMP_SENSOR_HID', 8991608)
-	set_shared_data('OUT_TEMP_SENSOR_HID', 8991608)
 	db = new dbms.Database()
 	console.log("Connecting to db...")
 	db.connect('dat', function () {
@@ -132,28 +128,50 @@ function GLOBAL_INIT () {
 				connected_ids.push(rows[i].hardware_id)
 			}
 			
-			var query = 
-			" SELECT sensor_id AS sid, MAX(time), value " +
-			" FROM `" + t['l'] + "` l " +
-			" INNER JOIN `" + t['s'] + "` s ON (s.id = l.sensor_id)" +
-			" GROUP BY sensor_id";//* /!\ According to StackOverflow, when using BTree as indexes (which is the case with sqlite), the maximum (key1, key2, key3) tuple will be the one returned by the GROUP BY and thus, for us, the last one in terms of time
-			db.select_query(query, null, function (err, rows) {
+			var q = "SELECT name, value FROM `" + t['set'] + "` "
+			db.select_query(q, null, function (err, rows) {
 				if (null != err) {
-					cancel_startup(query)
+					cancel_startup(q)
 				}
 				for(var i in rows) {
-					if (rows[i].sid == get_shared_data('OUT_TEMP_SENSOR_ID')) {
-						set_shared_data('OUT_TEMP', parseFloat(rows[i].value).toFixed(1))
+					var setting = rows[i].name
+					var value = rows[i].value
+					if (setting == "main_inside_temperature_sensor") {
+						set_shared_data('IN_TEMP_SENSOR_ID', parseInt(value))
+					} else if (setting == "main_outside_temperature_sensor") {
+						set_shared_data('OUT_TEMP_SENSOR_ID', parseInt(value))
+					} else if (setting == "main_inside_temperature_sensor_hid") {
+						set_shared_data('IN_TEMP_SENSOR_HID', parseInt(value))
+					} else if (setting == "main_outside_temperature_sensor_hid") {
+						set_shared_data('OUT_TEMP_SENSOR_HID', parseInt(value))
+					} else {
+						set_shared_data(setting, value)
 					}
-					if (rows[i].sid == get_shared_data('IN_TEMP_SENSOR_ID')) {
-						set_shared_data('IN_TEMP', parseFloat(rows[i].value).toFixed(1))
-					}
-
-					sensors_values[rows[i].sid] = rows[i].value
 				}
-				console.log("Server startup states: " + JSON.stringify(sensors_values) + JSON.stringify(allowed_ids) + JSON.stringify(connected_ids))
-				set_shared_data('SENSORS_VALUES', sensors_values) //* Will be updated by EventMonitor
-				start()
+
+				var query = 
+				" SELECT sensor_id AS sid, MAX(time), value " +
+				" FROM `" + t['l'] + "` l " +
+				" INNER JOIN `" + t['s'] + "` s ON (s.id = l.sensor_id)" +
+				" GROUP BY sensor_id";//* /!\ According to StackOverflow, when using BTree as indexes (which is the case with sqlite), the maximum (key1, key2, key3) tuple will be the one returned by the GROUP BY and thus, for us, the last one in terms of time
+				db.select_query(query, null, function (err, rows) {
+					if (null != err) {
+						cancel_startup(query)
+					}
+					for(var i in rows) {
+						if (rows[i].sid == get_shared_data('OUT_TEMP_SENSOR_ID')) {
+							set_shared_data('OUT_TEMP', parseFloat(rows[i].value).toFixed(1))
+						}
+						if (rows[i].sid == get_shared_data('IN_TEMP_SENSOR_ID')) {
+							set_shared_data('IN_TEMP', parseFloat(rows[i].value).toFixed(1))
+						}
+
+						sensors_values[rows[i].sid] = rows[i].value
+					}
+					console.log("Server startup states: " + JSON.stringify(sensors_values) + JSON.stringify(allowed_ids) + JSON.stringify(connected_ids))
+					set_shared_data('SENSORS_VALUES', sensors_values) //* Will be updated by EventMonitor
+					start()
+				})
 			})
 		})
 	})
