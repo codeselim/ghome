@@ -7,6 +7,7 @@ INSERT INTO sensors_types VALUES (4, "Contact", 0);
 INSERT INTO sensors_types VALUES (5, "Prise électrique", 0);
 INSERT INTO sensors_types VALUES (6, "Volet", 0);
 INSERT INTO sensors_types VALUES (7, "Thermostat radiateur", 0);
+INSERT INTO sensors_types VALUES (8, "Interrupteur", 0);
 
 
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (1, "égalité", 1, "free");
@@ -59,6 +60,7 @@ INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887024, 'Volet Salon RC', 6); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 9999991, 'Radiateur 2', 7); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 1651576, 'electricity 1', 5); -- checked
+INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 2214883, 'Interrupteur 1', 8); -- checked
 
 -- Predefined thresholds
 -- Temperature (stId=1)

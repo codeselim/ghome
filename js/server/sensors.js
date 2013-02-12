@@ -37,12 +37,13 @@ function decode_frame (frame) {
 
 /**
  * Function the type of the sensor and the detected value
+ * @param{int} type_s the type of the sensor (software type, from the db)
  * @param {array} frame_data of the data inside the frame
  *        {integer} type_s  type of sensor
- * @returns {array} Array containig the type of the sensor (temperature or light sensor)
- * and the value detected by the sensor
+ * @returns {value} the value detected by the sensor
 */
 function decode_data_byte (type_s, frame_data) {
+	console.log("ENTERING DECODE DATA BYTE")
 	switch (type_s) {
 		case 1 ://temperature
 			var value = Math.abs((frame_data.data[2] * 40 /255) - 40 ) ;//temperature sensor
@@ -59,9 +60,24 @@ function decode_data_byte (type_s, frame_data) {
 		case 5 : //electricity : value of power consumption in a minute in Wh
 			var value = parseFloat (frame_data.data[2]+"."+frame_data.data[3]);
 			   //value of power consumption in a minute in Wh
+
+		case 8 : //switch
+			switch (frame_data.data[0] >> 4){
+				case 1 : 
+				 	return 1; //bottom right
+				 case 3 :
+				 	return 2; // top right
+				 case 5 :
+				 	return 3; // top left
+				 case 7 :
+				 	return 4; //bottom left
+				 default:
+				 	return -1;
+
+			}
 			return value;
 		default:
-			return [-1, -1];
+			return -1
 	}
 }
 

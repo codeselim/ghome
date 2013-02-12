@@ -1,3 +1,4 @@
+var db;
 var qs = require('querystring')
 var tpl = require('./template_engine')
 var shared = require('./shared_data')
@@ -260,7 +261,7 @@ function statsRH(req, res, params, responseSender){
 					"sensors.hardware_id =  "+sensor_id+" and"+
 					"strftime('%Y-%m-%d', logs.time) = date('now') and"+
 					"(strftime('%H',logs.time) = '"+previous_hour+"') ;"			
-	params.db.select_query (query_str, null,function (err,rows){ console.log(err)})
+	db.select_query (query_str, null,function (err,rows){ console.log(err)})
 
 	var delete_query_str = "delete from logs where id in ("+
 					"select logs.id"+
@@ -268,7 +269,7 @@ function statsRH(req, res, params, responseSender){
 					"where sensors.sensor_type_id  = 1 and "+
 					"strftime('%Y-%m-%d', logs.time) = date('now') and"+
 					"(strftime('%H',logs.time) = '"+previous_hour+"') ;"			
-	params.db.select_query (query_str, null,function (err,rows){ console.log(err)})
+	db.select_query (query_str, null,function (err,rows){ console.log(err)})
  }
 
 
@@ -287,7 +288,7 @@ function statsRH(req, res, params, responseSender){
 				"from logs inner join sensors on logs.sensor_id =  sensors.id"+
 				"where sensors.sensor_type_id  = 5 and"+
 				"(strftime('%H',logs.time) = '"+previous_hour+"') and strftime('%Y-%m-%d', logs.time) = date('now');"
-	params.db.select_query (query_str,null,function (err,rows){ console.log(err)})
+	db.select_query (query_str,null,function (err,rows){ console.log(err)})
 
 	var delete_query_str = "delete from logs where id in ("+
 					"select logs.id"+
@@ -295,7 +296,7 @@ function statsRH(req, res, params, responseSender){
 					"where sensors.sensor_type_id  = 5 and "+
 					"strftime('%Y-%m-%d', logs.time) = date('now') and"+
 					"(strftime('%H',logs.time) = '"+previous_hour+"') ;"			
-	params.db.select_query (query_str,null,function (err,rows){ console.log(err)})
+	db.select_query (query_str,null,function (err,rows){ console.log(err)})
  }
 
  /**
@@ -311,7 +312,7 @@ function statsRH(req, res, params, responseSender){
 				"from hour_stats "+
 				"where sensor_type_id = 1 and"+
 				"strftime('%Y-%m-%d', time) =  strftime('%Y-%m-%d','now', '-1 day');"
-	params.db.select_query (query_str, null,function (err,rows){ console.log(err)})
+	db.select_query (query_str, null,function (err,rows){ console.log(err)})
  }
 
 
@@ -329,7 +330,7 @@ function statsRH(req, res, params, responseSender){
 				"from hour_stats "+
 				"where sensor_type_id = 5 and"+
 				"strftime('%Y-%m-%d', time) =  strftime('%Y-%m-%d','now', '-1 day');"
-	params.db.select_query (query_str, null,function (err,rows){ console.log(err)})
+	db.select_query (query_str, null,function (err,rows){ console.log(err)})
  }
 
   /**
@@ -345,7 +346,7 @@ function statsRH(req, res, params, responseSender){
 				"from daily_stats "+
 				"where sensor_type_id = 1 and"+
 				"strftime('%Y-%m', time) =  strftime('%Y-%m','now', '-1 month');"
-	params.db.select_query (query_str, null,function (err,rows){ console.log(err)})
+	db.select_query (query_str, null,function (err,rows){ console.log(err)})
  }
 
 
@@ -363,7 +364,7 @@ function statsRH(req, res, params, responseSender){
 				"from daily_stats "+
 				"where sensor_type_id = 5 and"+
 				"strftime('%Y-%m', time) =  strftime('%Y-%m','now', '-1 month');"
-	params.db.select_query (query_str, null,function (err,rows){ console.log(err)})
+	db.select_query (query_str, null,function (err,rows){ console.log(err)})
  }
 
 
@@ -390,7 +391,7 @@ function statsRH(req, res, params, responseSender){
 	// 				"from ?"+
 	// 				"where time between '?' and '?'"+
 	// 				"and sensor_type_id = 1; "	
-	// params.db.select_query (query_str, [table,date1,date2,type_sensor], getData (err, rows))
+	// db.select_query (query_str, [table,date1,date2,type_sensor], getData (err, rows))
 	// if (err != NULL)
 	// 	return rows
 	// else 
@@ -424,7 +425,7 @@ function statsRH(req, res, params, responseSender){
 // 					" from ? "+
 // 					" where time between '?' and '?' "+
 // 					" and sensor_type_id = 5; "	
-// 	params.db.select_query (query_str, [table,date1,date2,type_sensor], getData (err, rows))
+// 	db.select_query (query_str, [table,date1,date2,type_sensor], getData (err, rows))
 // 	if (err != NULL)
 // 		return rows
 // 	else 
@@ -441,12 +442,12 @@ function statsRH(req, res, params, responseSender){
 // // }
 
 
-// function start ( ) {
+function start (database) {
+ db =database;
+}
 
-// }
 
-
-// exports.start = start 
+exports.start = start 
 // exports.get_temperature_stats = get_temperature_stats
 // exports.get_consumption_stats = get_consumption_stats
 exports.temperature_h = temperature_h
