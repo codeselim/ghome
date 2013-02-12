@@ -62,7 +62,6 @@ function lumEvent(idSensor, sensor_type_id, value) {
 	checkThresholds(idSensor, sensor_type_id, value);
 }
 function contEvent(idSensor, sensor_type_id, value) {
-	console.log("state change for contact sensor", idSensor)
 	// Contact performed
 	if(value == 1) {
 		eventEmitter.emit(SENSOR_EVENT, 3, idSensor);
