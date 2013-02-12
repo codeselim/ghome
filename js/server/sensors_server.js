@@ -21,12 +21,12 @@ function start (db, web_serv, port, allowed_ids) {
 		stream.setEncoding("utf8");
 
 		stream.addListener("connect", function(){
-			console.log("SENSSERV: ", new Date(), "New sensors server connection established.")
+			// console.log("SENSSERV: ", new Date(), "New sensors server connection established.")
 		});
 
 		var buffer = ""
 		stream.addListener("data", function (data) {
-			console.log("SENSSERV: ", new Date(), "Receiving data from sensors.")
+			// console.log("SENSSERV: ", new Date(), "Receiving data from sensors.")
 			buffer += data
 			var pos = -1
 			while (buffer.length >= FRAME_SIZE && -1 != (pos = buffer.indexOf(FRAME_SEPARATOR))) {//* We have found a separator, that means that the previous frame (that may be incomplete or may not) is over and a new one starts
@@ -45,8 +45,8 @@ function start (db, web_serv, port, allowed_ids) {
 				var frame = buffer.substr(0, FRAME_SIZE) //* We know we have a complete frame (>= FRAME_SIZE and pos == 0) so just cut it off by its length
 				buffer = buffer.substr(FRAME_SIZE, buffer.length) //* Crops the current buffer, we don't need the data from the previous frame anymore
 				var frame_data = decode(frame)
-				console.log("SENSSERV: ", "Sensor id=", frame_data.id)
 				if (-1 != allowed_ids.indexOf(frame_data.id)) {
+					console.log("SENSSERV: ", "Sensor id=", frame_data.id)
 					console.log("SENSSERV: ", "This sensor is one of ours && the checksum is correct.")
 					if(check_checksum(frame_data, frame)) {
 						// console.log("The checksum is correct ?", check_checksum(frame_data))
@@ -56,7 +56,7 @@ function start (db, web_serv, port, allowed_ids) {
 					}
 				}
 			};
-			console.log("SENSSERV: ", "Ending the sensors stream data receiver function") //* Mainly for the purpose of being able to check when the SENSOR_FRAME_EVENT handler function is executed with respect to the current function execution
+			// console.log("SENSSERV: ", "Ending the sensors stream data receiver function") //* Mainly for the purpose of being able to check when the SENSOR_FRAME_EVENT handler function is executed with respect to the current function execution
 		});
 
 		stream.addListener("end", function(){
