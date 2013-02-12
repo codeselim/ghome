@@ -46,14 +46,15 @@ INSERT INTO actions_types VALUES (null, "Ouvrir Volet 60%", 6, "TRUC");
 INSERT INTO actions_types VALUES (null, "Fermer Volet 30%", 6, "TRUC");
 INSERT INTO actions_types VALUES (null, "Fermer Volet 60%", 6, "TRUC");
 
-INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (1, 2214883, 'Temp 1', 1); -- @TODO Check that this hardware id actually is of that type
-INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 346751, 'Lumi 1', 2); -- @TODO Check that this hardware id actually is of that type
-INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 346756, 'Lumi 2', 2); -- @TODO Check that this hardware id actually is of that type
-INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8991608, 'Présence 1', 3); -- @TODO Check that this hardware id actually is of that type
-INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8991638, 'Présence 2', 3); -- @TODO Check that this hardware id actually is of that type
-INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 112022, 'Contact', 4); -- @TODO Check that this hardware id actually is of that type
+INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (1, 8991608, 'Temp 1', 1); -- checked
+INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 346751, 'Lumi 1', 2); -- checked
+-- INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 346756, 'Lumi 2', 2); -- @TODO Check that this hardware id actually is of that type
+-- INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8991608, 'Présence 1', 3); -- @TODO Check that this hardware id actually is of that type
+INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 346751, 'Présence 2', 3); -- checked
+INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 111198, 'Contact 1', 4); -- checked
+INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 112022, 'Contact 2', 4); -- checked
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 115002, 'Prise élec 1', 5); -- @TODO Check that this hardware id actually is of that type
-INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 115003, 'Prise élec 2', 5); -- @TODO Check that this hardware id actually is of that type
+-- INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 115003, 'Prise élec 2', 5); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887022, 'Volet Chambre 1', 6); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887024, 'Volet Salon RC', 6); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 9999991, 'Radiateur 2', 7); -- @TODO Check that this hardware id actually is of that type

@@ -26,7 +26,7 @@ set_shared_data('SQL_TABLES', {'st': 'sensors_types',
 								'stct':'sensor_types_condition_types',
 								'thst':'thresholds_sensor_types'
 							})
-var allowed_ids = [2214883, 346751, 8991608, 112022, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
+var allowed_ids = [8991608, 346751, 8991608, 111198, 112022, 115002] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 var connected_ids = allowed_ids.slice(0) // copies the content of allowed_ids
 set_shared_data('ALLOWED_IDS', allowed_ids)
 set_shared_data('CONNECTED_IDS', connected_ids)
@@ -63,11 +63,11 @@ function update_main_temperatures (frame_data) {
 	// Frame to be used as demo : A55A0B0700003608008933780084
 	if (frame_data.id == get_shared_data('OUT_TEMP_SENSOR_ID')) {
 		console.log('The sensor id of the received frame is the one of the main OUTSIDE temperature sensor. Updating the server in-memory value.')
-		var temp = require('./sensors').decode_data_byte(frame_data)[1].toFixed(1)
+		var temp = require('./sensors').decode_data_byte(1 /* temperature */, frame_data)[1].toFixed(1)
 		set_shared_data('OUT_TEMP', temp)
 	} else if (frame_data.id == get_shared_data('IN_TEMP_SENSOR_ID')) {
 		console.log('The sensor id of the received frame is the one of the main INSIDE temperature sensor. Updating the server in-memory value.')
-		var temp = require('./sensors').decode_data_byte(frame_data)[1].toFixed(1)
+		var temp = require('./sensors').decode_data_byte(1 /* temperature */, frame_data)[1].toFixed(1)
 		set_shared_data('IN_TEMP', temp)
 	}
 }
