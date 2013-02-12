@@ -91,10 +91,39 @@ function preEvent(idSensor, sensor_type_id, value) {
 	lastValues[idSensor] = value;
 }
 
+function switchEvent(idSensor, sensor_type_id, value) {
+	switch(value) {
+
+		case 1:
+		// Bouton interr droit bas
+		eventEmitter.emit(SENSOR_EVENT, 15, idSensor)
+		break
+
+		case 2:
+		// Bouton interr droit haut
+		eventEmitter.emit(SENSOR_EVENT, 14, idSensor)
+		break
+
+		case 3:
+		// Bouton interr gauche haut
+		eventEmitter.emit(SENSOR_EVENT, 12, idSensor)
+		break
+
+		case 4:
+		// Bouton interr gauche bas
+		eventEmitter.emit(SENSOR_EVENT, 13, idSensor)
+		break
+
+		default:
+		break
+	}
+}
+
 var dictSensorEvent = { 1 : tempEvent,
 	2 : lumEvent,
 	4 : contEvent,
 	3 : preEvent,
+	8 : switchEvent
 	};
 
 function sendTimeEvent() {
