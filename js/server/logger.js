@@ -20,8 +20,8 @@ function insertLog(frame_data) {
 		if (null == err) {// if no error
 			for(var i in rows) {
 				type = rows[i].sensor_type_id
-				value = sensors_utils.decode_data_byte(frame_data, type)
-				db.select_query("INSERT INTO " + tables.l + " VALUES (?, ?, ?, datetime() )", ["NULL", rows[i].sensor_id, value], function (err, rows){
+				value = sensors_utils.decode_data_byte(type, frame_data)
+				db.select_query("INSERT INTO " + tables.l + " VALUES (NULL, ?, ?, datetime() )", [rows[i].sensor_id, value], function (err, rows){
 					if(err) {
 						console.error("[INSERT_LOG_ERROR] : " + err)
 					}

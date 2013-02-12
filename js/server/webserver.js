@@ -10,9 +10,9 @@ var shared    = require('./shared_data')
 var sseSender = require('./sse_sender')
 var device    = require('./device_module')
 var scheduler = require('./scheduler_module')
+var stats_computer 	  	= require('./stats_computer')
 var threshold = require('./threshold_module')
 var spy_webm  = require('./spy_web_module');
-
 
 var webdir = '../..'
 /**
@@ -33,7 +33,8 @@ var requestHandlers = {
 	, 'threshold'         : threshold.thresholdRequestHandler
 	// , 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
-	, 'postform'          : postformHandler //test post implementation selim 	
+	, 'postform'		  : postformHandler //test post implementation selim 	
+	, 'stats'			  : stats_computer.statsRH	
 }
 
 /* Same format as the request handles dict. Exceptions for the default request handler*/
@@ -55,6 +56,9 @@ function postformHandler(req, res, params, responseSender){
 	params['fileUrl'] = 'postform.html'
 	responseSender(req, res, params, data)
 }
+
+
+
 
 /** Appends '.html' to the module name and uses it as fileName */
 function defaultHtmlRequestHandler(req, res, params, responseSender) {
@@ -187,7 +191,7 @@ function start (db, port) {
 					urlParams['postData'] += postDataChunk;
 					//console.log("Received POST data chunk '"+ postDataChunk + "'.");
 					var json = qs.parse(urlParams.postData);
-					console.log(json);
+					console.log("POST data sent");
 					});
 				}
 
