@@ -49,6 +49,9 @@ Database.prototype.prepare_statement = function(query_str, parameters, callback_
 	var self = this
 	this.db.serialize(function() {
 		try {
+			if (DBG) {
+				console.log("DBMS PREPARE: ", query_str, parameters)
+			};
 			var statement = self.db.prepare(query_str);
 			statement.on("error", function (err) {
 				self.error(err, query_str, callback_func)

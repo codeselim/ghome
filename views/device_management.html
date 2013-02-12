@@ -29,7 +29,9 @@
 				{{#device_types}}
 					<li data-role="list-divider">{{label}}</li>
 					{{#devices}}
-					<li><a data-transition="fade" href="/?module=device&amp;action=edit&amp;id={{id}}">{{label}}</a></li>
+					<li><a data-transition="fade" href="/?module=device&amp;action=edit&amp;id={{id}}">
+						<span>{{label}}</span><span style="float: right; width: 30%; text-align:left"> {{value}}</span>
+					</a></li>
 					{{/devices}}
 				{{/device_types}}
 			</ul>

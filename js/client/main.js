@@ -12,8 +12,8 @@ require.config({
 })
 
 
-require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'threshold', 'utils', 'jquerymobile'], 
-	function($, /*_,*/ sseListener, devMgmt, device, scheduler, threshold, utils) {
+require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'threshold', 'spy', 'jquerymobile'], 
+	function($, /*_,*/ sseListener, devMgmt, device, scheduler, threshold, spy) {
 	$(function() {
 
 		//* Hides the body until JQM finishes applying styles
@@ -50,59 +50,7 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', '
 			, 'task'          : scheduler.taskPageInit
 			, 'thresholdList' : threshold.listPageInit
 			, 'threshold'     : threshold.pageInit
-			, 'spy'       : function() {
-				
-				// TODO : get recent logs from spy table and create a table with them
-				utils.initMessages();
-
-				var submitForm = function submitForm() {
-					var data = utils.queryStringToHash($.param($('input:not([type=button],[type=submit]),select')))
-					console.log(data)
-					data.module = 'spy'
-
-					data.action = 'submit_parameters'
-
-
-					$.ajax({
-						'url'      : "/"
-						, 'dataType' : 'json'
-						, 'data'     : data
-					})
-					.done(function(data) {
-						console.log(data)
-						if (data.success) {
-							utils.addMessage('success', 'TODO: retourner le nouvel id pour pouvoir passer en mode édition')
-							window.location.href = '/?module=spy'
-							// setTimeout('top.location.href = "/?module=scheduler"',2000)
-						} else {
-							utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
-						}
-					})
-					.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
-
-				}
-
-				$("form").validate({
-					rules: { 
-						email: {required:true, email:true}
-					} 
-					, messages: { 
-						email: {
-							required : "Email requis",
-							email : "Email non valide"
-						}
-					}
-					, errorPlacement: function(error, element) {
-						//* Needed to place the error message out of the select menu.
-						if (element.is('select')) {
-							error.insertAfter($(element).parent())
-						} else {
-							error.insertAfter(element)
-						}
-					}
-					, submitHandler: submitForm
-				})
-			}
+			, 'spy'           : spy.pageInit
 		}
 
 		for(var id in pageinits) {

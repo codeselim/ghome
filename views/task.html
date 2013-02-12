@@ -24,7 +24,7 @@
 					<li id="nameArgs">
 						<div data-role="fieldcontain">
 				            <fieldset data-role="controlgroup">
-				                <input name="taskName" id="textinput1" placeholder="" value="" type="text">
+				                <input name="taskName" id="textinput1" placeholder="" value="{{taskName}}" type="text">
 				            </fieldset>
 				        </div>
 					</li>
@@ -39,15 +39,24 @@
 									{{#actionDevices}}
 									<optgroup label="{{label}}">
 										{{#devices}}
-									    <option value="{{id}}" data-device-type="{{type}}">&nbsp;&nbsp;{{label}}</option>
+									    <option value="{{id}}" data-device-type="{{type}}" {{{selected}}} >&nbsp;&nbsp;{{label}}</option>
 										{{/devices}}
 									</optgroup>
 									{{/actionDevices}}
 								</select>
 							</div>
 							<div class="ui-block-b">
+								{{#editMode}}
+								<select name="aAction" >
+									{{#actionValues}}
+										<option value="{{id}}" {{{selected}}} >{{label}}</option>
+									{{/actionValues}}
+								</select>								
+								{{/editMode}}
+								{{^editMode}}
 								<select name="aAction" disabled>
 								</select>
+								{{/editMode}}
 							</div>
 						</div>
 					</li>
