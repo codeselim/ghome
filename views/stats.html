@@ -54,32 +54,35 @@ $(function () {
                 <input type="hidden" name="module" value="stats">
                     
                 <div class="ui-block-a">
-                   <table>
-                    <tr>
-                        <td> 
-                            <select name="typedestatistiques" >
-                                <option value="n/a">-- Type de Statistiques --</option>
-                                <option value="temperature" {{#TEMP_STAT}} selected="selected" {{/TEMP_STAT}} >Température</option>
-                                <option value="electricity" {{#ELECT_STAT}} selected="selected" {{/ELECT_STAT}}>Électricité</option>
-                            </select>                            
-                        </td>
-                        <td>
-                            <input id="datefrom" name="datefrom"  value="{{DATEFROM_VALUE}}" placeholder="Select the starting date..." />
-                        </td>
-                        <td>
-                            <input id="dateto" name="dateto" value="{{DATETO_VALUE}}" placeholder="Select the ending date..." />                         
-                        </td>
-                        <td>
-                            <input type="submit" value="Valider" name="submit" />
-                        </td>
-                    </tr>
-                   </table>
+                    <div style="float:left">
+                         <select name="typedestatistiques" >
+                            <option value="n/a">-- Type de Statistiques --</option>
+                             <option value="temperature" {{#TEMP_STAT}} selected="selected" {{/TEMP_STAT}} >Température</option>
+                             <option value="electricity" {{#ELECT_STAT}} selected="selected" {{/ELECT_STAT}}>Électricité</option>
+                           </select>     
+                    </div> 
+                    <div style="float:left;">
+                        <table>
+                            <tr>
+                                <td>
+                                  <input id="datefrom" name="datefrom"  value="{{DATEFROM_VALUE}}" placeholder="Select the starting date..." />   
+                                </td>
+                                <td>
+                                    <input id="dateto" name="dateto" value="{{DATETO_VALUE}}" placeholder="Select the ending date..." />                         
+                                </td>
+                            </tr>
+                        </table>    
+                       
+                    </div>
+                    <div style="float:left;">
+                        <input type="submit" value="Valider" name="submit" />
+                    </div>
                 </div>
            </form> 
 
 
             <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
-            </div>
+        </div>
 
         </div>
                                         
