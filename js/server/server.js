@@ -63,11 +63,11 @@ function update_main_temperatures (frame_data) {
 	// Frame to be used as demo : A55A0B0700003608008933780084
 	if (frame_data.id == get_shared_data('OUT_TEMP_SENSOR_ID')) {
 		console.log('The sensor id of the received frame is the one of the main OUTSIDE temperature sensor. Updating the server in-memory value.')
-		var temp = require('./sensors').decode_data_byte(1 /* temperature */, frame_data)[1].toFixed(1)
+		var temp = require('./sensors').decode_data_byte(1 /* temperature */, frame_data).toFixed(1)
 		set_shared_data('OUT_TEMP', temp)
 	} else if (frame_data.id == get_shared_data('IN_TEMP_SENSOR_ID')) {
 		console.log('The sensor id of the received frame is the one of the main INSIDE temperature sensor. Updating the server in-memory value.')
-		var temp = require('./sensors').decode_data_byte(1 /* temperature */, frame_data)[1].toFixed(1)
+		var temp = require('./sensors').decode_data_byte(1 /* temperature */, frame_data).toFixed(1)
 		set_shared_data('IN_TEMP', temp)
 	}
 }
