@@ -9,6 +9,7 @@ var sensors_values = {}
 function send_message(target, action){
 	db.select_query("SELECT message_to_sensor FROM actions_types WHERE id = ?", [action], function (err, rows) {
 		console.log("YOUPI")
+		console.log("target :", target, "action :", action)
 		for (var r in rows){
 			console.log("YOUPISUPER")
 			device_communicator.sendToSensor (target, rows[r]["message_to_sensor"]);
@@ -41,9 +42,10 @@ function execute_task(event_id, origin_id) {//this function will search the good
 	var current_condition_id = null;
 	console.log("event id :")
 	console.log(event_id)
+	console.log("origin_id", origin_id)
 
 	//We get the action type id, the operator, the value to compare, the sensor_id and the target_id from the candidate actions (actions wich are in the right timer for being candidate)
-	db.select_query("SELECT action_type_id, operator, value_to_compare, sensor_id, target_id, c.id FROM Tasks AS t INNER JOIN conditions AS c ON c.task_id = t.id INNER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND origin_id = ?"
+	db.select_query("SELECT action_type_id, operator, value_to_compare, sensor_id, target_id, c.id FROM Tasks AS t LEFT OUTER JOIN conditions AS c ON c.task_id = t.id LEFT OUTER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND origin_id = ?"
 			, [event_id, origin_id], function (err, rows) { //now we select the proper actions with the operator
 				/*if(event_id == 5){//change of day
 
@@ -86,6 +88,7 @@ function execute_task(event_id, origin_id) {//this function will search the good
 						}
 						break;
 						case 5 : // if operator = ">="
+						console.log("check >=")
 						if (parseInt(rows[r]["value_to_compare"]) < parseInt(value)){ //if we have the contrary of the operator, that means that the action have at least one condition wich is not respected, and we can't execute the action
 							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
 						}
@@ -112,6 +115,7 @@ function execute_task(event_id, origin_id) {//this function will search the good
 						//@TODO : s'assurer que les rentrées coté client sont en phase avec les choix du code (si le nombre du mois corespond etc)
 
 						case 10 : //if operator is mois egal
+						console.log("check mois")
 						if (parseInt(rows[r]["value_to_compare"]) != (date.getMonth() + 1)){
 							actions_type[rows[r]["action_type_id"]] = false; //so we put the corresponding value to false = not executable
 						}
