@@ -16,8 +16,9 @@ function getWeatherFromCity (city, callback) {
 			callback(result)
 		})
 		resp.on("end", function () {
+			console.log("Text answer: ", body)
 			var data = JSON.parse(body)
-			console.log(data)
+			console.log("Parsed data: ", JSON.stringify(data))
 			callback(result)
 		})
 	})
