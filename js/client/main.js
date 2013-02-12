@@ -2,12 +2,16 @@
 
 require.config({ 
 	baseUrl: 'js/client'
-	, paths: {  
+	, paths: { 
 		  'jquerymobile': '../vendor/jquery.mobile-1.2.0.min'
 		, 'jqvalidate': '../vendor/jquery.validate.min'
 	}
 	, shim : {
 		'jquerymobile' : ['jquery']
+		, 'highcharts' : {
+			'exports' : 'Highcharts'
+			, 'deps' : ['jquery']
+		}
 	}
 })
 

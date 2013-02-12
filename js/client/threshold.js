@@ -6,7 +6,7 @@ define(['jquery','utils'], function($, utils){
 			, 'value'       : $('[name=value]').val()
 			, 'id'          : $('[name=id]').val()
 			, 'module'      : 'threshold'
-			, 'deviceTypes' : utils.queryStringToHash($.param($('input[type=checkbox]:checked')))['stid']
+			, 'deviceTypesJSON' : JSON.stringify(utils.getFieldsValues($('input[type=checkbox]:checked'))['stid'])
 		}
 
 		if (dataToSubmit.id) {
