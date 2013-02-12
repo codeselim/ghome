@@ -5,14 +5,14 @@ clear && clear && clear
 # echo "a="$a"blorg"
 origin=`pwd` # saving current dir
 defaultValue="blorg"
-reset=$defaultValue
+reset="OK"
 m=$defaultValue
 r=$defaultValue
 
 while [ "$1" != "" ]; do
 	case $1 in
-		noreset)
-			reset="OK"
+		reset)
+			reset=$defaultValue
 			shift;;
 		m)
 			m="OK"
