@@ -76,6 +76,7 @@ var deviceRH = function (req, res, params, responseSender) {
 			params.db.insert_query(q, p, function (err) {
 				if (null == err) {
 					console.log("Request went well")
+					get_shared_data('SOFTWARE_IDS')[params.query.equip_id] = this.lastID
 					res.end(JSON.stringify({'id': this.lastID, 'success': true, 'msg' : 'Le nouvel équipement a été ajouté avec succès.'}))
 				} else {
 					console.error("deviceRH: Error when inserting the new device.", q, p, zerr)
@@ -135,18 +136,36 @@ var deviceTestRH = function (req, res, params, responseSender) {
 	var te = get_shared_data('DEVICE_END_TESTS')
 	var tp = get_shared_data('DEVICE_POLL_TESTS')
 	var aids = get_shared_data('ALLOWED_IDS')
-	var cids = get_shared_data('CONNECTED_IDS')
+	var tiIds = get_shared_data('TEACH_IN_IDS')
 	switch(params.query.action) {
 		case "teststart":
 			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
 			testid++
+			var devId = parseInt(params.query.deviceId)
 			// Initialize the data structure allowing tests to shared data about this specific test (unique testid)
 			satr[testid] = {}
 			// In case if was already in memory, delete it:
-			utils.ArrayRemove(aids, aids.indexOf(params.query.deviceId))
-			utils.ArrayRemove(cids, cids.indexOf(params.query.deviceId))
+			/* A bit of explanation here :
+			 * In order to receive data from the device
+			 * it has to be in the allowed_ids array
+			 * but if this is a device that finally don't register in the system
+			 * then we have to remove it from this allowed_ids array at the end
+			 * and if it is a device that is already registered, then we don't want to remove it 
+			 * at the end. This, if it is found in the current state, don't remove at the end, 
+			 * else, remove at the end of the test
+			*/
+			// if(-1 != aids.indexOf(params.query.deviceId)) {// if currently not allowed
+			// 	satr[testid]['removeAfterTest'] = false // not allowed after either
+			// } else {
+			// 	satr[testid]['removeAfterTest'] = true // 
+			// }
+			
+			//* Remove it from "connected_ids" so that we can detect if it has sent us a data by checking it has been added back into the array
+			utils.ArrayRemove(tiIds, devId)
+			
 			//* Then add it to the allowed ids so that we don't filter it out, but don't add to connected ones, as what we want is to detect connection
-			aids.push(params.query.deviceId)
+			// former implementation
+			// aids.push(params.query.deviceId)
 			if (params.query.deviceType in ts) {
 				ts[params.query.deviceType](req, res, params, testid)
 			} else {// If no start_test registered, displaying error message
@@ -156,6 +175,7 @@ var deviceTestRH = function (req, res, params, responseSender) {
 
 		case "testpoll":
 			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			var devId = parseInt(params.query.deviceId)
 			if (params.query.deviceType in tp) {
 				tp[params.query.deviceType](req, res, params, params.query.testid)
 			} else {// If no poll_test registered: Sending events:[] so that we terminate the test
@@ -165,9 +185,13 @@ var deviceTestRH = function (req, res, params, responseSender) {
 
 		case "testend":
 			console.log('testpend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			var devId = parseInt(params.query.deviceId)
 			//* Removing from in-memory arrays
-			ArrayRemove(aids, aids.indexOf(params.query.deviceId))
-			ArrayRemove(cids, cids.indexOf(params.query.deviceId))
+			// former implementation
+			// if (satr[testid]['removeAfterTest']) {
+			// 	utils.ArrayRemove(aids, devId)
+			// };
+			utils.ArrayRemove(tiIds, devId)
 			// The test is over, cleaning shared data about it
 			delete satr[testid]
 			if (params.query.deviceType in te) {
@@ -208,9 +232,10 @@ var deviceManagementRH  = function (req, res, params, responseSender) {
 							var typeId = deviceTypes[i].id
 							for(var j in deviceTypes[i].devices) {
 								var s = deviceTypes[i].devices[j]
-								deviceTypes[i]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])	
+								deviceTypes[i].devices[j]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])	
 							}
 						}
+
 
 						var tplParams = {'device_types' : deviceTypes}
 

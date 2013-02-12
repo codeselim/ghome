@@ -188,10 +188,10 @@ function start (db, port) {
 				//handling POST data	
 				if(req.method === "POST") {
 					req.addListener("data", function(postDataChunk) {
-					urlParams['postData'] += postDataChunk;
-					//console.log("Received POST data chunk '"+ postDataChunk + "'.");
-					var json = qs.parse(urlParams.postData);
-					console.log("POST data sent");
+						urlParams['postData'] += postDataChunk;
+						//console.log("Received POST data chunk '"+ postDataChunk + "'.");
+						var json = qs.parse(urlParams.postData);
+						console.log("POST data sent");
 					});
 				}
 

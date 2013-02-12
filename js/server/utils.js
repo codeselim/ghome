@@ -1,5 +1,11 @@
 //* Small JS "upgrade"
-var ArrayRemove = function(a, index) { a.splice(index, 1); return a;}
+var ArrayRemove = function(a, value) { 
+	var index = -1
+	if (-1 != (index = a.indexOf(value))) {
+		a.splice(index, 1); 
+	}
+	return a
+}
 
 /**
  * This function returns the current local system "public" ip address (still the LAN one, not the Internet one)

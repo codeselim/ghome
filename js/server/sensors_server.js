@@ -45,6 +45,9 @@ function start (db, web_serv, port, allowed_ids) {
 				var frame = buffer.substr(0, FRAME_SIZE) //* We know we have a complete frame (>= FRAME_SIZE and pos == 0) so just cut it off by its length
 				buffer = buffer.substr(FRAME_SIZE, buffer.length) //* Crops the current buffer, we don't need the data from the previous frame anymore
 				var frame_data = decode(frame)
+				if (0x07 == frame_data.org) {// teach-in mode
+					pushToTeachIn(frame_data.id)
+				}
 				if (-1 != allowed_ids.indexOf(frame_data.id)) {
 					console.log("SENSSERV: ", "Sensor id=", frame_data.id)
 					console.log("SENSSERV: ", "This sensor is one of ours && the checksum is correct.")
@@ -67,6 +70,15 @@ function start (db, web_serv, port, allowed_ids) {
 	});
 
 	server.listen(port);
+}
+
+var tiArrId = 0
+var tiArrSz = 30
+var tiArr = new Array(tiArrSz)
+set_shared_data("TEACH_IN_IDS", tiArr)
+function pushToTeachIn (id) {
+	tiArr[tiArrId % tiArrSz] = id // % in order to keep it fixed-sized, replacing oldest values
+	tiArrId++
 }
 
 exports.start = start
