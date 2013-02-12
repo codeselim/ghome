@@ -46,19 +46,19 @@ function execute_spy(event_id, origin_id) {
 						db.select_query("SELECT name FROM sensors WHERE id = ?",[origin_id], function (err, rows) {//search the name of the sensor responsible of the event
 							for (r in rows){
 								console.log("evenement de type ", event_name," arrivé au capteur ", rows[r]["name"]);
-								db.select_query("INSERT INTO `logs_spy` VALUES (null, " + origin_id + ", \'" + event_name + "\', datetime())", [], function (err, rows) {}) //insert into the DB the informations needed
+								db.insert_query("INSERT INTO `logs_spy` VALUES (null, " + origin_id + ", \'" + event_name + "\', datetime())", [], function (err, rows) {}) //insert into the DB the informations needed
 
-								var date= new Date();
+								var date = new Date();
 								mailOptions.text = "Le mode espion de votre application GHome est activé, il nous semble donc pertinent de vous avertir d\'évènements non désirés dans votre maison :\nIl est arrivé un évènement de type "
 								+ event_name + " ayant eu lieu sur le capteur " + rows[r]["name"] + " à " + date; //Create the text of the informative mail
 								// send mail with defined transport object
 								smtpTransport.sendMail(mailOptions, function(error, response){
-					    		if(error){
-					      		  console.log(error);
-					    		}else{
-					      		  console.log("Message sent: " + response.message);
-					  			}
-					    		smtpTransport.close(); // shut down the connection pool, no more messages
+									if(error) {
+										console.log(error);
+									} else{
+										console.log("Message sent: " + response.message);
+									}
+						    		smtpTransport.close(); // shut down the connection pool, no more messages
 								});
 							}
 						});
