@@ -6,6 +6,6 @@ CREATE TABLE `hour_stats` (
   `min` INTEGER ,
   `max` INTEGER ,
   `time` DATE NOT NULL,
-  FOREIGN KEY(sensor_type_id) REFERENCES sensor_types(id)
+  FOREIGN KEY(sensor_type_id) REFERENCES sensors_types(id)
 );
 
