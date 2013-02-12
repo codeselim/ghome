@@ -182,42 +182,53 @@ var deviceTestRH = function (req, res, params, responseSender) {
 }
 
 var deviceManagementRH  = function (req, res, params, responseSender) {
-	params.db.select_query(
-		"SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
-		"FROM " + t['st'] + " st " +
-		"JOIN " + t['s']+ " s ON st.id = s.sensor_type_id " +
-		"ORDER BY st.name, device_name ASC", 
-		null, 
-		function (err, rows) {
-			var sensors_values = get_shared_data('SENSORS_VALUES')
-			var data = ''
-			if(null != err) {
-				console.log("[scheduler_module reported SQL_ERROR] : "+err);
-			} else {
-				var deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
-				for(var i in deviceTypes) {
-					var typeId = deviceTypes[i].id
-					for(var j in deviceTypes[i].devices) {
-						var s = deviceTypes[i].devices[j]
-						deviceTypes[i]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])	
+	switch (params.query.action) {
+		case 'update_device_values' : 
+			//* @TODO WIP, send the new values
+			// var sensors_values = get_shared_data('SENSORS_VALUES')
+			params.error404 = true
+			responseSender(req, res, params)
+			break
+
+		default:
+			params.db.select_query(
+				"SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
+				"FROM " + t['st'] + " st " +
+				"JOIN " + t['s']+ " s ON st.id = s.sensor_type_id " +
+				"ORDER BY st.name, device_name ASC", 
+				null, 
+				function (err, rows) {
+					var sensors_values = get_shared_data('SENSORS_VALUES')
+					var data = ''
+					if(null != err) {
+						console.log("[scheduler_module reported SQL_ERROR] : "+err);
+					} else {
+						var deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
+						for(var i in deviceTypes) {
+							var typeId = deviceTypes[i].id
+							for(var j in deviceTypes[i].devices) {
+								var s = deviceTypes[i].devices[j]
+								deviceTypes[i]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])	
+							}
+						}
+
+						var tplParams = {'device_types' : deviceTypes}
+
+						if (params.query.msg) {
+							tplParams.msg = decodeURIComponent(params.query.msg)
+						}
+
+						data = tpl.get_template_result("device_management.html", tplParams)
+
+						params.fileUrl = 'device_management.html'
+						
 					}
+					
+					responseSender(req, res, params, data)			
 				}
-
-				var tplParams = {'device_types' : deviceTypes}
-
-				if (params.query.msg) {
-					tplParams.msg = decodeURIComponent(params.query.msg)
-				}
-
-				data = tpl.get_template_result("device_management.html", tplParams)
-
-				params.fileUrl = 'device_management.html'
-				
-			}
-			
-			responseSender(req, res, params, data)			
-		}
-	)
+			)
+			break
+	}
 }
 
 

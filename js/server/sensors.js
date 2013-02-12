@@ -61,7 +61,7 @@ function decode_data_byte (type_s, frame_data) {
 			   //value of power consumption in a minute in Wh
 			return value;
 		default:
-			return null;
+			return [-1, -1];
 	}
 }
 
@@ -83,7 +83,8 @@ function getDisplayableState (typeId, value) {
 	if (typeId in stateDisplayers) {
 		return stateDisplayers[typeId](value)
 	} else {
-		return 'Unable to get the sensor\'s state'
+		// return 'Unable to get the sensor\'s state'
+		return 'Pas de données'
 	}
 }
 

@@ -26,7 +26,7 @@ set_shared_data('SQL_TABLES', {'st': 'sensors_types',
 								'stct':'sensor_types_condition_types',
 								'thst':'thresholds_sensor_types'
 							})
-var allowed_ids = [2214883, 346751, 8991608, 112022, 6] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
+var allowed_ids = [8991608, 346751, 8991608, 111198, 112022, 115002] //  @TODO : Put ALL OF THE IDS here // Note : The "6" is for debugging, remove before production
 var connected_ids = allowed_ids.slice(0) // copies the content of allowed_ids
 set_shared_data('ALLOWED_IDS', allowed_ids)
 set_shared_data('CONNECTED_IDS', connected_ids)
@@ -124,7 +124,7 @@ function GLOBAL_INIT () {
 				sensors_values[rows[i].sid] = rows[i].value
 			}
 			console.log("Server startup states: " + JSON.stringify(sensors_values))
-			set_shared_data('SENSORS_VALUES', sensors_values)
+			set_shared_data('SENSORS_VALUES', sensors_values) //* Will be updated by EventMonitor
 			start()
 		})
 	})
