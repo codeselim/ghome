@@ -1,4 +1,6 @@
-package com.example.hellotroll;
+package com.ghome.apph4114;
+
+import com.ghome.apph4114.R;
 
 import android.os.Bundle;
 import android.app.Activity;

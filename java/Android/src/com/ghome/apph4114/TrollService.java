@@ -1,4 +1,4 @@
-package com.example.hellotroll;
+package com.ghome.apph4114;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,6 +10,8 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.ghome.apph4114.R;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -157,8 +159,6 @@ public class TrollService extends Service {
 					Matcher m = pattern.matcher(str);
 					if (m.find()) {
 						notif(m.group(1), m.group(4));
-					} else {
-						Log.v("BLORG", m.toString());
 					}
 					Log.v(LOG_TAG, "Notification received: " + str);
 					TTextShow(str);
@@ -201,7 +201,7 @@ public class TrollService extends Service {
 					msg);
 			// Creates an explicit intent for an Activity in your app
 			if(null == url) {
-				url = "http://" + ipAddress + "/blorg";
+				url = "http://" + ipAddress + "/";
 			}
 			Intent resultIntent = new Intent(Intent.ACTION_VIEW, 
 				       Uri.parse(url));

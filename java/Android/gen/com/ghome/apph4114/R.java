@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.example.hellotroll;
+package com.ghome.apph4114;
 
 public final class R {
     public static final class attr {
