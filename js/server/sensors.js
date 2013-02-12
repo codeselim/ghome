@@ -64,9 +64,9 @@ function decode_data_byte (type_s, frame_data) {
 		case 8 : //switch
 			switch (frame_data.data[0] >> 4){
 				case 1 : 
-				 	return 1; //bottom right
+				 	return 1; //top right
 				 case 3 :
-				 	return 2; // top right
+				 	return 2; // bottom right
 				 case 5 :
 				 	return 3; // top left
 				 case 7 :

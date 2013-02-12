@@ -64,13 +64,11 @@ function lumEvent(idSensor, sensor_type_id, value) {
 function contEvent(idSensor, sensor_type_id, value) {
 	// Contact performed
 	if(value == 1) {
-		//tasks_executor.execute_task(3);
 		eventEmitter.emit(SENSOR_EVENT, 3, idSensor);
 	}
 
 	// Contact removed
 	if(value == 0) {
-		//tasks_executor.execute_task(4);
 		eventEmitter.emit(SENSOR_EVENT, 4, idSensor);
 	}
 
@@ -97,13 +95,13 @@ function switchEvent(idSensor, sensor_type_id, value) {
 	switch(value) {
 
 		case 1:
-		// Bouton interr droit bas
-		eventEmitter.emit(SENSOR_EVENT, 15, idSensor)
+		// Bouton interr droit haut
+		eventEmitter.emit(SENSOR_EVENT, 14, idSensor)
 		break
 
 		case 2:
-		// Bouton interr droit haut
-		eventEmitter.emit(SENSOR_EVENT, 14, idSensor)
+		// Bouton interr droit bas
+		eventEmitter.emit(SENSOR_EVENT, 15, idSensor)
 		break
 
 		case 3:
