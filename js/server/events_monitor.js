@@ -1,3 +1,5 @@
+"use strict"
+
 //* Gets data parsed from sensors and check if it's associated to a real event
 //* from the database
 
@@ -33,10 +35,11 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 	function(err, rows) {
 		var thresholds = [];
 		for (var r in rows) {
-			thresholds.push(rows[r]["thresholds.value"]);
+			thresholds.push(rows[r]["th.value"]);
 		}
 
 		for(var t in thresholds) {
+			var threshold = thresholds[t]
 			if (lastValues[idSensor] < threshold && value > threshold) {
 				//tasks_executor.execute_task(1);
 				eventEmitter.emit(SENSOR_EVENT, 1, idSensor);
@@ -182,7 +185,7 @@ function sendTimeEvent() {
 */
 	// Save date of last execution
 	var fileLastExecution = fs.openSync("lastExecutionTimer.txt", "w");
-	fs.writeSync(fileLastExecution, currentTime.toLocaleString(), 0, encoding='utf8');
+	fs.writeSync(fileLastExecution, currentTime.toLocaleString(), 0);
 	fs.closeSync(fileLastExecution);
 
 }
@@ -198,35 +201,30 @@ function start(database) {
 }
 
 function handleEvent(frame_data) {
+	console.log("EM_Data received from : " + frame_data.id);
+	console.log("EM_Data : " + frame_data.data);
 
-console.log("Data received : " + frame_data.data);
+	db.select_query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"` WHERE hardware_id = ?", [frame_data.id], function(err, rows) {
 
-db.select_query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"` WHERE hardware_id = ?", [frame_data.id], function(err, rows) {
+	// For every type of the sensor (a sensor can have many types)
 
-// For every type of the sensor (a sensor can have many types)
-	 for (var r in rows) {
-      //console.log(rows[r]["sensors_types.name"]);
-      //var sensor_type = rows[r]["sensors_types.name"];
-      //var sensor_type_id = rows[r]["sensors_types.id"];
-      // If sensor_type_id is associated with a function in dictSensorEvent
-      type = rows[r].sensor_type_id
-	  value = sensors_utils.decode_data_byte(type, frame_data)
-	  sensor_id = rows[r].sensor_id
-	  console.log(type);
-      if (type in Object.keys(dictSensorEvent)) {
-      	//db.query("SELECT id FROM sensors WHERE hardware_id = ? AND sensor_type_id = ?", [idSensor, sensor_type_id], function(err, rows) {
+		 for (var r in rows) {
+			//console.log(rows[r]["sensors_types.name"]);
+			//var sensor_type = rows[r]["sensors_types.name"];
+			//var sensor_type_id = rows[r]["sensors_types.id"];
+			// If sensor_type_id is associated with a function in dictSensorEvent
+			var type = rows[r].sensor_type_id
+			var value = sensors_utils.decode_data_byte(type, frame_data)
+			var sensor_id = rows[r].sensor_id
+			 console.log("TYPE SENSOR : " + type);
+			if (type in Object.keys(dictSensorEvent)) {
+				dictSensorEvent[type](sensor_id, type, value);
+			}
+	  	}
 
-      		
-      	dictSensorEvent[type](sensor_id, type, value);
-      		
-      	
-      }
-      
-      /*var eventStr = dictEvents[sensor_type](2,5);
-      db.select_query("SELECT id FROM event_types WHERE name = ?", eventStr, sendEvent);*/
-  }
-});
 
+
+	});
 }
 
 exports.start = start;
