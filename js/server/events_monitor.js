@@ -199,11 +199,13 @@ function start(database) {
 
 function handleEvent(frame_data) {
 
-console.log("Data received : " + frame_data.data);
+console.log("EM_Data received from : " + frame_data.id);
+console.log("EM_Data : " + frame_data.data);
 
 db.select_query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"` WHERE hardware_id = ?", [frame_data.id], function(err, rows) {
 
 // For every type of the sensor (a sensor can have many types)
+
 	 for (var r in rows) {
       //console.log(rows[r]["sensors_types.name"]);
       //var sensor_type = rows[r]["sensors_types.name"];
@@ -225,6 +227,9 @@ db.select_query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"`
       /*var eventStr = dictEvents[sensor_type](2,5);
       db.select_query("SELECT id FROM event_types WHERE name = ?", eventStr, sendEvent);*/
   }
+
+
+
 });
 
 }
