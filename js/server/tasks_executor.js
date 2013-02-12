@@ -5,6 +5,7 @@ var shared = require('./shared_data')
 var device_communicator = require('./device_communicator.js')
 var get_shared_data = shared.get_shared_data
 var sensors_values = {}
+var stats_computer = require('./stats_computer.js')
 
 function send_message(target, action){
 	db.select_query("SELECT message_to_sensor FROM actions_types WHERE id = ?", [action], function (err, rows) {
@@ -48,11 +49,14 @@ function execute_task(event_id, origin_id) {//this function will search the good
 	db.select_query("SELECT action_type_id, operator, value_to_compare, sensor_id, target_id, c.id FROM Tasks AS t LEFT OUTER JOIN conditions AS c ON c.task_id = t.id LEFT OUTER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND origin_id = ?"
 			, [event_id, origin_id], function (err, rows) { //now we select the proper actions with the operator
 				/*if(event_id == 5){//change of day
-
+					stats_computer.temperature_d();
+					stats_computer.consumption_d();
 				} else if (event_id == 6) {//change of hour
-
+					stats_computer.temperature_h();
+					stats_computer.consumption_h();
 				} else if (event_id == 7) {//change of minute
-
+					stats_computer.temperature_m();
+					stats_computer.consumption_m();
 				}*/
 
 				for (var r in rows) { //creation of a dictionnaire where we put all the candidate actions

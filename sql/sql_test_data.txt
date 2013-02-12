@@ -53,7 +53,7 @@ INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 3467
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 346751, 'Présence 2', 3); -- checked
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 111198, 'Contact 1', 4); -- checked
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 112022, 'Contact 2', 4); -- checked
--- INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 115002, 'Prise élec 1', 5); -- @TODO Check that this hardware id actually is of that type
+INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 4288617990, 'Prise élec 1', 5); -- @TODO Check that this hardware id actually is of that type
 -- INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 115003, 'Prise élec 2', 5); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887022, 'Volet Chambre 1', 6); -- @TODO Check that this hardware id actually is of that type
 INSERT INTO `sensors` (id, hardware_id, name, sensor_type_id) VALUES (null, 8887024, 'Volet Salon RC', 6); -- @TODO Check that this hardware id actually is of that type

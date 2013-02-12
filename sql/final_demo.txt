@@ -1,8 +1,8 @@
 --Allumage et extinction prise en fonction du contact 
-INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, origin_id, mode_id) VALUES (1,"allumer prise en contact",1,7,3,6,1);
-INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, origin_id, mode_id) VALUES (2,"eteindre prise perte de contact",2,7,4,6,1);
+INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, origin_id, mode_id) VALUES (1,"allumer prise en contact",1,6,3,5,1);
+INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, origin_id, mode_id) VALUES (2,"eteindre prise perte de contact",2,6,4,5,1);
 INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (1, "02", 1, 10, -1);
-INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (2, "50", 1, 5, 2);--lumière >= 50
+--INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (2, "50", 1, 5, 2);--lumière >= 50
 
 --Ouverture volet en fonction de seuil descendant pour la lumière
 INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, origin_id, mode_id) VALUES (3,"ouvrir volet",6,9,2,2,1);
