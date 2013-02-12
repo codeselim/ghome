@@ -91,16 +91,17 @@ function preEvent(idSensor, sensor_type_id, value) {
 }
 
 function switchEvent(idSensor, sensor_type_id, value) {
+	console.log("VALUE SWITCH :", value)
 	switch(value) {
 
 		case 1:
-		// Bouton interr droit bas
-		eventEmitter.emit(SENSOR_EVENT, 15, idSensor)
+		// Bouton interr droit haut
+		eventEmitter.emit(SENSOR_EVENT, 14, idSensor)
 		break
 
 		case 2:
-		// Bouton interr droit haut
-		eventEmitter.emit(SENSOR_EVENT, 14, idSensor)
+		// Bouton interr droit bas
+		eventEmitter.emit(SENSOR_EVENT, 15, idSensor)
 		break
 
 		case 3:
@@ -244,6 +245,7 @@ function handleEvent(frame_data) {
 			var value = sensors_utils.decode_data_byte(type, frame_data)
 			var sensor_id = rows[r].sensor_id
 			 console.log("EM_TYPE SENSOR : " + type);
+			 console.log("EM_VALUE_SENSOR : " + value);
 			if (type in dictSensorEvent) {
 				console.log("EM_SEND EVENT")
 				dictSensorEvent[type](sensor_id, type, value);

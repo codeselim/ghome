@@ -254,21 +254,21 @@ function statsRH(req, res, params, responseSender){
  	var date = new Date();
 	var previous_hour = date.getHours() - 1;
 	//insert the average of temperature of the previous hour in the table hour_stats
-	var query_str = "insert into hour_stats (sensor_id,sensor_type_id,value,min,max,time)"+
-					"select logs.sensor_id, sensors.sensor_type_id,avg(logs.value),min(logs.value), max(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)"+
-					"from logs inner join sensors on logs.sensor_id =  sensors.id"+
-					"where sensors.sensor_type_id  = 1 and "+
-					"sensors.hardware_id =  "+sensor_id+" and"+
-					"strftime('%Y-%m-%d', logs.time) = date('now') and"+
-					"(strftime('%H',logs.time) = '"+previous_hour+"') ;"			
+	var query_str = "insert into hour_stats (sensor_id,sensor_type_id,value,min,max,time)  "+
+					"select logs.sensor_id, sensors.sensor_type_id,avg(logs.value),min(logs.value), max(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)  "+
+					"from logs inner join sensors on logs.sensor_id =  sensors.id  "+
+					"where sensors.sensor_type_id  = 1 and  "+
+					"sensors.hardware_id =   "+sensor_id+" and  "+
+					"strftime('%Y-%m-%d', logs.time) = date('now') and  "+
+					"(strftime('%H',logs.time) = ' "+previous_hour+"') ;"			
 	db.select_query (query_str, null,function (err,rows){ console.log(err)})
 
-	var delete_query_str = "delete from logs where id in ("+
-					"select logs.id"+
-					"from logs inner join sensors on logs.sensor_id =  sensors.id"+
-					"where sensors.sensor_type_id  = 1 and "+
-					"strftime('%Y-%m-%d', logs.time) = date('now') and"+
-					"(strftime('%H',logs.time) = '"+previous_hour+"') ;"			
+	var delete_query_str = "delete from logs where id in (  "+
+					"select logs.id "+
+					"from logs inner join sensors on logs.sensor_id =  sensors.id  "+
+					"where sensors.sensor_type_id  = 1 and  "+
+					"strftime('%Y-%m-%d', logs.time) = date('now') and  "+
+					"(strftime('%H',logs.time) = ' "+previous_hour+"') ;"			
 	db.select_query (query_str, null,function (err,rows){ console.log(err)})
  }
 
@@ -283,19 +283,19 @@ function statsRH(req, res, params, responseSender){
  	var date = new Date();
 	var previous_hour = date.getHours() - 1;
 	//insert the average of temperature of the previous hour in the table hour_stats
-	var query_str = "insert into hour_stats (sensor_id,sensor_type_id,value,time)"+
-				"Select  logs.sensor_id, sensors.sensor_type_id, sum(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time)"+
-				"from logs inner join sensors on logs.sensor_id =  sensors.id"+
-				"where sensors.sensor_type_id  = 5 and"+
-				"(strftime('%H',logs.time) = '"+previous_hour+"') and strftime('%Y-%m-%d', logs.time) = date('now');"
+	var query_str = "insert into hour_stats (sensor_id,sensor_type_id,value,time)  "+
+				"Select  logs.sensor_id, sensors.sensor_type_id, sum(logs.value),  strftime('%Y-%m-%d %H:00:00', logs.time) "+
+				"from logs inner join sensors on logs.sensor_id =  sensors.id "+
+				"where sensors.sensor_type_id  = 5 and "+
+				"(strftime('%H',logs.time) = ' "+previous_hour+"') and strftime('%Y-%m-%d', logs.time) = date('now');"
 	db.select_query (query_str,null,function (err,rows){ console.log(err)})
 
-	var delete_query_str = "delete from logs where id in ("+
-					"select logs.id"+
-					"from logs inner join sensors on logs.sensor_id =  sensors.id"+
-					"where sensors.sensor_type_id  = 5 and "+
-					"strftime('%Y-%m-%d', logs.time) = date('now') and"+
-					"(strftime('%H',logs.time) = '"+previous_hour+"') ;"			
+	var delete_query_str = "delete from logs where id in ( "+
+					"select logs.id "+
+					"from logs inner join sensors on logs.sensor_id =  sensors.id "+
+					"where sensors.sensor_type_id  = 5 and  "+
+					"strftime('%Y-%m-%d', logs.time) = date('now') and "+
+					"(strftime('%H',logs.time) = ' "+previous_hour+"') ;"			
 	db.select_query (query_str,null,function (err,rows){ console.log(err)})
  }
 
@@ -307,10 +307,10 @@ function statsRH(req, res, params, responseSender){
 */
  function temperature_d ( ) {
  	//insert the average of temperature of the previous day in the table daily_stats
-	var query_str = "insert into daily_stats (sensor_id,sensor_type_id,value,min,max,time)"+
-				"Select  sensor_id,sensor_type_id, avg(value),min(min), max(max),  strftime('%Y-%m-%d', time)"+
-				"from hour_stats "+
-				"where sensor_type_id = 1 and"+
+	var query_str = "insert into daily_stats (sensor_id,sensor_type_id,value,min,max,time) "+
+				"Select  sensor_id,sensor_type_id, avg(value),min(min), max(max),  strftime('%Y-%m-%d', time) "+
+				"from hour_stats  "+
+				"where sensor_type_id = 1 and "+
 				"strftime('%Y-%m-%d', time) =  strftime('%Y-%m-%d','now', '-1 day');"
 	db.select_query (query_str, null,function (err,rows){ console.log(err)})
  }
@@ -325,10 +325,10 @@ function statsRH(req, res, params, responseSender){
  function consumption_d ( ) {
  	
 	//insert the average of temperature of the previous day in the table daily_stats
-	var query_str = "insert into daily_stats (sensor_id,sensor_type_id,value,time)"+
-				"Select  sensor_id,sensor_type_id, avg(value),  strftime('%Y-%m-%d', time)"+
-				"from hour_stats "+
-				"where sensor_type_id = 5 and"+
+	var query_str = "insert into daily_stats (sensor_id,sensor_type_id,value,time) "+
+				"Select  sensor_id,sensor_type_id, avg(value),  strftime('%Y-%m-%d', time) "+
+				"from hour_stats  "+
+				"where sensor_type_id = 5 and "+
 				"strftime('%Y-%m-%d', time) =  strftime('%Y-%m-%d','now', '-1 day');"
 	db.select_query (query_str, null,function (err,rows){ console.log(err)})
  }
@@ -341,10 +341,10 @@ function statsRH(req, res, params, responseSender){
 */
  function temperature_m ( ) {
  	//insert the average of temperature of the previous month in the table monthly_stats
-	var query_str = "insert into monthly_stats (sensor_id,sensor_type_id,value,min,max,time)"+
-				"Select  sensor_id,sensor_type_id, avg(value),min(min), max(max),  strftime('%Y-%m-%d', time,'start of month')"+
-				"from daily_stats "+
-				"where sensor_type_id = 1 and"+
+	var query_str = "insert into monthly_stats (sensor_id,sensor_type_id,value,min,max,time) "+
+				"Select  sensor_id,sensor_type_id, avg(value),min(min), max(max),  strftime('%Y-%m-%d', time,'start of month') "+
+				"from daily_stats  "+
+				"where sensor_type_id = 1 and "+
 				"strftime('%Y-%m', time) =  strftime('%Y-%m','now', '-1 month');"
 	db.select_query (query_str, null,function (err,rows){ console.log(err)})
  }
@@ -359,10 +359,10 @@ function statsRH(req, res, params, responseSender){
  function consumption_m ( ) {
  	
 	//insert the average of temperature of the previous month in the table monthly_stats
-	var query_str = "insert into monthly_stats (sensor_id,sensor_type_id,value,time)"+
-				"Select  sensor_id,sensor_type_id, avg(value),strftime('%Y-%m-%d', time,'start of month')"+
-				"from daily_stats "+
-				"where sensor_type_id = 5 and"+
+	var query_str = "insert into monthly_stats (sensor_id,sensor_type_id,value,time) "+
+				"Select  sensor_id,sensor_type_id, avg(value),strftime('%Y-%m-%d', time,'start of month') "+
+				"from daily_stats  "+
+				"where sensor_type_id = 5 and "+
 				"strftime('%Y-%m', time) =  strftime('%Y-%m','now', '-1 month');"
 	db.select_query (query_str, null,function (err,rows){ console.log(err)})
  }
@@ -387,9 +387,9 @@ function statsRH(req, res, params, responseSender){
  // 	else 
 	// 	table = "monthly_stats"
  
- // 	var query_str = " select time, value,min, max "+
-	// 				"from ?"+
-	// 				"where time between '?' and '?'"+
+ // 	var query_str = " select time, value,min, max  "+
+	// 				"from ? "+
+	// 				"where time between '?' and '?' "+
 	// 				"and sensor_type_id = 1; "	
 	// db.select_query (query_str, [table,date1,date2,type_sensor], getData (err, rows))
 	// if (err != NULL)
@@ -421,9 +421,9 @@ function statsRH(req, res, params, responseSender){
 //  	else 
 // 		table = "monthly_stats"
 
-//  	var query_str = "select time, value "+
-// 					" from ? "+
-// 					" where time between '?' and '?' "+
+//  	var query_str = "select time, value  "+
+// 					" from ?  "+
+// 					" where time between '?' and '?'  "+
 // 					" and sensor_type_id = 5; "	
 // 	db.select_query (query_str, [table,date1,date2,type_sensor], getData (err, rows))
 // 	if (err != NULL)
