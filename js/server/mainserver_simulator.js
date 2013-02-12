@@ -19,6 +19,7 @@ function generateSimulations(){
 	frames[5] = { "data" : "A55A0B0700003608008933780084" , "type" : "temperature" } 
 	frames[6] = { "data" : "A55A0B06000000090001B5960066" , "type" : "capteur contact 1" }
 	frames[7] = { "data" : "A55A0B06000000080001B25E002A" , "type" : "capteur contact 2" }
+	frames[8] = { "data" : "A55A0B07052200480019337800A0" , "type" : "electricity 1" }
 	var firstvalue = 1
 	var lastvalue  = 1
 
