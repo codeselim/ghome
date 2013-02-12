@@ -26,7 +26,7 @@ Date.prototype.getWeek = function() {
 
 
 function checkThresholds(idSensor, sensor_type_id, value) {
-	console.log("ERROR WITH "+ lastValues);
+	//console.log("ERROR WITH "+ lastValues);
 	db.select_query("SELECT th.value " +
 					"FROM `" +  tables['th'] + "` th " +
 					"INNER JOIN `"+ tables['thst'] + "` thst ON (thst.threshold_id = th.id) " +
@@ -49,7 +49,7 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 				eventEmitter.emit(SENSOR_EVENT, 2, idSensor);
 			}
 		}
-		console.log("ERROR WITH "+ value);
+		//console.log("ERROR WITH "+ value);
 		lastValues[idSensor] = value;
 	});
 }
@@ -192,7 +192,7 @@ function sendTimeEvent() {
 
 
 function start(database) {
-	console.log("Starting events_monitor");
+	console.log("EM_Starting events_monitor");
 	lastValues = shared_data.get_shared_data("SENSORS_VALUES");
 	db = database;
 	//getData(2214883, 10);
@@ -216,8 +216,9 @@ function handleEvent(frame_data) {
 			var type = rows[r].sensor_type_id
 			var value = sensors_utils.decode_data_byte(type, frame_data)
 			var sensor_id = rows[r].sensor_id
-			 console.log("TYPE SENSOR : " + type);
-			if (type in Object.keys(dictSensorEvent)) {
+			 console.log("EM_TYPE SENSOR : " + type);
+			if (type in dictSensorEvent) {
+				console.log("EM_SEND EVENT")
 				dictSensorEvent[type](sensor_id, type, value);
 			}
 	  	}
