@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>ghome</title>
+	<link rel="stylesheet/less" type="text/css" href="css/ghome.less" />
+	<script src="js/vendor/less.min.js" type="text/javascript"></script>
+	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
+</head>
+<body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
+	<div data-role="page" id="threshold" data-cache="never">
+		<div data-theme="a" data-role="header" data-position="fixed">
+			<h3>Seuils</h3>
+			<a href="/?module=home" data-icon="home" data-iconpos="notext" >Accueil</a>
+			<a href="/?module=threshold_list" data-icon="back" data-direction="reverse" data-iconpos="notext">Parent</a>
+		</div>
+		<div data-role="content">
+			<form action="/">
+				<input type="hidden" name="id" value="{{threshold.id}}" />
+				<ul data-role="listview" data-divider-theme="d" data-inset="true">
+					<li data-role="list-divider">Nom du seuil</li>
+					<li>
+						<div data-role="fieldcontain" {{#threshold.id}}class='locked'{{/threshold.id}}>
+							<input type="text" name="name" value="{{threshold.thresholdName}}">
+						</div>
+					</li>
+					<li data-role="list-divider">Valeur du seuil</li>
+					<li>
+						<div data-role="fieldcontain">
+							<fieldset data-role="controlgroup">
+								<input name="value" value="{{threshold.value}}" type="text" />
+							</fieldset>
+						</div>
+					</li>
+					<li data-role="list-divider">Capteurs concernés</li>
+					<li>
+						<div data-role="fieldcontain">
+							<fieldset data-role="controlgroup">
+								{{#device_types}}
+									<input type="checkbox" name="stid" id="cb-sensor-{{id}}" value="{{id}}" {{#selected}}checked{{/selected}} />
+									<label for="cb-sensor-{{id}}">{{deviceType}}</label>
+								{{/device_types}}
+							</fieldset>
+						</div>
+
+					</li>
+				</ul>
+
+				<ul data-role="listview" data-inset="true" id="messages"></ul>
+
+				<input type="submit" value="Valider" name="submit"/>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

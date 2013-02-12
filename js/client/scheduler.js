@@ -115,6 +115,9 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 	 * Uses the condition-id attribute of the element to edit the right condValue select list
 	 */
 	var updateCondValue = function() {
+		// Grabbing the sensorType so that the server is able to determine which condition thresholds are available to us (as thresholds are set to sensor types)
+		var sensorType = $(this).parents('.conditionBlock').find('select.condSourceSelect').eq(0).find(':selected').eq(0).data('sensor-type')
+		console.log("sensorType=", sensorType)
 		var condType = $(this).val()
 		var condId = $(this).data('condition-id')
 
@@ -122,10 +125,14 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 			$.ajax({
 					'url'      : "/"
 				, 'dataType' : 'json'
-				, 'data'     : {'module' : 'task', 'action' : 'get_condition_values', 'condType' : condType}
+				, 'data'     : {'module' : 'task', 'action' : 'get_condition_values', 'condType' : condType, 'sensorType': sensorType}
 			})
 			.done(function(data) {
-				populateSelectBox($('#condition'+ condId +' [name=condValue]'), data, true)
+				if (data.type == "free") {
+					// @TODO Change the input to a free text input
+				} else if (data.type == "list") {
+					populateSelectBox($('#condition'+ condId +' [name=condValue]'), data.values, true)
+				}
 			})
 		} else {
 			populateSelectBox($('#condition'+ condId +' [name=condValue]'), {})
@@ -142,7 +149,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 
 	var getFormParams = function() {
 		//* Fixed params
-		params = {
+		var params = {
 				name: $('[name=taskName]').val()
 			, act: utils.queryStringToHash($.param($('#actionArgs select')))
 			, evt: utils.queryStringToHash($.param($('#evtArgs select')))
@@ -150,8 +157,10 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		}
 
 		$('[id^=condition]').each(function(){
-			console.log($(this))
-			params.cond.push(utils.queryStringToHash($.param($(this).find('select'))))
+			var cond = utils.queryStringToHash($.param($(this).find('select')))
+			if (!$.isEmptyObject(cond)) {
+				params.cond.push(cond)
+			}
 		})
 
 		return params
@@ -159,13 +168,13 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 
 	var submitNewTask = function() {
 
+		console.log(getFormParams())
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
-			, 'data'     : $.extend({'module' : 'task', 'action' : 'submit'}, getFormParams())
+			, 'data'     : {'module' : 'task', 'action' : 'submit', 'data': JSON.stringify(getFormParams())}
 		})
 		.done(function(data) {
-			console.log(data)
 			if (data.success) {
 				utils.addMessage('success', 'Ok! Vous allez être redirigé sur la liste des tâches.')
 				// window.location.href = '/?module=scheduler'
@@ -185,32 +194,34 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 
 
 	var taskPI = function taskPI() {
+		console.log('taskPI!')
 		var cache = {}
 		var conditionCount = 0
 
 		$('.leftLink').parent().parent().parent().removeClass('ui-btn');
 		$('.leftLink').contents().unwrap();
 
-		$("#form").validate({
-				rules: {
-						'device'          : {'required': true }
-					, 'devAction'       : {'required': true }
-					, 'trigger'         : {'required': true }
-					, 'sensor'          : {'required': true }
-					, 'threshold_type'  : {'required': true }
-					, 'threshold_value' : {'required': true }
-					, 'threshold_event' : {'required': true }
-				} 
-			, messages: {}
-			, errorPlacement: function(error, element) {
-				//* Needed to place the error message out of the select menu.
-				if (element.is('select')) {
-					error.insertAfter($(element).parent())
-				} else {
-					error.insertAfter(element)
-				}
-			}
-		})
+		//* WTF is this shit?
+		// $("form").validate({
+		// 		rules: {
+		// 				'device'          : {'required': true }
+		// 			, 'devAction'       : {'required': true }
+		// 			, 'trigger'         : {'required': true }
+		// 			, 'sensor'          : {'required': true }
+		// 			, 'threshold_type'  : {'required': true }
+		// 			, 'threshold_value' : {'required': true }
+		// 			, 'threshold_event' : {'required': true }
+		// 		} 
+		// 	, messages: {}
+		// 	, errorPlacement: function(error, element) {
+		// 		//* Needed to place the error message out of the select menu.
+		// 		if (element.is('select')) {
+		// 			error.insertAfter($(element).parent())
+		// 		} else {
+		// 			error.insertAfter(element)
+		// 		}
+		// 	}
+		// })
 
 		initCache(cache)
 		utils.initMessages()
@@ -219,18 +230,19 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		$('[name=evtType]').change(updateCondType)
 		$('#conditionEvt [name=condType]').change(updateCondValue)
 		$('#addCondition').click(function() {
-			$bigList = $('#bigList')
-			$bigList.find('li:last').before(cache.conditionTemplate.replace(/@@condId@@/g, conditionCount++))
-			$newCondition = $bigList.find('li:last').prev('li')
-			$newCondition.find("[name=condType]").change(updateCondValue)
-			$newCondition.find("[name=condSource]").change(updateCondType)
-			$newCondition.find(".removeCondition").click(removeCondition)
+			var bigList = $('#bigList')
+			bigList.find('li:last').before(cache.conditionTemplate.replace(/@@condId@@/g, conditionCount++))
+			var newCondition = bigList.find('li:last').prev('li')
+			newCondition.find("[name=condType]").change(updateCondValue)
+			newCondition.find("[name=condSource]").change(updateCondType)
+			newCondition.find(".removeCondition").click(removeCondition)
 
 			//* Ask JQM to redraw the new elements
-			$newCondition.trigger('create')
-			$bigList.listview('refresh')
+			newCondition.trigger('create')
+			bigList.listview('refresh')
 		})
 
+		console.log('registering validation!')
 		$('form').validate({
 				rules: { 
 					  taskName: "required" 

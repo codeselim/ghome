@@ -4,7 +4,6 @@ var fs = require('fs')
 var tpl = require('./template_engine')
 var ss = require('./sensors_server')
 var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
-var tpl = require('./template_engine')
 var get_shared_data = require('./shared_data').get_shared_data
 var off = true
 var testid = 0 // The testid can be used by the test start/poll/end handlers to share data among them if they need to, by allowing them to identify a given request
@@ -18,7 +17,7 @@ var utils = require('./utils')
  * Object passed : [{'value': type_id, 'label': type_name}]
 */
 function getDevicesTypesList (db, callback) {
-	var q = "SELECT * FROM " + t['st'] + " ORDER BY name ASC"
+	var q = "SELECT id, name FROM " + t['st'] + " ORDER BY name ASC"
 	var data = []
 	db.select_query(q, null, function (err, rows) { // Dictionary of the SQL tables names
 		if (null != err) {
@@ -27,7 +26,6 @@ function getDevicesTypesList (db, callback) {
 		} else {
 			console.log(rows)
 			for(var i in rows) {
-				console.log("Row " + i, rows[i])
 				data.push({'id': rows[i]['id'], 'label': rows[i]['name']})
 			}
 		}
@@ -184,25 +182,39 @@ var deviceTestRH = function (req, res, params, responseSender) {
 }
 
 var deviceManagementRH  = function (req, res, params, responseSender) {
-	params.db.select_query("SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
-					"FROM " + t['st'] + " st " +
-					"JOIN " + t['s']+ " s ON st.id = s.sensor_type_id " +
-					"ORDER BY st.name, device_name ASC", 
+	params.db.select_query(
+		"SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
+		"FROM " + t['st'] + " st " +
+		"JOIN " + t['s']+ " s ON st.id = s.sensor_type_id " +
+		"ORDER BY st.name, device_name ASC", 
 		null, 
 		function (err, rows) {
-			if(null != err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
-			
-			var deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
+			var sensors_values = get_shared_data('SENSORS_VALUES')
+			var data = ''
+			if(null != err) {
+				console.log("[scheduler_module reported SQL_ERROR] : "+err);
+			} else {
+				var deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
+				for(var i in deviceTypes) {
+					var typeId = deviceTypes[i].id
+					for(var j in deviceTypes[i].devices) {
+						var s = deviceTypes[i].devices[j]
+						deviceTypes[i]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])	
+					}
+				}
 
-			var tplParams = {'device_types' : deviceTypes}
+				var tplParams = {'device_types' : deviceTypes}
 
-			if (params.query.msg) {
-				tplParams.msg = decodeURIComponent(params.query.msg)
+				if (params.query.msg) {
+					tplParams.msg = decodeURIComponent(params.query.msg)
+				}
+
+				data = tpl.get_template_result("device_management.html", tplParams)
+
+				params.fileUrl = 'device_management.html'
+				
 			}
-
-			var data = tpl.get_template_result("device_management.html", tplParams)
-
-			params.fileUrl = 'device_management.html'
+			
 			responseSender(req, res, params, data)			
 		}
 	)

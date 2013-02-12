@@ -3,12 +3,14 @@
 var http      = require('http')
 var fs        = require('fs')
 var mime      = require('mime')
+var qs 		    = require('querystring');
+
 var tpl       = require('./template_engine')
 var shared    = require('./shared_data')
 var sseSender = require('./sse_sender')
 var device    = require('./device_module')
 var scheduler = require('./scheduler_module')
-var qs 		  = require('querystring');
+var threshold = require('./threshold_module')
 var spy_webm  = require('./spy_web_module');
 
 
@@ -27,7 +29,9 @@ var requestHandlers = {
 	, 'device_test'       : device.deviceTestRH
 	, 'scheduler'         : scheduler.schedulerRequestHandler
 	, 'task'              : scheduler.taskRequestHandler
-	, 'app'               : defaultHtmlRequestHandler
+	, 'threshold_list'    : threshold.thresholdListRequestHandler
+	, 'threshold'         : threshold.thresholdRequestHandler
+	// , 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
 	, 'postform'          : postformHandler //test post implementation selim 	
 }

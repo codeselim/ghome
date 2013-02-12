@@ -9,33 +9,37 @@
 	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
 </head>
 <body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
-	<div data-role="page" id="devMgmt" data-cache="never">
+	<div data-role="page" id="thresholdList">
 		<div data-theme="a" data-role="header" data-position="fixed">
-			<h3>Gestion des équipements</h3>
-			<a href="/?module=home" data-icon="home" data-iconpos="notext">Accueil</a>
+			<h3>Seuils</h3>
+			<a href="/?module=home" data-icon="home" data-iconpos="notext" >Accueil</a>
 			<a href="/?module=home" data-icon="back" data-transition="slide" data-direction="reverse" data-iconpos="notext">Parent</a>
 		</div>
+
 		<div data-role="content">
+
 			<ul data-role="listview" data-inset="true" id="messages">
 				{{#msg}}
 					<li data-theme="g" data-icon="delete" ><a href="#"><span class="success">{{msg}}</span></a></li>
 				{{/msg}}
 			</ul>
-
-			<ul data-role="listview" data-divider-theme="b" data-inset="true" id="deviceList">
+			<ul data-role="listview" data-filter="true" data-filter-placeholder="Rerchercher un nom de seuil..." 
+					data-divider-theme="b" data-inset="true">
 				<li data-icon="plus">
-					<a data-transition="fade" href="/?module=device&amp;action=new"> Nouvel équipement </a>
+					<a data-transition="fade" href="/?module=threshold&amp;action=new">Nouveau Seuil</a>
 				</li>
-				{{#device_types}}
-					<li data-role="list-divider">{{label}}</li>
-					{{#devices}}
-					<li><a data-transition="fade" href="/?module=device&amp;action=edit&amp;id={{id}}">
-						<span>{{label}}</span><span style="float: right; width: 30%; text-align:left"> {{value}}</span>
+				<li data-role="list-divider">Liste des seuils</li>
+				{{#thresholds}}
+					<li><a data-transition="fade" href="/?module=threshold&amp;action=edit&amp;id={{id}}">
+						<span>{{thresholdName}}</span><span style="float: right; width: 30%; text-align:left"> {{value}}</span>
 					</a></li>
-					{{/devices}}
-				{{/device_types}}
+				{{/thresholds}}
+				{{^thresholds}}
+					<li>Il n'y a pas de seuil enregistré</li>
+				{{/thresholds}}
 			</ul>
-		</div>
+		</div>  <!-- /content -->
+
 	</div>
 </body>
 </html>

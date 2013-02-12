@@ -1,5 +1,7 @@
 #!/bin/bash
 
+clear && clear && clear
+
 # echo "a="$a"blorg"
 origin=`pwd` # saving current dir
 defaultValue="blorg"
