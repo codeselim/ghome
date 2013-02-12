@@ -7,6 +7,7 @@ var events = require('events');
 var net = require("net");
 var sensors_utils = require('./sensors')
 var get_shared_data = require('./shared_data').get_shared_data
+var set_shared_data = require('./shared_data').set_shared_data
 var decode = sensors_utils.decode_frame
 var check_checksum = sensors_utils.check_frame_checksum
 var eventEmitter = new events.EventEmitter();

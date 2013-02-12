@@ -169,7 +169,7 @@ function GLOBAL_INIT () {
 
 						sensors_values[rows[i].sid] = rows[i].value
 					}
-					console.log("Server startup states: " + JSON.stringify(sensors_values) + JSON.stringify(allowed_ids) + JSON.stringify(connected_ids))
+					console.log("Server startup states: " + JSON.stringify(sensors_values) + JSON.stringify(allowed_ids))
 					set_shared_data('SENSORS_VALUES', sensors_values) //* Will be updated by EventMonitor
 					start()
 				})
