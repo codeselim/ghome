@@ -52,7 +52,7 @@ var stats_computer = require('./stats_computer')
 //*************** Constants **************
 var SENSORS_SERVER_PORT = 8000
 var WEB_SERVER_PORT = 80
-var ANDROID_NOTIF_SERVER_PORT = 5000
+var ANDROID_NOTIF_SERVER_PORT = 4500
 //****************************************
 
 function frame_to_android_notif (frame_data) {
@@ -105,7 +105,7 @@ function GLOBAL_INIT () {
 		process.exit()
 	}
 	console.log("Starting Initializing data...")
-	var ip = utils.getLocalPublicIpAddress(["eth0", "p2p1"])
+	var ip = utils.getLocalPublicIpAddress(["wlan0", "wlan1"])
 	set_shared_data('MAIN_SERVER_IP', ip)
 	set_shared_data('WEB_UI_HOME', 'http://' + ip + "/")
 	set_shared_data('MAIN_SERVER_PORT', 5000)
