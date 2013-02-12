@@ -61,7 +61,7 @@ function decode_data_byte (type_s, frame_data) {
 			   //value of power consumption in a minute in Wh
 			return value;
 		default:
-			return null;
+			return [-1, -1];
 	}
 }
 
