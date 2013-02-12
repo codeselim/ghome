@@ -39,28 +39,34 @@ var taskRH  = function (req, res, params, responseSender) {
 			console.log('get_actions: deviceType=' + params.query.deviceType)
 			//* Required data: for deviceType, list of actions, and for each: {actionlabel: action id}
 			var actions = ''
-			params.db.select_query("SELECT at.id , at.name FROM "+t.at+" at WHERE at.sensor_type_id = ? ", [params.query.deviceType], function (err, rows){
-			if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
-			var actions = sutils.generate_json_get_actions_by_device_type(rows)
-			res.end(actions)
+			params.db.select_query("SELECT at.id, at.name " +
+									"FROM `" + t.at + "` at " +
+									"WHERE at.sensor_type_id = ? "
+			, [params.query.deviceType], function (err, rows){
+				if(err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
+				var actions = sutils.generate_json_get_actions_by_device_type(rows)
+				res.end(actions)
 			})
 			break
 		}
 
 		case 'get_event_types' : //* Returns the events available for a given sensor type
 		{
+			console.log("SCHMOD: Getting event types from sensor_type")
+			console.log(params)
 			var data = {}
 			//* Required data: for sourceType, list of events, and for each: {evtlabel: evtid}
-			var q = "SELECT event_type_id " + 
-				"FROM `" + t['stet'] + "` " +
-				"WHERE sensor_type_id = ?"
-			var p = [Math.abs(params.query.sourceType)]
+			var q = "SELECT stet.event_type_id, et.name " + 
+					"FROM `" + t['stet'] + "` stet " +
+					"INNER JOIN `" + t['et'] + "` et ON (et.id = stet.event_type_id) " +
+					"WHERE stet.sensor_type_id = ?"
+			var p = [parseInt(params.query.sourceType)]
 			params.db.select_query(q, p, function (err, rows) {
 				for(var i in rows) {
-					data[rows[i]['event_type_id']] = rows[i]['event_type_id']
+					data[rows[i]['name']] = rows[i]['event_type_id']
 				}
+				res.end(JSON.stringify(data))
 			})			
-			res.end(JSON.stringify(data))
 			break
 		}
 
@@ -68,66 +74,98 @@ var taskRH  = function (req, res, params, responseSender) {
 		{
 			var data = {}
 			//* Required data: for evtType (resp. sensorType, list of events, and for each: {evtlabel: evtid}
-			if (params.query.evtType) {
-				var data = {}
-				var q = "SELECT condition_type_id " + 
-					"FROM `" + t['etct'] + "` " +
-					"WHERE event_type_id = ?"
-				var p = [Math.abs(params.query.evtType)]
+			if (params.query.evtType) { // Getting the conditions types related to a given event_type
+				console.log("SCHMOD: Getting conditions types from event_type")
+				var q = "SELECT etct.condition_type_id, ct.name " + 
+						"FROM `" + t['etct'] + "` etct " +
+						"INNER JOIN `" + t['ct'] + "` ct ON (ct.id = etct.condition_type_id) " +
+						"WHERE etct.event_type_id = ?"
+				var p = [parseInt(params.query.evtType)]
 				params.db.select_query(q, p, function (err, rows) {
 					for(var i in rows) {
-						data[rows[i]['condition_type_id']] = rows[i]['condition_type_id']
+						data[rows[i]['name']] = rows[i]['condition_type_id']
 					}
+					res.end(JSON.stringify(data))
 				})
-			} else if (params.query.sensorType && params.query.sensorType < 10 ) {
-				var data = {
-					  '<' : 1 
-					, '>' : 2
-					, 'pony' : 11
-					, 'unicorn' : 12
-					, 'narwhal' : 13
-				}
+			} else if (params.query.sensorType) { // Getting the conditions types related to a given sensor_type
+				console.log("SCHMOD: Getting conditions types from sensor_type")
+				var q = "SELECT stct.condition_type_id, ct.name " + 
+						"FROM `" + t['stct'] + "` stct " +
+						"INNER JOIN `" + t['ct'] + "` ct ON (ct.id = stct.condition_type_id) " +
+						"WHERE stct.sensor_type_id = ?"
+				var st = parseInt(params.query.sensorType)
+				var p = [st]
+				params.db.select_query(q, p, function (err, rows) {
+					if (null != err) {
+					console.error("SCHMOD: SQL Query failed", err)
+					};
+					for(var i in rows) {
+						data[rows[i]['name']] = rows[i]['condition_type_id']
+					}
+					res.end(JSON.stringify(data))
+				})
 			} 
-			// console.log(data)
-			res.end(JSON.stringify(data))
 			break
 		}
 
 		case 'get_condition_values' : //* Returns the possible values for a given condition type
 		{
 			var data = {}
-			if (params.query.condType < 10) {
-				var data = { 'Seuil1' : 1, 'Seuil2' : 2}
-			}
-			res.end(JSON.stringify(data))
+			var q = 
+			"SELECT input_type " +
+			"FROM `" + t['ct'] + "` ct " +
+			"WHERE id = ?" 
+			var p = [parseInt(params.query.condType)]
+			params.db.select_query(q, p, function (err, rows) {
+				if (null != err) {
+					console.error("SCHMOD: SQL ERROR", err)
+				} else {
+					data['type'] = rows[0].input_type
+					if (data.type == 'list') {
+						q = 
+						"SELECT th.id AS id, th.name AS name " +
+						" FROM `" + t['thst'] + "` thst " +
+						" INNER JOIN `" + t['th'] + "` th ON(th.id = thst.threshold_id)" +
+						" WHERE thst.sensor_type_id = ?"
+						p = [parseInt([params.query.sensorType])]
+						data['values'] = {}
+						params.db.select_query(q, p, function (err, rows) {
+							if (null != err) {
+								console.log("SCHMOD: not a list", JSON.stringify(data))
+							} else {
+								for(var i in rows) {
+									data.values[rows[i]['name']] = rows[i]['id']
+								}
+								console.log("SCHMOD: IS a list", JSON.stringify(data))
+								res.end(JSON.stringify(data))
+							}
+						})
+					} else {
+						console.log("SCHMOD: NOT a list", JSON.stringify(data))
+						res.end(JSON.stringify(data))
+					}
+				}
+			})
 			break
 		}
 
 		case 'initCache' : //* Returns the html for a condition, preloaded with the sensors list (more?)
 		{
-			var data = {'conditionTemplate' : tpl.get_template_result("new_device_templates.html", {
-				  'conditionTemplate' : true
-				, 'evtSourceTypes' : [
-					{'label' : 'Sources spéciales', 'sensors' : [
-						  {'label' : 'Date', 'value' : 1, 'type' : 51}
-						, {'label' : 'Météo', 'value' : 2, 'type' : 52}
-					]},
-					{'label' : 'Capteurs Température', 'sensors' : [
-						  {'label' : 'Capteur Température1', 'value' : 1, 'type' : 2}
-						, {'label' : 'Capteur Température2', 'value' : 2, 'type' : 2}
-					]},
-					{'label' : 'Capteurs Présence', 'sensors' : [
-						  {'label' : 'Capteur Présence1', 'value' : 1, 'type' : 13}
-						, {'label' : 'Capteur Présence2', 'value' : 2, 'type' : 13}
-					]}
-				]
-			})}
-			res.end(JSON.stringify(data))
+			getEvtSources(params.db, function (evtSources) {
+				var data = {'conditionTemplate' : tpl.get_template_result("new_device_templates.html", {
+					  'conditionTemplate' : true
+					, 'evtSourceTypes' : evtSources
+				})}
+				res.end(JSON.stringify(data))
+			})
 			break
 		}
 
 		case 'submit':
 		{
+			console.log('-------------------------------------')
+			console.log(params.query)
+			console.log('-------------------------------------')
 			res.end(JSON.stringify({success: Math.random() > 0.5}))
 		}
 			break
@@ -140,49 +178,65 @@ var taskRH  = function (req, res, params, responseSender) {
 			/**
 			 *@TODO : get the devices that receive actions and adjust the query as well!! 
 			 */
-			params.db.select_query("SELECT st.name, s.sensor_type_id, s.id, s.name AS device_name " +
-							"FROM " + t.st + " st " +
-							"JOIN " + t.s + " s ON st.id = s.sensor_type_id " +
-							"WHERE s.sensor_type_id IN ( " +
-							"	SELECT sensor_type_id " +
-							"	FROM " + t.at + " " +
-							") " +
-							"ORDER BY s.sensor_type_id", 
+			params.db.select_query( 
+				"SELECT st.name AS name, arv.sensor_type_id AS sensor_type_id, arv.id AS id, arv.name AS device_name " +
+				"FROM " + t.st + " st " +
+				"INNER JOIN `" + t['arv'] + "` arv ON (st.id = arv.sensor_type_id) " +
+				"ORDER BY st.name, device_name ASC",
 				null, 
 				function (err, rows) {
-					if(null != err) console.log("[scheduler_module reported SQL_ERROR] : "+err);
+					if(null != err) {
+						console.log("[scheduler_module reported SQL_ERROR] : " + err)
+					}
 					
-					var deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
+					var actionDevices = sutils.generate_json_devices_list_from_sql_rows(rows)
 
-					var data = tpl.get_template_result("task.html", { 
-						  'deviceTypes' : deviceTypes
-						  //* Alternative device array
-						  // 'deviceTypes' : [{'label' : 'Prises', 'devices' : [{'label' : 'Prise1', 'value' : 1, 'type' : 1} , {'label' : 'Prise2', 'value' : 2, 'type' : 1} ]}, {'label' : 'Volets', 'devices' : [{'label' : 'Volet1', 'value' : 1, 'type' : 2} , {'label' : 'Volet2', 'value' : 2, 'type' : 2} ]} ]
-						, 'evtSourceTypes' : [
-							{'label' : 'Sources spéciales', 'sensors' : [
-							    {'label' : 'Date', 'value' : 1, 'type' : 51}
-								, {'label' : 'Météo', 'value' : 2, 'type' : 52}
-							]},
-							{'label' : 'Capteurs Température', 'sensors' : [
-							    {'label' : 'Capteur Température1', 'value' : 1, 'type' : 2}
-								, {'label' : 'Capteur Température2', 'value' : 2, 'type' : 2}
-							]},
-							{'label' : 'Capteurs Présence', 'sensors' : [
-							    {'label' : 'Capteur Présence1', 'value' : 1, 'type' : 3}
-								, {'label' : 'Capteur Présence2', 'value' : 2, 'type' : 3}
-							]}
-						] 
+					getEvtSources(params.db, function (evtSources) {
+						var tplData = {
+							 'actionDevices' : actionDevices,
+							 'evtSourceTypes' : evtSources
+						}
+
+						var html = tpl.get_template_result("task.html", tplData)
+
+						params.fileUrl = 'task.html'
+						responseSender(req, res, params, html)
 					})
-
-					params.fileUrl = 'task.html'
-					responseSender(req, res, params, data)			
 				})
 			break
 		}
 	}
 }
 
-
+/** Gets the event sources from the DB and passes them to the specified callback as first argument
+ * @param{dbms.Database} db : The dbms.Database object
+ * @param{function} callback : The callback to be called when the computation is over and to pass the data to
+ * @return{undefined} undefined
+*/
+function getEvtSources(db, callback) {
+	var evtSources = 
+	[
+		{
+			'label' : 'Sources spéciales', 
+			'devices' : [
+				{'label' : 'Date', 'id' : -1, 'type' : -1},
+				{'label' : 'Météo', 'id' : -2, 'type' : -2}
+			]
+		}
+	]
+	db.select_query(
+		"SELECT st.name AS name, elv.sensor_type_id AS sensor_type_id, elv.id AS id, elv.name AS device_name " +
+		"FROM " + t.st + " st " +
+		"INNER JOIN `" + t['elv'] + "` elv ON (st.id = elv.sensor_type_id) " +
+		"ORDER BY st.name, device_name ASC",
+		null,
+		function (err, rows) {
+			var es = sutils.generate_json_devices_list_from_sql_rows(rows)
+			evtSources = evtSources.concat(es)
+			callback(evtSources)
+		}
+	)
+}
 
 exports.schedulerRequestHandler = schedulerRH
 exports.taskRequestHandler = taskRH

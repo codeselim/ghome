@@ -148,13 +148,15 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		console.log('new device pageInit')
 		utils.initMessages()
 
-		$("#form").validate({
+		$("form").validate({
 			  rules: { 
 					  equip_id: "required"
+					, equip_label: "required"
 					, equip_type: "required"
 				} 
 			, messages: { 
 					  equip_id: "Veuillez entrez l'identifiant de l'équipemement à ajouter"
+					, equip_label: "Veuillez entrez un libellé pour l'équipemement à ajouter"
 					, equip_type: "Veuillez sélectionner le type d'équipement"
 				}
 			, errorPlacement: function(error, element) {
