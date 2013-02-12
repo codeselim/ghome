@@ -72,10 +72,11 @@ function decode_data_byte (type_s, frame_data) {
 				 case 7 :
 				 	return 4; //bottom left
 				 default:
-				 	return -1;
+				 return 0;
+			
 
 			}
-			return value;
+			break
 		default:
 			return -1
 	}
