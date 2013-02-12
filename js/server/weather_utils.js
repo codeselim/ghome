@@ -1,8 +1,8 @@
 "use strict"
 
 var apiKey = "457b887c44133538131202"
-var baseURL = "/feed/search.ashx?key=" + apiKey + "&format=json&query={CITY}"
-var apiHost = "www.worldweatheronline.com"
+var baseURL = "/feed/weather.ashx?q={CITY},France&key=" + apiKey + "&format=json"
+var apiHost = "free.worldweatheronline.com"
 
 function getWeatherFromCity (city, callback) {
 	var http = require('http')
@@ -18,8 +18,9 @@ function getWeatherFromCity (city, callback) {
 		resp.on("end", function () {
 			console.log("Text answer: ", body)
 			var data = JSON.parse(body)
-			console.log("Parsed data: ", JSON.stringify(data))
-			callback(result)
+			
+			console.log("Parsed data: ", JSON.stringify(data.data.current_condition))
+			// callback(result)
 		})
 	})
 }
