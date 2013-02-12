@@ -1,12 +1,15 @@
+"use strict"
 // This module is a server for sending native notifications to connected Android devices.
 // It can have a dynamic number of connected devices and will broadcast notifications to all of them
 
-var net = require("net");
-console.log("Starting Android Service server")
+var net = require("net")
+var get_shared_data = require("./shared_data").get_shared_data
+console.log("ANDRONOTIF: Starting Android Service server")
 var streamId = 0
 var streams = {}
 var server = null
 var NOTIF_PREFIX = "notif: "
+var ACTION_PREFIX = "url: "
 // var eventEmitter = new events.EventEmitter();
 // var ANDROID_NOTIF_EVENT = "pushAndroidNotif"
 
@@ -19,7 +22,7 @@ function start (port, ip) {
 		stream.setEncoding("utf8");
 
 		stream.addListener("connect", function(){
-			console.log("New server connection established (device number", myStreamId, ").")
+			console.log("ANDRONOTIF: New ANDROID server connection established (device number", myStreamId, ").")
 		// Debug purpose : If you want to debug the notifications, uncomment that code
 		// 	var i = 0
 		// 	a = setInterval(function () {
@@ -30,10 +33,11 @@ function start (port, ip) {
 		// 			shutdown()
 		// 		}
 		// 	}, 3000)
+			write_to_device(myStreamId, "You are now connected to your GHome Server", get_shared_data('WEB_UI_HOME'))
 		});
 
 		function shutdown () {
-			console.log("Closing connection to Android device number", myStreamId)
+			console.log("ANDRONOTIF: Closing connection to Android device number", myStreamId)
 			var stop = true
 			// clearInterval(a)
 			delete streams[myStreamId]
@@ -45,16 +49,24 @@ function start (port, ip) {
 
 		var buffer = ""
 		stream.addListener("data", function (data) {
-			console.log(new Date(), "New data packet came in:", data)
-			stream.write(new Date().toString() + ": ACK\r\n")
+			console.log("ANDRONOTIF: " + new Date().toString() + "New data packet came in:", data)
+			stream.write("ANDRONOTIF: " + new Date().toString() + ": ACK\r\n")
 		});
 	})
 	server.listen(port, ip);
 }
 
-function push_android_notif (notifText) {
+function write_to_device (streamId, message, url) {
+	var urlTxt = ''
+	if (url) {
+		urlTxt = "\t" + ACTION_PREFIX + url
+	}
+	streams[streamId].write(NOTIF_PREFIX + message + urlTxt)
+}
+
+function push_android_notif (notifText, url) {
 	for(var streamId in streams) {
-		streams[streamId].write(NOTIF_PREFIX + notifText)
+		write_to_device(streamId, notifText, url)
 	}
 }
 
