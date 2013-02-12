@@ -177,6 +177,8 @@ function handleEvent(frame_data) {
 			var sensor_type = rows[r].sensor_sensor_type_id
 			var value = sensors_utils.decode_data_byte(sensor_type, frame_data)
 			var sensor_id = rows[r].sensor_id
+			 console.log("EM_TYPE SENSOR : " + sensor_type);
+			 console.log("EM_VALUE_SENSOR : " + value);
 			 console.log("EM_sensor_type SENSOR : " + sensor_type);
 			if (sensor_type in dictSensorEvent) {
 				console.log("EM_SEND EVENT")

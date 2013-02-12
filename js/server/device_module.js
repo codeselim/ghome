@@ -208,9 +208,10 @@ var deviceManagementRH  = function (req, res, params, responseSender) {
 							var typeId = deviceTypes[i].id
 							for(var j in deviceTypes[i].devices) {
 								var s = deviceTypes[i].devices[j]
-								deviceTypes[i]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])	
+								deviceTypes[i].devices[j]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])	
 							}
 						}
+
 
 						var tplParams = {'device_types' : deviceTypes}
 
