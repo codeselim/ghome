@@ -176,6 +176,10 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 				testDevice()
 			}
 		})
+
+		$('a#changeState').click(function() {
+			$('#statePopup').popup('open')	
+		})
 	}
 
 	return {

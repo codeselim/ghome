@@ -110,21 +110,38 @@ var deviceRH = function (req, res, params, responseSender) {
 		case 'edit':
 			if (params.query.id) {
 				getDeviceInfo(params.db, params.query.id, function (deviceInfo) {
-					console.log(deviceInfo)
+					deviceInfo.editMode = true
+					deviceInfo.value = sutils.getDisplayableState(deviceInfo.devices_types.id, get_shared_data('SENSORS_VALUES')[params.query.id])	
+					console.log('## ', JSON.stringify(deviceInfo))
 
-					for(var i in deviceInfo.devices_types) {
-						var dt = deviceInfo.devices_types[i]
-						console.log(dt)
-						if (dt.id == deviceInfo.device.type) {
-							dt.selected = true
-							break
+					params.db.select_query("SELECT at.id, at.name FROM `" + t.at + "` at WHERE at.sensor_type_id = ? ",
+								[deviceInfo.device.type], function (err, rows){
+						if(err) {
+							params.error404 = true
+							responseSender(req, res, params)
+						} else {
+							console.log('## rows', JSON.stringify(rows))							
+							deviceInfo.actions = rows
+							for(var i in deviceInfo.devices_types) {
+								var dt = deviceInfo.devices_types[i]
+								console.log(dt)
+								if (dt.id == deviceInfo.device.type) {
+									dt.selected = true
+									break
+								}
+							}
+
+							console.log('## ', JSON.stringify(deviceInfo))
+
+							var data = tpl.get_template_result("device.html", deviceInfo)
+							params.fileUrl = 'device.html'
+							responseSender(req, res, params, data)
 						}
-					}
-
-					var data = tpl.get_template_result("device.html", deviceInfo)
-					params.fileUrl = 'device.html'
-					responseSender(req, res, params, data)
+					})
 				})
+			} else {
+				params.error404 = true
+				responseSender(req, res, params)
 			}
 			break	
 	}

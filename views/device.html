@@ -16,13 +16,21 @@
 		</div>
 		<div data-role="content">
 			<!-- Content-Begin -->
+
+			{{#editMode}}
+			<ul data-role="listview" data-divider-theme="d" data-inset="true">
+					<li data-role="list-divider">Etat</li>
+					<li data-icon="gear"><a id="changeState">{{value}}</a></li>
+			</ul>
+			{{/editMode}}
+
 			<form action="/" method="GET" id="form">
 				<input type="hidden" name="id" value="{{device.id}}" />
 				<ul data-role="listview" data-divider-theme="d" data-inset="true">
 					<li data-role="list-divider">Type</li>
 					<li>
-						<div data-role="fieldcontain" {{#device.id}}class='locked'{{/device.id}}>
-							<select name="equip_type" id="equip_type" {{#device.id}}disabled{{/device.id}}>
+						<div data-role="fieldcontain" {{#editMode}}class='locked'{{/editMode}}>
+							<select name="equip_type" id="equip_type" {{#editMode}}disabled{{/editMode}}>
 								<option value="">-- Choisir --</option>
 								{{#devices_types}}
 								{{#selected}}
@@ -64,6 +72,19 @@
 			<div data-role="popup" id="popup">
 				<a href="#" data-rel="back" data-role="button" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
 				<p id="popupContent">Oops</p>
+			</div>
+
+			<div data-role="popup" id="statePopup">
+				<a href="#" data-rel="back" data-role="button" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<div>
+					<select name="stateSelect">
+						{{#actions}}
+						<option value="{{id}}">{{name}}</option>
+						{{/actions}}
+					</select>
+					<a href="#" data-role="button">Valider</a>
+					<p >Oops</p>
+				</div>
 			</div>
 
 			<!-- Content-End -->
