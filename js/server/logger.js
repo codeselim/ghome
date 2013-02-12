@@ -21,7 +21,7 @@ function insertLog(frame_data) {
 			for(var i in rows) {
 				type = rows[i].sensor_type_id
 				value = sensors_utils.decode_data_byte(type, frame_data)
-				db.select_query("INSERT INTO " + tables.l + " VALUES (?, ?, ?, datetime() )", ["NULL", rows[i].sensor_id, value], function (err, rows){
+				db.select_query("INSERT INTO " + tables.l + " VALUES (NULL, ?, ?, datetime() )", [rows[i].sensor_id, value], function (err, rows){
 					if(err) {
 						console.error("[INSERT_LOG_ERROR] : " + err)
 					}
