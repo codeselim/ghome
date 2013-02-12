@@ -27,9 +27,9 @@ set_shared_data('SQL_TABLES', {'st': 'sensors_types',
 								'thst':'thresholds_sensor_types'
 							})
 var allowed_ids = []  //[8991608, 346751, 8991608, 111198, 112022, 115002] 
-var connected_ids = [] //allowed_ids.slice(0) // copies the content of allowed_ids
+var software_ids = {}
+set_shared_data('SOFTWARE_IDS', software_ids)
 set_shared_data('ALLOWED_IDS', allowed_ids)
-set_shared_data('CONNECTED_IDS', connected_ids)
 var t = get_shared_data('SQL_TABLES')
 var plugins = ['enocean_sensors'] // Edit this array in order to load new plugins
 //******************************************************************
@@ -118,14 +118,14 @@ function GLOBAL_INIT () {
 		console.log("DB connected.")
 		set_shared_data('IN_TEMP', 0) // @TODO : Get the value from the database instead !
 		set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
-		var q = "SELECT hardware_id FROM `" + t['s'] + "`"
+		var q = "SELECT hardware_id, id FROM `" + t['s'] + "`"
 		db.select_query(q, null, function (err, rows) {
 			if (null != err) {
 				cancel_startup(q)
 			}
 			for(var i in rows) {
 				allowed_ids.push(rows[i].hardware_id)
-				connected_ids.push(rows[i].hardware_id)
+				software_ids[rows[i].hardware_id] = rows[i].id
 			}
 			
 			var q = "SELECT name, value FROM `" + t['set'] + "` "
@@ -194,17 +194,7 @@ function start () {
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, events_monitor.handleEvent)
 	events_monitor.events.addListener(events_monitor.SENSOR_EVENT, tasks_executor.execute_task)
 	events_monitor.events.addListener(events_monitor.SENSOR_EVENT, spy.check_spy)
-	
-	/** 
-	*
-	*/
-	// var database = new Database;
-	// database.select_query()
-
-
 	sensors_serv.start(db, web_serv, SENSORS_SERVER_PORT, allowed_ids)
-	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
-	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
 }
 
 
