@@ -23,7 +23,26 @@
 				<span id="temp-out" class="{{COLOR_TEMP_OUT}}-temp bold">{{OUT_TEMP}} &deg;C</span> | 
 				<span id="heating" class="mode-{{HEATING_STATE}} bold">{{HEATING_STATE}}</span> |
 				<span id="consumtion">{{CONSUMTION}} kWh</span>
-				<div id="weather">{{WEATHER_PIC}}</div>
+				<div id="weather">
+					{{#WEATHER}}
+					{{{wpic}}}
+					<div class="w-additional-infos">
+						<span class="w-pressure">
+							{{pressure}} mbars
+						</span>	
+						<span class="w-wind">
+							{{wind}} km/h
+						</span>	
+						<span class="w-temp-c">
+							{{temp}} &deg;C
+						</span>	
+						<span class="w-humidity">
+							{{humidity}} % d'humidité
+						</span>	
+					</div>
+
+					{{/WEATHER}}
+				</div>
 			</div>
 			<ul data-role="listview" data-divider-theme="b" data-inset="true" >
 				<!-- <li><a data-transition="slide" href="/?module=app">Test notifs</a></li> -->
