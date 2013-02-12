@@ -53,7 +53,7 @@ function execute_task(event_id, origin_id) {//this function will search the good
 				} else if (event_id == 6) {//change of hour
 					stats_computer.temperature_h();
 					stats_computer.consumption_h();
-				} else if (event_id == 7) {//change of minute
+				} else if (event_id == 9) {//change of month
 					stats_computer.temperature_m();
 					stats_computer.consumption_m();
 				}
