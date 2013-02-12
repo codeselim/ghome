@@ -185,7 +185,7 @@ function sendTimeEvent() {
 */
 	// Save date of last execution
 	var fileLastExecution = fs.openSync("lastExecutionTimer.txt", "w");
-	fs.writeSync(fileLastExecution, currentTime.toLocaleString(), 0, encoding='utf8');
+	fs.writeSync(fileLastExecution, currentTime.toLocaleString(), 0);
 	fs.closeSync(fileLastExecution);
 
 }
@@ -216,7 +216,7 @@ function handleEvent(frame_data) {
 			var type = rows[r].sensor_type_id
 			var value = sensors_utils.decode_data_byte(type, frame_data)
 			var sensor_id = rows[r].sensor_id
-			// console.log(type);
+			 console.log("TYPE SENSOR : " + type);
 			if (type in Object.keys(dictSensorEvent)) {
 				dictSensorEvent[type](sensor_id, type, value);
 			}
