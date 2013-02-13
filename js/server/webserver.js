@@ -7,13 +7,14 @@ var qs 		    = require('querystring');
 
 var tpl       = require('./template_engine')
 var shared    = require('./shared_data')
+var get_shared_data = shared.get_shared_data
 var sseSender = require('./sse_sender')
 var device    = require('./device_module')
 var scheduler = require('./scheduler_module')
 var stats_computer 	  	= require('./stats_computer')
 var threshold = require('./threshold_module')
 var spy_webm  = require('./spy_web_module');
-
+var wutils    = require('./weather_utils')
 var webdir = '../..'
 /**
  * Request handlers
@@ -81,15 +82,24 @@ function sendPlainHTML(fileName, args, path) {
 
 // @TODO: MOVE IN ANOTHER FILE BEGIN ///////////////////////////////////////////////////////////////
 function homeReqHandler(req, res, params, responseSender) {
-	var templateData = {
-		'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
-		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
-		, 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
-		, 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
-	}
-	var data = tpl.get_template_result("home.html", templateData)
-	params['fileUrl'] = 'home.html'
-	responseSender(req, res, params, data)
+	var wpic = ''
+	wutils.getWeatherFromCity(get_shared_data('weather_location'), function (wData) {
+		if ("weatherIconUrl" in wData) {
+			var url = wData.weatherIconUrl[0].value
+			wpic = '<img src="' + url + '" alt="' + escape(wData.weatherDesc[0].value) + '" />'
+
+		}
+		var templateData = {
+			'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
+			, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
+			, 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
+			, 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
+			, 'WEATHER' : {'wpic': wpic, 'temp': wData.temp_C, 'pressure': wData.pressure, 'humidity': wData.humidity, 'wind': wData.windspeedKmph}
+		}
+		var data = tpl.get_template_result("home.html", templateData)
+		params['fileUrl'] = 'home.html'
+		responseSender(req, res, params, data)
+	})
 }
 
 /**  This function returns the CSS temperature color to be applied to a given
@@ -188,10 +198,10 @@ function start (db, port) {
 				//handling POST data	
 				if(req.method === "POST") {
 					req.addListener("data", function(postDataChunk) {
-					urlParams['postData'] += postDataChunk;
-					//console.log("Received POST data chunk '"+ postDataChunk + "'.");
-					var json = qs.parse(urlParams.postData);
-					console.log("POST data sent");
+						urlParams['postData'] += postDataChunk;
+						//console.log("Received POST data chunk '"+ postDataChunk + "'.");
+						var json = qs.parse(urlParams.postData);
+						console.log("POST data sent");
 					});
 				}
 

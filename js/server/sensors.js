@@ -101,7 +101,7 @@ function getDisplayableState (typeId, value) {
 		return stateDisplayers[typeId](value)
 	} else {
 		// return 'Unable to get the sensor\'s state'
-		return 'Pas de données'
+		return 'Pas de donnée'
 	}
 }
 

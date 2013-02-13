@@ -27,9 +27,9 @@ set_shared_data('SQL_TABLES', {'st': 'sensors_types',
 								'thst':'thresholds_sensor_types'
 							})
 var allowed_ids = []  //[8991608, 346751, 8991608, 111198, 112022, 115002] 
-var connected_ids = [] //allowed_ids.slice(0) // copies the content of allowed_ids
+var software_ids = {}
+set_shared_data('SOFTWARE_IDS', software_ids)
 set_shared_data('ALLOWED_IDS', allowed_ids)
-set_shared_data('CONNECTED_IDS', connected_ids)
 var t = get_shared_data('SQL_TABLES')
 var plugins = ['enocean_sensors'] // Edit this array in order to load new plugins
 //******************************************************************
@@ -88,6 +88,7 @@ function load_plugins () {
 		require(p + 'end_tests.js')
 		require(p + 'communicators.js')
 		require(p + 'state_displayers.js')
+		require(p + 'events_handlers.js')
 	}
 }
 
@@ -111,10 +112,6 @@ function GLOBAL_INIT () {
 	set_shared_data('MAIN_SERVER_IP', "134.214.105.28")
 	set_shared_data('WEB_UI_HOME', 'http://' + ip + "/")
 	set_shared_data('MAIN_SERVER_PORT', 5000)
-	set_shared_data('IN_TEMP_SENSOR_ID', 1)
-	set_shared_data('OUT_TEMP_SENSOR_ID', 1)
-	set_shared_data('IN_TEMP_SENSOR_HID', 8991608)
-	set_shared_data('OUT_TEMP_SENSOR_HID', 8991608)
 	db = new dbms.Database()
 	console.log("Connecting to db...")
 	db.connect('dat', function () {
@@ -122,38 +119,60 @@ function GLOBAL_INIT () {
 		console.log("DB connected.")
 		set_shared_data('IN_TEMP', 0) // @TODO : Get the value from the database instead !
 		set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
-		var q = "SELECT hardware_id FROM `" + t['s'] + "`"
+		var q = "SELECT hardware_id, id FROM `" + t['s'] + "`"
 		db.select_query(q, null, function (err, rows) {
 			if (null != err) {
 				cancel_startup(q)
 			}
 			for(var i in rows) {
 				allowed_ids.push(rows[i].hardware_id)
-				connected_ids.push(rows[i].hardware_id)
+				software_ids[rows[i].hardware_id] = rows[i].id
 			}
 			
-			var query = 
-			" SELECT sensor_id AS sid, MAX(time), value " +
-			" FROM `" + t['l'] + "` l " +
-			" INNER JOIN `" + t['s'] + "` s ON (s.id = l.sensor_id)" +
-			" GROUP BY sensor_id";//* /!\ According to StackOverflow, when using BTree as indexes (which is the case with sqlite), the maximum (key1, key2, key3) tuple will be the one returned by the GROUP BY and thus, for us, the last one in terms of time
-			db.select_query(query, null, function (err, rows) {
+			var q = "SELECT name, value FROM `" + t['set'] + "` "
+			db.select_query(q, null, function (err, rows) {
 				if (null != err) {
-					cancel_startup(query)
+					cancel_startup(q)
 				}
 				for(var i in rows) {
-					if (rows[i].sid == get_shared_data('OUT_TEMP_SENSOR_ID')) {
-						set_shared_data('OUT_TEMP', parseFloat(rows[i].value).toFixed(1))
+					var setting = rows[i].name
+					var value = rows[i].value
+					if (setting == "main_inside_temperature_sensor") {
+						set_shared_data('IN_TEMP_SENSOR_ID', parseInt(value))
+					} else if (setting == "main_outside_temperature_sensor") {
+						set_shared_data('OUT_TEMP_SENSOR_ID', parseInt(value))
+					} else if (setting == "main_inside_temperature_sensor_hid") {
+						set_shared_data('IN_TEMP_SENSOR_HID', parseInt(value))
+					} else if (setting == "main_outside_temperature_sensor_hid") {
+						set_shared_data('OUT_TEMP_SENSOR_HID', parseInt(value))
+					} else {
+						set_shared_data(setting, value)
 					}
-					if (rows[i].sid == get_shared_data('IN_TEMP_SENSOR_ID')) {
-						set_shared_data('IN_TEMP', parseFloat(rows[i].value).toFixed(1))
-					}
-
-					sensors_values[rows[i].sid] = rows[i].value
 				}
-				console.log("Server startup states: " + JSON.stringify(sensors_values) + JSON.stringify(allowed_ids) + JSON.stringify(connected_ids))
-				set_shared_data('SENSORS_VALUES', sensors_values) //* Will be updated by EventMonitor
-				start()
+
+				var query = 
+				" SELECT sensor_id AS sid, MAX(time), value " +
+				" FROM `" + t['l'] + "` l " +
+				" INNER JOIN `" + t['s'] + "` s ON (s.id = l.sensor_id)" +
+				" GROUP BY sensor_id";//* /!\ According to StackOverflow, when using BTree as indexes (which is the case with sqlite), the maximum (key1, key2, key3) tuple will be the one returned by the GROUP BY and thus, for us, the last one in terms of time
+				db.select_query(query, null, function (err, rows) {
+					if (null != err) {
+						cancel_startup(query)
+					}
+					for(var i in rows) {
+						if (rows[i].sid == get_shared_data('OUT_TEMP_SENSOR_ID')) {
+							set_shared_data('OUT_TEMP', parseFloat(rows[i].value).toFixed(1))
+						}
+						if (rows[i].sid == get_shared_data('IN_TEMP_SENSOR_ID')) {
+							set_shared_data('IN_TEMP', parseFloat(rows[i].value).toFixed(1))
+						}
+
+						sensors_values[rows[i].sid] = rows[i].value
+					}
+					console.log("Server startup states: " + JSON.stringify(sensors_values) + JSON.stringify(allowed_ids))
+					set_shared_data('SENSORS_VALUES', sensors_values) //* Will be updated by EventMonitor
+					start()
+				})
 			})
 		})
 	})
@@ -176,17 +195,7 @@ function start () {
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, events_monitor.handleEvent)
 	events_monitor.events.addListener(events_monitor.SENSOR_EVENT, tasks_executor.execute_task)
 	events_monitor.events.addListener(events_monitor.SENSOR_EVENT, spy.check_spy)
-	
-	/** 
-	*
-	*/
-	// var database = new Database;
-	// database.select_query()
-
-
 	sensors_serv.start(db, web_serv, SENSORS_SERVER_PORT, allowed_ids)
-	set_shared_data('IN_TEMP_SENSOR_ID', 8991608)
-	set_shared_data('OUT_TEMP_SENSOR_ID', 8991608)
 }
 
 
