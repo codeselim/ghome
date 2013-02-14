@@ -142,13 +142,37 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		})
 		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
 	}
+
+	var changeDeviceState = function() {
+		console.log($('[name=newState]').val())
+		$.ajax({
+				'url'      : "/"
+			, 'dataType' : 'json'
+			, 'data'     : {
+					  'module':'device_management'
+					, 'action':'change_device_state'
+					, 'newStateId': $('[name=newState]').val()
+					, 'deviceId': $('[name=id]').val()
+				}
+		})
+		.done(function(data) {
+			console.log(data)
+			if (data.success) {
+				utils.addMessage('success', 'La requête a été envoyée à l\'équipemement')
+				$('#statePopup').popup('close')
+			} else {
+				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
+			}
+		})
+		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
+	}
 	
 	//*** Returned functions *************************************************************************
 	var pageInit = function pageInit() {
 		console.log('new device pageInit')
 		utils.initMessages()
 
-		$("form").validate({
+		$("#mainForm").validate({
 			  rules: { 
 					  equip_id: "required"
 					, equip_label: "required"
@@ -159,15 +183,19 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 					, equip_label: "Veuillez entrez un libellé pour l'équipemement à ajouter"
 					, equip_type: "Veuillez sélectionner le type d'équipement"
 				}
-			, errorPlacement: function(error, element) {
-				//* Needed to place the error message out of the select menu.
-				if (element.is('select')) {
-					error.insertAfter($(element).parent())
-				} else {
-					error.insertAfter(element)
-				}
-			}
+			, errorPlacement: utils.errorPlacementFix
 			, submitHandler: submitForm
+		})
+
+		$("#stateForm").validate({
+			  rules: { 
+					  newState: "required"
+				} 
+			, messages: { 
+					  newState: "Veuillez sélectionner l'état désiré de l'équipemement"
+				}
+			, errorPlacement: utils.errorPlacementFix
+			, submitHandler: changeDeviceState
 		})
 		
 		$("#test").on('click',function(){

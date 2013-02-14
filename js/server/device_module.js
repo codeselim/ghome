@@ -69,6 +69,13 @@ function getDeviceInfo (db, deviceid, callback) {
 
 var deviceRH = function (req, res, params, responseSender) {
 	switch (params.query.action) {
+		case 'change_device_state':
+			console.log('send action',params.query.actionCode,'to device', params.query.deviceId)
+			require('./device_communicator').sendToSensor(params.query.deviceId, params.query.actionCode)
+			res.end(JSON.stringify({'success':true}))
+			break
+
+
 		case 'submit_new':
 			var q = "INSERT INTO `" + t['s'] + "` (id, name, hardware_id, sensor_type_id) VALUES (NULL, ?, ?, ?)"
 			var p = [params.query.equip_label, params.query.equip_id, params.query.equip_type]
