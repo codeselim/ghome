@@ -3,6 +3,7 @@ var eventsMonitor = require('../../events_monitor')
 var checkThresholds = eventsMonitor.checkThresholds
 var eventEmitter = eventsMonitor.eventEmitter
 var shared_data = require('../../shared_data')
+var SENSOR_EVENT = eventsMonitor.SENSOR_EVENT
 
 function tempEvent(idSensor, sensor_type_id, value) {
 	checkThresholds(idSensor, sensor_type_id, value);
