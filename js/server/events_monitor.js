@@ -191,3 +191,4 @@ exports.events = eventEmitter;
 exports.SENSOR_EVENT = SENSOR_EVENT;
 exports.addEventHandler = addEventHandler
 exports.checkThresholds = checkThresholds
+exports.eventEmitter = eventEmitter
