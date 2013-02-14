@@ -13,8 +13,9 @@ var device    = require('./device_module')
 var scheduler = require('./scheduler_module')
 var stats_computer 	  	= require('./stats_computer')
 var threshold = require('./threshold_module')
-var spy_webm  = require('./spy_web_module');
+var spy_webm  = require('./spy_web_module')
 var wutils    = require('./weather_utils')
+var sutils    = require('./sensors')
 var webdir = '../..'
 /**
  * Request handlers
@@ -32,31 +33,31 @@ var requestHandlers = {
 	, 'task'              : scheduler.taskRequestHandler
 	, 'threshold_list'    : threshold.thresholdListRequestHandler
 	, 'threshold'         : threshold.thresholdRequestHandler
-	// , 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
-	, 'postform'		  : postformHandler //test post implementation selim 	
-	, 'stats'			  : stats_computer.statsRH	
+	// , 'postform'		      : postformHandler //test post implementation selim 	@TODO keep?
+	, 'stats'			        : stats_computer.statsRH
+	, 'sse'               : sseSender.requestHandler
 }
 
 /* Same format as the request handles dict. Exceptions for the default request handler*/
 var exceptions = {
-	'/sse' : sseSender.requestHandler
+	// '/sse' : sseSender.requestHandler
 }
 
 
-function postformHandler(req, res, params, responseSender){
-		var templateData = {
-		'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
-		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
-		, 'TEST_DATA'		 : params.postData
-		, 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
-		, 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
-	}
-	var data = tpl.get_template_result("postform.html", templateData)
-	console.log(params['pathname'])
-	params['fileUrl'] = 'postform.html'
-	responseSender(req, res, params, data)
-}
+// function postformHandler(req, res, params, responseSender){
+// 		var templateData = {
+// 		  'IN_TEMP'		     : shared.get_shared_data('IN_TEMP')
+// 		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
+// 		, 'TEST_DATA'      : params.postData
+// 		, 'COLOR_TEMP_IN'  : sutils.temperatureStyle(shared.get_shared_data('IN_TEMP'))
+// 		, 'COLOR_TEMP_OUT' : sutils.temperatureStyle(shared.get_shared_data('OUT_TEMP'))
+// 	}
+// 	var data = tpl.get_template_result("postform.html", templateData)
+// 	console.log(params['pathname'])
+// 	params['fileUrl'] = 'postform.html'
+// 	responseSender(req, res, params, data)
+// }
 
 
 
@@ -88,45 +89,23 @@ function homeReqHandler(req, res, params, responseSender) {
 			var url = wData.weatherIconUrl[0].value
 			wpic = '<img src="' + url + '" alt="' + escape(wData.weatherDesc[0].value) + '" />'
 		}
+		var inTempValue = shared.get_shared_data('IN_TEMP')
+		var outTempValue = shared.get_shared_data('OUT_TEMP')
+		var tempSensorType = shared.get_shared_data('TEMP_SENSOR_TYPE')
+
 		var templateData = {
-			'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
-			, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
-			, 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
-			, 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
-			, 'WEATHER' : {'wpic': wpic, 'temp': wData.temp_C, 'pressure': wData.pressure, 'humidity': wData.humidity, 'wind': wData.windspeedKmph}
+			  'in_temp'     : sutils.getDisplayableState(tempSensorType, inTempValue)
+			, 'in_style'    : sutils.getStateStyle(tempSensorType, inTempValue)
+			, 'out_temp'    : sutils.getDisplayableState(tempSensorType, inTempValue)
+			, 'out_style'   : sutils.getStateStyle(tempSensorType, inTempValue)
+			, 'temp_in_id'  : shared.get_shared_data('IN_TEMP_SENSOR_ID')
+			, 'temp_out_id' : shared.get_shared_data('OUT_TEMP_SENSOR_ID')
+			, 'WEATHER'     : {'wpic': wpic, 'temp': wData.temp_C, 'pressure': wData.pressure, 'humidity': wData.humidity, 'wind': wData.windspeedKmph}
 		}
 		var data = tpl.get_template_result("home.html", templateData)
 		params['fileUrl'] = 'home.html'
 		responseSender(req, res, params, data)
 	})
-}
-
-/**  This function returns the CSS temperature color to be applied to a given
- * temperature depending on its value
- * For instance, -2 would be blue, 25 would be green, 32 would be red...
- * @param{int} temperature_value The temperature value (signed integer)
- * @return{string} Color name to be used in the CSS class ("{COLOR}-temp")
- */
-var temp2color = function(temperature_value) {
-	var color = ''
-	if (temperature_value >= 32) {
-		var color = 'red1'
-	} else if (temperature_value >= 25) {
-		var color = 'green3'
-	} else if (temperature_value >= 19) {
-		var color = 'green2'
-	} else if (temperature_value >= 10) {
-		var color = 'green1'
-	} else if (temperature_value >= 5) {
-		var color = 'blue1'
-	} else if (temperature_value >= 0) {
-		var color = 'blue2'
-	} else if (temperature_value >= -5) {
-		var color = 'blue3'
-	} else if (temperature_value <= -10) {
-		var color = 'blue4'
-	}
-	return color
 }
 // @TODO: MOVE IN ANOTHER FILE END /////////////////////////////////////////////////////////////////
 

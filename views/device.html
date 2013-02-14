@@ -21,10 +21,10 @@
 			<ul data-role="listview" data-divider-theme="d" data-inset="true">
 					<li data-role="list-divider">Etat</li>
 					{{#hasActions}}
-					<li data-icon="gear"><a id="changeState">{{value}}</a></li>
+					<li data-icon="gear"><a id="changeState" data-role="ghome-state" data-device-id="{{device.id}}">{{value}}</a></li>
 					{{/hasActions}}
 					{{^hasActions}}
-					<li>{{value}}</li>
+					<li id="deviceState" data-role="ghome-state" data-device-id="{{device.id}}">{{value}}</li>
 					{{/hasActions}}
 			</ul>
 			{{/editMode}}

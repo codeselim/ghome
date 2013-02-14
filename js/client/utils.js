@@ -1,6 +1,7 @@
 "use strict"
 
-define(function(){
+define(['jquery'], function($){
+	//** Form values ********************************************************************************/
 	//* Returns JSON from a "aa=yy&bb=zz" string 
 	var queryStringToHash = function queryStringToHash  (query) {
 		if (!query) {
@@ -54,8 +55,7 @@ define(function(){
 		return fields
 	}
 
-
-
+	//** Messages ***********************************************************************************/
 	var initMessages = function() {
 		var $msg = $('#messages')
 		if ($msg.find('li').length == 0) {
@@ -97,6 +97,7 @@ define(function(){
 		$msg.show()
 	}
 
+	//** Validation *********************************************************************************/
 	var errorPlacementFix = function(error, element) {
 		//* Needed to place the error message out of the select menu.
 		if (element.is('select')) {
@@ -105,7 +106,6 @@ define(function(){
 			error.insertAfter(element)
 		}
 	}
-
 
 	return {
 		  queryStringToHash: queryStringToHash

@@ -173,6 +173,10 @@ function handleEvent(frame_data) {
 			var sensor_id = rows[r].sensor_id
 			console.log("EM_TYPE SENSOR : " + sensor_type);
 			console.log("EM_VALUE_SENSOR : " + value);
+
+			// Notification to update the sensor's value
+			sensors_utils.notifyNewSensorState(sensor_id, sensor_type, value)
+
 			if (sensor_type in dictSensorEvent) {
 				console.log("EM_SEND EVENT")
 				dictSensorEvent[sensor_type](sensor_id, sensor_type, value)

@@ -19,10 +19,17 @@
 		<!-- <p>&nbsp;Faits/en cours en gris, pas touchés en jaune.</p> -->
 		<div data-role="content">
 			<div id="quick-dashboard">
-				<span id="temp-in" class="{{COLOR_TEMP_IN}}-temp bold">{{IN_TEMP}} &deg;C</span> | 
-				<span id="temp-out" class="{{COLOR_TEMP_OUT}}-temp bold">{{OUT_TEMP}} &deg;C</span> | 
-				<span id="heating" class="mode-{{HEATING_STATE}} bold">{{HEATING_STATE}}</span> |
+				<span id="temp-in" data-role="ghome-state" data-device-id="{{temp_in_id}}" data-use-style="true" class="{{in_style}}">{{in_temp}}</span>
+				| 
+				<span id="temp-out" data-role="ghome-state" data-device-id="{{temp_out_id}}" data-use-style="true" class="{{out_style}}">{{out_temp}}</span> 
+				{{#HEATING_STATE}}
+				| 
+				<span id="heating" class="mode-{{HEATING_STATE}} bold">{{HEATING_STATE}}</span>
+				{{/HEATING_STATE}}
+				{{#CONSUMTION}}
+				|
 				<span id="consumtion">{{CONSUMTION}} kWh</span>
+				{{/CONSUMTION}}
 				<div id="weather">
 					{{#WEATHER}}
 					{{{wpic}}}

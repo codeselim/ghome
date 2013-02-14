@@ -1,4 +1,6 @@
-define (function(){
+"use strict"
+
+define (['jquery'], function($){
   var sources = []
   var config = {
     'defaultSource' : '/sse'
@@ -46,10 +48,31 @@ define (function(){
     }
   }
 
+
+
+  //** Device State Listener **********************************************************************/
+  var initDeviceStateListener = function initDeviceStateListener() {
+    console.log('SSE enabled')
+    enableSSE(updateDeviceState, '/?module=sse&stream=deviceState')
+  }
+
+  var updateDeviceState = function updateDeviceState(event) {
+    console.log(event.data)
+    var data = JSON.parse(event.data)
+    var $deviceElt = $('[data-role=ghome-state][data-device-id='+ data.deviceId +']')
+    
+    $deviceElt.html(data.value)
+
+    if ($deviceElt.attr('data-use-style')) {
+      $deviceElt.addClass(data.style)
+    }
+  }
+
   return {
-    'enableSSE'   : enableSSE
-    , 'disableSSE': disableSSE
-    , 'config'    : config
+    'enableSSE'                : enableSSE
+    , 'disableSSE'             : disableSSE
+    , 'config'                 : config
+    , 'initDeviceStateListener': initDeviceStateListener
   }
 })
 

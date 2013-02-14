@@ -1,6 +1,10 @@
 #quick-dashboard {
 	font-size: 1.8em;
 	text-align: center;
+
+	[data-role=ghome-state] {
+		font-weight: bold;
+	}
 }
 
 #weather {
@@ -10,22 +14,24 @@
 	margin-bottom: 0.7em;
 	background-color: #c5c5c5;
 	height: 64px;
+
+	img {
+		float: left;
+		margin-right: 10px;
+	}
+	
+	.w-additional-infos {
+		display: block;
+		width: 200px;
+		font-size: 13px; /*yuck, pixels, but no time to do better*/
+		text-align: left;
+		padding-top: 1px;
+		padding-bottom: 1px;
+	}
+
+
+	.w-additional-infos span {
+		display: block;
+	}
 }
 
-#weather img {
-	float: left;
-	margin-right: 10px;
-}
-
-#weather .w-additional-infos {
-	display: block;
-	width: 200px;
-	font-size: 13px; /*yuck, pixels, but no time to do better*/
-	text-align: left;
-	padding-top: 1px;
-	padding-bottom: 1px;
-}
-
-#weather .w-additional-infos span {
-	display: block;
-}
