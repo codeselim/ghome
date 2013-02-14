@@ -51,7 +51,7 @@ function start (db, web_serv, port, allowed_ids) {
 				}
 				if (-1 != allowed_ids.indexOf(frame_data.id)) {
 					console.log("SENSSERV: ", "Sensor id=", frame_data.id)
-					console.log("SENSSERV: ", "This sensor is one of ours && the checksum is correct.")
+					console.log("SENSSERV: ", "This sensor is one of ours.")
 					if(check_checksum(frame_data, frame)) {
 						// console.log("The checksum is correct ?", check_checksum(frame_data))
 						eventEmitter.emit(SENSOR_FRAME_EVENT, frame_data) //* Sends the new "complete" frame to the event handler
