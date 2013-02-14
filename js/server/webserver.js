@@ -1,6 +1,6 @@
 "use strict"
 
-var http      = require('http')
+var https      = require('https')
 var fs        = require('fs')
 var mime      = require('mime')
 var qs 		    = require('querystring');
@@ -133,11 +133,11 @@ var temp2color = function(temperature_value) {
 
 /**
  * defaultResponseSender is going to be the default callback of every requestHandler
- * It sets the HTTP status to OK 200 and sends the content to be returned to the browser client
+ * It sets the HTTPs status to OK 200 and sends the content to be returned to the browser client
  * using the default mime type found using the file extension
  * IF YOU WANT TO WRITE YOUR OWN Content-Type HEADER THEN JUST DON'T CALL THE CALLBACK...
- * @param{http.ServerRequest} original request from the browser client
- * @param{http.ServerResponse} response object to send to the browser client
+ * @param{https.ServerRequest} original request from the browser client
+ * @param{https.ServerResponse} response object to send to the browser client
  * @param{???} parameters defined by the webserver
  * @param{string or Buffer} data to be send to the browser client using res.end()
  * @return{undefined} undefined
@@ -175,14 +175,20 @@ function start (db, port) {
 		authRealm : "GHome Management Console.",
 		authFile : __dirname + '/users.htpasswd'
 	});
-
-	http.createServer(function (req, res) {
+	var SSLoptions = {
+		key:    fs.readFileSync('./server.key'),
+		cert:   fs.readFileSync('./server.crt'),
+		ca:     fs.readFileSync('./ca.crt'),
+		requestCert:        true,
+		rejectUnauthorized: false
+	};
+	https.createServer(SSLoptions, function (req, res) {
 
 		basic.apply(req, res, function (username) {
 
 			req.setEncoding("utf8"); 
 
-			//* Note : req is an instance of http.ServerRequest and res is an instance of http.ServerResponse
+			//* Note : req is an instance of https.ServerRequest and res is an instance of https.ServerResponse
 			try {
 				var urlParams = require('url').parse(req.url, true)
 				urlParams['postData'] = ''
