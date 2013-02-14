@@ -31,6 +31,7 @@ function getWeatherFromCity (city, callback) {
 			body += chunk
 		});
 		resp.on("error", function () {
+			console.log('Unable to get weather info')
 			callback(result)
 		})
 		resp.on("end", function () {
@@ -40,6 +41,9 @@ function getWeatherFromCity (city, callback) {
 			// console.log("----------------------------------------\nParsed data: ", JSON.stringify(data))
 			callback(data)
 		})
+	}).on("error", function () {
+		console.log('Unable to get weather info')
+		callback(result)
 	})
 }
 

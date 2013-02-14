@@ -29,7 +29,7 @@
 			</ul>
 			{{/editMode}}
 
-			<form action="/" method="GET" id="form">
+			<form action="/" method="GET" id="mainForm">
 				<input type="hidden" name="id" value="{{device.id}}" />
 				<ul data-role="listview" data-divider-theme="d" data-inset="true">
 					<li data-role="list-divider">Type</li>
@@ -87,13 +87,16 @@
 				</div>
 				<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content">
 					<h3 class="ui-title">Veuillez sélectionner le nouvel état de l'équipement</h3>
-					<select name="stateSelect">
-						{{#actions}}
-						<option value="{{id}}">{{name}}</option>
-						{{/actions}}
-					</select>
-					<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">Annuler</a>    
-					<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="b" id="saveNewStateBtn">Enregistrer</a>  
+					<form action="/" id="actionForm">
+						<select name="stateSelect">
+							<option value="">-- Choisir une action --</option>
+							{{#actions}}
+							<option value="{{id}}">{{name}}</option>
+							{{/actions}}
+						</select>
+						<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">Annuler</a>    
+						<input type="submit" value="Enregistrer" data-theme="b">
+					</form>
 				</div>
 			</div>
 			{{/hasActions}}
