@@ -1,9 +1,10 @@
-var net = require('net')
+var net = require('net')	
 
 var localhost = new net.Socket()
 localhost.connect(8000, "localhost", function () { console.log("Simulator is connected to the local sensors_server.js port 8000") })
 
 function sendData(data) {
+	localhost.write(data);
 	localhost.end(data);
 }
 
@@ -29,10 +30,12 @@ function generateSimulations(){
 	var lastvalue  = 8
 
 
-var PLUG_SWITCH_ON_FRAME = 'A55A6B0555000000FF9F1E06304C'
+var PLUG_SWITCH_ON_FRAME = 'A55A6B0555000000FF9F1E06304C'  // id FF9F1E06
+var test_generated       = 'A55A6B0555000000FF9F1E07304C'
 
 
 	sendData(PLUG_SWITCH_ON_FRAME)
+	sendData(test_generated)
 	// setInterval(function(){ 
 	// 	var temp = Math.floor((Math.random()*lastvalue)+firstvalue);
 	// 	sendData(frames[temp].data) // send simulation frame to sensor_server
