@@ -42,16 +42,16 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 			for(var t in thresholds) {
 				var threshold = thresholds[t]
 				if (lastValues[idSensor] < threshold && value > threshold) {
-				//tasks_executor.execute_task(1);
-				eventEmitter.emit(SENSOR_EVENT, 1, idSensor);
+					//tasks_executor.execute_task(1);
+					eventEmitter.emit(SENSOR_EVENT, 1, idSensor);
+				}
+				if (lastValues[idSensor] > threshold && value < threshold) {
+					//tasks_executor.execute_task(2);
+					eventEmitter.emit(SENSOR_EVENT, 2, idSensor);
+				}
 			}
-			if (lastValues[idSensor] > threshold && value < threshold) {
-				//tasks_executor.execute_task(2);
-				eventEmitter.emit(SENSOR_EVENT, 2, idSensor);
-			}
-		}
-		//console.log("ERROR WITH "+ value);
-		lastValues[idSensor] = value;
+			//console.log("ERROR WITH "+ value);
+			lastValues[idSensor] = value;
 	});
 }
 
@@ -168,7 +168,7 @@ function handleEvent(frame_data) {
 			//var sensor_type = rows[r]["sensors_types.name"];
 			//var sensor_type_id = rows[r]["sensors_types.id"];
 			// If sensor_type_id is associated with a function in dictSensorEvent
-			var sensor_type = rows[r].sensor_sensor_type_id
+			var sensor_type = rows[r].sensor_type_id
 			var value = sensors_utils.decode_data_byte(sensor_type, frame_data)
 			var sensor_id = rows[r].sensor_id
 			console.log("EM_TYPE SENSOR : " + sensor_type);
@@ -190,3 +190,5 @@ exports.handleEvent = handleEvent;
 exports.events = eventEmitter;
 exports.SENSOR_EVENT = SENSOR_EVENT;
 exports.addEventHandler = addEventHandler
+exports.checkThresholds = checkThresholds
+exports.eventEmitter = eventEmitter

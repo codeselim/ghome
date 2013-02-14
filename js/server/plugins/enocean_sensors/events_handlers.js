@@ -1,5 +1,7 @@
 "use strict"
 var eventsMonitor = require('../../events_monitor')
+var checkThresholds = eventsMonitor.checkThresholds
+var eventEmitter = eventsMonitor.eventEmitter
 var shared_data = require('../../shared_data')
 
 function tempEvent(idSensor, sensor_type_id, value) {
