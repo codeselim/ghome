@@ -25,6 +25,35 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', '
 
 		var homePI = function() {
 			console.log('pageinit home!')
+			$("input[type='button']").mouseup(function () {
+				var dataToSubmit = {
+					'module'      : 'home',
+					//'action'      : 'restartServer'
+
+				}
+
+				dataToSubmit.action = this.name
+
+		console.log('Data to submit: ', JSON.stringify(dataToSubmit))
+
+		$.ajax({
+				'url'      : "/"
+			, 'dataType' : 'json'
+			, 'data'     : dataToSubmit
+			, contentType: 'application/json'
+			//, type     :  "POST"
+		})
+		.done(function(data) {
+			console.log(data)
+			if (data.success) {
+				window.location.href = '/?module=home'
+			} else {
+				console.log(data.msg)
+				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
+			}
+		})
+		}
+			)
 		}
 
 		var notifPI = function() {

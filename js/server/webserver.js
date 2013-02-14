@@ -1,5 +1,7 @@
 "use strict"
 
+var sys = require('sys')
+var terminal = require('child_process').spawn('bash')
 var http      = require('http')
 var fs        = require('fs')
 var mime      = require('mime')
@@ -16,6 +18,24 @@ var threshold = require('./threshold_module')
 var spy_webm  = require('./spy_web_module');
 var wutils    = require('./weather_utils')
 var webdir = '../..'
+
+terminal.stdout.on('data', function (data) {
+
+	console.log('stdout: ' + data);
+
+});
+terminal.stderr.on('data', function (data) {
+  console.log('stderr: ' + data);
+});
+terminal.stdin.write('cd ' + __dirname+'\n');
+//terminal.stdin.end();
+
+terminal.on('exit', function (code) {
+        console.log('child process exited with code ' + code);
+});
+
+
+
 /**
  * Request handlers
  * Prototype: function(req, res, params, responseSender)
@@ -80,6 +100,7 @@ function sendPlainHTML(fileName, args, path) {
 
 }
 
+
 // @TODO: MOVE IN ANOTHER FILE BEGIN ///////////////////////////////////////////////////////////////
 function homeReqHandler(req, res, params, responseSender) {
 	// var wpic = ''
@@ -89,6 +110,26 @@ function homeReqHandler(req, res, params, responseSender) {
 	// 		wpic = '<img src="' + url + '" alt="' + escape(wData.weatherDesc[0].value) + '" />'
 
 	// 	}
+	console.log("QUERY ACTION : ",params.query.action)
+	if(params.query.action == 'restartServer') {
+		//"./kill.sh all  && ./launch.sh all"
+		//exec("ls -la", displayErrorBash);
+		//res.end(JSON.stringify({'success': true}))
+		console.log('Restarting Ghome server');
+
+		//terminal.stdin.write('./kill.sh all')
+
+		terminal.stdin.end();
+
+
+	}
+
+	else if(params.query.action == 'resetServer') {
+		//res.end(JSON.stringify({'success': true}))
+		console.log('Resetting Ghome server');
+		terminal.stdin.write('./kill.sh all  && ./launch.sh reset')
+		terminal.stdin.end();
+	}
 		var templateData = {
 			'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
 			, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
