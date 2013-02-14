@@ -82,24 +82,23 @@ function sendPlainHTML(fileName, args, path) {
 
 // @TODO: MOVE IN ANOTHER FILE BEGIN ///////////////////////////////////////////////////////////////
 function homeReqHandler(req, res, params, responseSender) {
-	// var wpic = ''
-	// wutils.getWeatherFromCity(get_shared_data('weather_location'), function (wData) {
-	// 	if ("weatherIconUrl" in wData) {
-	// 		var url = wData.weatherIconUrl[0].value
-	// 		wpic = '<img src="' + url + '" alt="' + escape(wData.weatherDesc[0].value) + '" />'
-
-	// 	}
+	var wpic = ''
+	wutils.getWeatherFromCity(get_shared_data('weather_location'), function (wData) {
+		if ("weatherIconUrl" in wData) {
+			var url = wData.weatherIconUrl[0].value
+			wpic = '<img src="' + url + '" alt="' + escape(wData.weatherDesc[0].value) + '" />'
+		}
 		var templateData = {
 			'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
 			, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
 			, 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
 			, 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
-			// , 'WEATHER' : {'wpic': wpic, 'temp': wData.temp_C, 'pressure': wData.pressure, 'humidity': wData.humidity, 'wind': wData.windspeedKmph}
+			, 'WEATHER' : {'wpic': wpic, 'temp': wData.temp_C, 'pressure': wData.pressure, 'humidity': wData.humidity, 'wind': wData.windspeedKmph}
 		}
 		var data = tpl.get_template_result("home.html", templateData)
 		params['fileUrl'] = 'home.html'
 		responseSender(req, res, params, data)
-	// })
+	})
 }
 
 /**  This function returns the CSS temperature color to be applied to a given
