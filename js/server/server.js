@@ -51,7 +51,7 @@ var stats_computer = require('./stats_computer')
 
 //*************** Constants **************
 var SENSORS_SERVER_PORT = 8000
-var WEB_SERVER_PORT = 80
+var WEB_SERVER_PORT = 443
 var ANDROID_NOTIF_SERVER_PORT = 4500
 //****************************************
 
