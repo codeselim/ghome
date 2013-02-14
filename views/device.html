@@ -87,11 +87,11 @@
 				</div>
 				<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content">
 					<h3 class="ui-title">Veuillez sélectionner le nouvel état de l'équipement</h3>
-					<form action="/" id="actionForm">
-						<select name="stateSelect">
+					<form action="/" id="stateForm">
+						<select name="newState">
 							<option value="">-- Choisir une action --</option>
 							{{#actions}}
-							<option value="{{id}}">{{name}}</option>
+							<option value="{{message_to_sensor}}">{{name}}</option>
 							{{/actions}}
 						</select>
 						<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">Annuler</a>    

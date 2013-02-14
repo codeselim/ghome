@@ -97,11 +97,22 @@ define(function(){
 		$msg.show()
 	}
 
+	var errorPlacementFix = function(error, element) {
+		//* Needed to place the error message out of the select menu.
+		if (element.is('select')) {
+			error.insertAfter($(element).parent())
+		} else {
+			error.insertAfter(element)
+		}
+	}
+
+
 	return {
 		  queryStringToHash: queryStringToHash
 		, initMessages:initMessages
 		, removeMessage:removeMessage
 		, addMessage:addMessage
 		, getFieldsValues: getFieldsValues
+		, errorPlacementFix: errorPlacementFix
 	}
 })
