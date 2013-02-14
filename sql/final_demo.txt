@@ -12,3 +12,7 @@ INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUE
 INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, origin_id, mode_id) VALUES (4,"fermer volet",8,9,1,2,1);
 INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (5, "11", 4, 7, 2);
 
+
+
+INSERT INTO tasks (id, name, action_type_id, target_id, event_type_id, origin_id, mode_id) VALUES (5,"TEST THRESH",1,6,1,12,1);
+INSERT INTO conditions (id, value_to_compare, task_id, type_id, sensor_id) VALUES (6, "20", 5, 6, 12);

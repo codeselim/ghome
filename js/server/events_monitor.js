@@ -36,11 +36,12 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 		function(err, rows) {
 			var thresholds = [];
 			for (var r in rows) {
-				thresholds.push(rows[r]["th.value"]);
+				thresholds.push(rows[r]["value"]);
 			}
 
 			for(var t in thresholds) {
 				var threshold = thresholds[t]
+				console.log("-------------------lastValues[idSensor] ",lastValues[idSensor], "threshold ",threshold, "value ", value)
 				if (lastValues[idSensor] < threshold && value > threshold) {
 					//tasks_executor.execute_task(1);
 					eventEmitter.emit(SENSOR_EVENT, 1, idSensor);
