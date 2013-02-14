@@ -70,8 +70,7 @@ function getDeviceInfo (db, deviceid, callback) {
 var deviceRH = function (req, res, params, responseSender) {
 	switch (params.query.action) {
 		case 'change_device_state':
-			console.log('send action',params.query.actionCode,'to device', params.query.deviceId)
-			require('./device_communicator').sendToSensor(params.query.deviceId, params.query.actionCode)
+			require('./device_communicator').sendToSensor(params.query.deviceId, params.query.newStateCode)
 			res.end(JSON.stringify({'success':true}))
 			break
 
@@ -122,7 +121,7 @@ var deviceRH = function (req, res, params, responseSender) {
 					deviceInfo.value = sutils.getDisplayableState(deviceInfo.devices_types.id, get_shared_data('SENSORS_VALUES')[params.query.id])	
 					console.log('## ', JSON.stringify(deviceInfo))
 
-					params.db.select_query("SELECT at.id, at.name FROM `" + t.at + "` at WHERE at.sensor_type_id = ? ",
+					params.db.select_query("SELECT at.message_to_sensor, at.name FROM `" + t.at + "` at WHERE at.sensor_type_id = ? ",
 								[deviceInfo.device.type], function (err, rows){
 						if(err) {
 							params.error404 = true

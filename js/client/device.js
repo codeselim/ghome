@@ -149,9 +149,9 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 				'url'      : "/"
 			, 'dataType' : 'json'
 			, 'data'     : {
-					  'module':'device_management'
+					  'module':'device'
 					, 'action':'change_device_state'
-					, 'newStateId': $('[name=newState]').val()
+					, 'newStateCode': $('[name=newState]').val()
 					, 'deviceId': $('[name=id]').val()
 				}
 		})
