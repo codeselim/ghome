@@ -20,7 +20,12 @@
 			{{#editMode}}
 			<ul data-role="listview" data-divider-theme="d" data-inset="true">
 					<li data-role="list-divider">Etat</li>
+					{{#hasActions}}
 					<li data-icon="gear"><a id="changeState">{{value}}</a></li>
+					{{/hasActions}}
+					{{^hasActions}}
+					<li>{{value}}</li>
+					{{/hasActions}}
 			</ul>
 			{{/editMode}}
 
@@ -74,18 +79,24 @@
 				<p id="popupContent">Oops</p>
 			</div>
 
+
+			{{#hasActions}}
 			<div data-role="popup" id="statePopup">
-				<a href="#" data-rel="back" data-role="button" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
-				<div>
+				<div data-role="header" data-theme="a" class="ui-corner-top">
+					<h1>Changement d'état</h1>
+				</div>
+				<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content">
+					<h3 class="ui-title">Veuillez sélectionner le nouvel état de l'équipement</h3>
 					<select name="stateSelect">
 						{{#actions}}
 						<option value="{{id}}">{{name}}</option>
 						{{/actions}}
 					</select>
-					<a href="#" data-role="button">Valider</a>
-					<p >Oops</p>
+					<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">Annuler</a>    
+					<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="b" id="saveNewStateBtn">Enregistrer</a>  
 				</div>
 			</div>
+			{{/hasActions}}
 
 			<!-- Content-End -->
 		</div>

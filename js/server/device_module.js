@@ -123,6 +123,9 @@ var deviceRH = function (req, res, params, responseSender) {
 						} else {
 							console.log('## rows', JSON.stringify(rows))							
 							deviceInfo.actions = rows
+							if (rows.length > 0) {
+								deviceInfo.hasActions = true
+							}
 							for(var i in deviceInfo.devices_types) {
 								var dt = deviceInfo.devices_types[i]
 								console.log(dt)
