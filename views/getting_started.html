@@ -6,49 +6,62 @@
 		</div>
 		<!-- <p>&nbsp;Faits/en cours en gris, pas touchés en jaune.</p> -->
 		<div data-role="content">
-			<div id="quick-dashboard">
-				<span id="temp-in" data-role="ghome-state" data-device-id="{{temp_in_id}}" data-use-style="true" class="{{in_style}}">{{in_temp}}</span>
-				| 
-				<span id="temp-out" data-role="ghome-state" data-device-id="{{temp_out_id}}" data-use-style="true" class="{{out_style}}">{{out_temp}}</span> 
-				{{#HEATING_STATE}}
-				| 
-				<span id="heating" class="mode-{{HEATING_STATE}} bold">{{HEATING_STATE}}</span>
-				{{/HEATING_STATE}}
-				{{#CONSUMTION}}
-				|
-				<span id="consumtion">{{CONSUMTION}} kWh</span>
-				{{/CONSUMTION}}
-				<div id="weather">
-					{{#WEATHER}}
-					{{{wpic}}}
-					<div class="w-additional-infos">
-						<span class="w-pressure">
-							{{pressure}} mbars
-						</span>	
-						<span class="w-wind">
-							{{wind}} km/h
-						</span>	
-						<span class="w-temp-c">
-							{{temp}} &deg;C
-						</span>	
-						<span class="w-humidity">
-							{{humidity}} % d'humidité
-						</span>	
-					</div>
+			<h2>Bienvenue sur votre console d'administration GHome !</h2>
 
-					{{/WEATHER}}
-				</div>
-			</div>
-			<ul data-role="listview" data-divider-theme="b" data-inset="true" >
-				<!-- <li><a data-transition="slide" href="/?module=app">Test notifs</a></li> -->
-				<li><a data-transition="slide" href="/?module=device_management">Gestion des équipements</a></li>
-				<!-- <li data-theme="f"><a data-transition="slide" href="#">Configurations</a></li> -->
-				<li><a data-ajax="false" href="/?module=stats">Statistiques</a></li>
-				<li><a data-transition="slide" href="/?module=spy">Mode Espion</a></li>
-				<!-- <li data-theme="f"><a data-transition="slide" href="#">Chauffage</a></li> -->
-				<!-- <li data-theme="f"><a data-transition="slide" href="#">Eclairage automatique</a></li> -->
-				<li><a data-transition="slide" href="/?module=scheduler">Planificateur</a></li>
-				<li><a data-transition="slide" href="/?module=threshold_list">Seuils</a></li>
-			</ul>
+			<p>Ce petit tutoriel vous guidera à travers la prise en main rapide de votre serveur GHome.</p>
+
+			<h3>Page d'accueil</h3>
+			<p><img src="css/images/getting_started_1.png" alt="home page"></p>
+			<p>Sur votre page d'accueil, vous pouvez retrouver les différentes fonctionalités de votre console d'administration GHome. Parmi celles-ci :</p>
+			<dl>
+				<dt>Gestion des équipements</dt>
+				<dd>
+					Vous permet de voir l'état courant de vos équipement et d'intéragir avec eux le cas échéant. 
+					C'est également là que vous pouvez ajouter un nouvel équipement.
+				</dd>
+				<dt>Statistiques</dt>
+				<dd>
+					Vous permet de visualiser l'évolution de différentes données de votre GHome au cours du temps. 
+					Comme la température intérieure et la consommation électrique.
+				</dd>
+				<dt>Mode espion</dt>
+				<dd>
+					Vous permet de paramétrer l'activation du <em>Mode espion</em> ainsi que d'en visualiser l'historique (logs).
+				</dd>
+				<dt>Planificateur</dt>
+				<dd>
+					Fonctionnalité principale de votre GHome, le planificateur vous permet d'effectuer toutes sortes d'actions en fonction
+					de différents paramètres ainsi que lors d'évènements en provenance des capteurs enregistrés dans votre GHome.
+					<br>Véritable boîte à outils, il vous permettra de rendre votre maison plus intelligente encore qu'elle ne l'est avec la 
+					configuration par défaut de nos génies d'ingénieurs.
+				</dd>
+				<dt>Seuils</dt>
+				<dd>
+					Vous permet de gérer les différents "seuils" associés aux différents types de capteurs rattachés à votre GHome.
+					<br>Ces seuils sont ensuite utilisés par le planificateur pour prendre ces décisions.
+				</dd>
+				<dt>Guide de démarrage</dt>
+				<dd>La page sur laquelle vous vous trouvez en ce moment-même.</dd>
+			</dl>
+
+			<h3>Ajout d'un nouvel équipement</h3>
+			<p>Afin d'ajouter un nouvel équipement, sur la page d'accueil, choisissez l'option <strong>Gestion des équipements</strong>.<br />
+				Appuyez ensuite sur "Nouvel équipement" en haut de la page de gestion des équipements.
+			</p>
+
+			<h3>Ajout d'une nouvelle tâche planifiée</h3>
+			<p>@TODO</p>
+
+			<h3>Ajout d'un seuil</h3>
+			<p>@TODO</p>
+
+			<h3>Modification d'un seuil</h3>
+			<p>@TODO</p>
+
+			<h3>Visualisation des statistiques</h3>
+			<p>@TODO</p>
+
+			<p>And so on...</p>
+		</div>
 	</div>
 {{> footer}}
