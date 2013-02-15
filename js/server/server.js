@@ -51,7 +51,8 @@ var stats_computer = require('./stats_computer')
 
 //*************** Constants **************
 var SENSORS_SERVER_PORT = 8000
-var WEB_SERVER_PORT = 443
+var WEB_SERVER_SECURED_PORT = 443
+var WEB_SERVER_UNSECURED_PORT = 80
 var ANDROID_NOTIF_SERVER_PORT = 4500
 //****************************************
 
@@ -110,7 +111,8 @@ function GLOBAL_INIT () {
 	var ip = utils.getLocalPublicIpAddress(["eth0", "p2p1"])
 	set_shared_data('LOCAL_SERVER_IP', ip)
 	set_shared_data('MAIN_SERVER_IP', "134.214.105.28")
-	set_shared_data('WEB_UI_HOME', 'http://' + ip + "/")
+	set_shared_data('WEB_UI_BASEURL', 'https://' + ip)
+	set_shared_data('WEB_UI_HOME', 'https://' + ip + "/")
 	set_shared_data('MAIN_SERVER_PORT', 5000)
 	set_shared_data('TEMP_SENSOR_TYPE', 1)
 	db = new dbms.Database()
@@ -183,7 +185,7 @@ function start () {
 	console.log('Data initialized... Starting server components.')
 	device_communicator.start(db)
 	logger.start(db)
-	web_serv.start(db, WEB_SERVER_PORT)
+	web_serv.start(db, WEB_SERVER_SECURED_PORT, WEB_SERVER_UNSECURED_PORT)
 	events_monitor.start(db);
 	tasks_executor.start(db);
 	stats_computer.start(db);

@@ -146,8 +146,25 @@ function defaultReqHandler(req, res, params, responseSender) {
 }
 
 
-function start (db, port) {
+function start (db, secured_port, unsecured_port) {
 	console.log('Starting webserver')
+
+	var http = require('http')
+
+	//* Redirecting any http request to https
+	http.createServer(function (req, res) {
+		var redirect = get_shared_data('WEB_UI_BASEURL') + req.url
+		// console.log("Redirecting from http to https: " + redirect)
+		res.writeHead(301, 'Moved Permanently', {
+			// 'Cache-Control': 'public',
+			// 'Date': new Date().toGMTString(),
+			// 'Server': 'Node/' + process.version,
+			'Content-Length': '0',
+			'Connection': 'Close',
+			'Location': redirect
+		});
+		res.end()
+	}).listen(unsecured_port);
 
 	var auth = require('http-auth')
 	var basic = auth({
@@ -206,7 +223,7 @@ function start (db, port) {
 				console.log(e)
 			}
 		})
-	}).listen(port)
+	}).listen(secured_port)
 }
 
 exports.start = start
