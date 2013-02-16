@@ -191,7 +191,7 @@ function start () {
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)
-	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, logger.insertLog)
+	// sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, logger.insertLog)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, events_monitor.handleEvent)
 	events_monitor.events.addListener(events_monitor.SENSOR_EVENT, tasks_executor.execute_task)
 	events_monitor.events.addListener(events_monitor.SENSOR_EVENT, spy.check_spy)

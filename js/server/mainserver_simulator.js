@@ -1,7 +1,8 @@
 var net = require('net')	
 
-
-
+	quantum = 0
+	simultaneous_frames = 0	
+	at_time = 0
 
 
 var localhost = new net.Socket()
@@ -4026,9 +4027,6 @@ function generateSimulations(){
 	frames[4000] = { "data" : "A55A0B07000052080089431800A0" , "type" : "Generic_frame_4000" }
 
 
-
-	var quantum = 3000
-	var simultanious_frames = 5	
 	var firstvalue = 1
 	var lastvalue  = 4000
 
@@ -4046,16 +4044,22 @@ function generateSimulations(){
 	  //sendData('A55A0B07000052080089431600A0')
 	
 	setInterval(function(){ 
-		for(i = 0 ; i < simultanious_frames; i++){
+		console.log("Simultaneous frames:"+simultaneous_frames+" - Quantum:"+quantum+" >>> At time: "+(at_time/1000)+"sec.");
+		for(i = 0 ; i <  simultaneous_frames; i++){
 			var temp = Math.floor((Math.random()*lastvalue)+firstvalue);
 			localhost.write(frames[temp].data);
 			console.log('===> [SIMULATION_FRAME_SENT] : Type '+frames[temp].type)
 		}
-		//sendData(frames[temp].data) // send simulation frame to sensor_server
+		at_time += quantum
+		console.log()
 	}, quantum);
 
 
 }
 
 
+quantum = 1000
+simultaneous_frames = 100	
+
+console.log("Frames Simulator Started:")
 generateSimulations();
