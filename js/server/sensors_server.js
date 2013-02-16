@@ -2,7 +2,7 @@
 
 //* Server that deals with the data from the sensors
 
-
+var disable_checksum = true;
 var events = require('events');
 var net = require("net");
 var sensors_utils = require('./sensors')
@@ -52,7 +52,7 @@ function start (db, web_serv, port, allowed_ids) {
 				if (-1 != allowed_ids.indexOf(frame_data.id)) {
 					console.log("SENSSERV: ", "Sensor id=", frame_data.id)
 					console.log("SENSSERV: ", "This sensor is one of ours.")
-					if(check_checksum(frame_data, frame)) {
+					if(disable_checksum || check_checksum(frame_data, frame)) {
 						// console.log("The checksum is correct ?", check_checksum(frame_data))
 						eventEmitter.emit(SENSOR_FRAME_EVENT, frame_data) //* Sends the new "complete" frame to the event handler
 					} else {

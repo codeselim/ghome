@@ -30,12 +30,18 @@ function generateSimulations(){
 	var lastvalue  = 8
 
 
-var PLUG_SWITCH_ON_FRAME = 'A55A6B0555000000FF9F1E06304C'  // id FF9F1E06
-var test_generated       = 'A55A6B0555000000FF9F1E07304C'
+//var PLUG_SWITCH_ON_FRAME = 'A55A6B0555000000FF9F1E06304C'  // id FF9F1E06
+//var test_generated       = 'A55A6B0555000000FF9F1E07304C'
 
 
-	sendData(PLUG_SWITCH_ON_FRAME)
-	sendData(test_generated)
+	// sendData(PLUG_SWITCH_ON_FRAME)
+	// sendData(test_generated)
+	   //sendData('A55A0B07000052080089337800A0')  // je suis basé sur celui là   id: 00893378
+	   //sendData('A55A0B07000052080089337900A0')  // id 00893379  1st generic
+
+	  //sendData('A55A0B07000052080089431800A0')  // this will be the 4000th generic captor (8995608)10  => (894318)16
+	   
+	  sendData('A55A0B07000052080089431600A0')
 	// setInterval(function(){ 
 	// 	var temp = Math.floor((Math.random()*lastvalue)+firstvalue);
 	// 	sendData(frames[temp].data) // send simulation frame to sensor_server
