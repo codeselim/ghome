@@ -7,24 +7,24 @@ var deviceCommunicator = require('../../device_communicator')
 var poll_tests = gsd('DEVICE_POLL_TESTS')
 var satr = gsd('shared_among_tests_requests')
 
+var simpleTeachIndDetection = function (req, res, params, testid) {
+	if (-1 != gsd('TEACH_IN_IDS').indexOf(satr['deviceId'])) {
+		res.end(JSON.stringify({status: 'ok', events: []})) // putting "events" empty array will trigger the test end, on the client
+	}
+}
 
 //* Action for device of type 1 = temperature
-poll_tests[1] = function (req, res, params, testid) {
-	res.end(JSON.stringify({status: 'ok'})) // just saying hello
-}
+poll_tests[1] = simpleTeachIndDetection
 
 //* Action for device of type 2 
-poll_tests[2] = function (req, res, params, testid) {
-	res.end(JSON.stringify({status: 'ok'})) // just saying hello
-}
-//* Action for device of type 2 
-poll_tests[3] = function (req, res, params, testid) {
-	res.end(JSON.stringify({status: 'ok'})) // just saying hello
-}
-//* Action for device of type 2 
-poll_tests[4] = function (req, res, params, testid) {
-	res.end(JSON.stringify({status: 'ok'})) // just saying hello
-}
+poll_tests[2] = simpleTeachIndDetection
+
+//* Action for device of type 3 
+poll_tests[3] = simpleTeachIndDetection
+
+//* Action for device of type 4 
+poll_tests[4] = simpleTeachIndDetection
+
 //* Action for device of type 5 : Power switch plug
 poll_tests[5] = function (req, res, params, testid) {
 	var current = new Date()
@@ -37,6 +37,4 @@ poll_tests[5] = function (req, res, params, testid) {
 	}
 }
 //* Action for device of type 2 
-poll_tests[6] = function (req, res, params, testid) {
-	res.end(JSON.stringify({status: 'ok'})) // just saying hello
-}
+poll_tests[6] = simpleTeachIndDetection

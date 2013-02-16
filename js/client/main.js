@@ -19,7 +19,6 @@ require.config({
 require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'threshold', 'spy', 'jquerymobile'], 
 	function($, /*_,*/ sseListener, devMgmt, device, scheduler, threshold, spy) {
 	$(function() {
-
 		//* Hides the body until JQM finishes applying styles
 		$('body').css('visibility', 'visible')
 
@@ -27,27 +26,9 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', '
 			console.log('pageinit home!')
 		}
 
-		var notifPI = function() {
-			console.log('pageinit notif!')
-			var onSSERecieved = function(e) {
-				$('#sseOutput').append('<br />' + e.data)
-			}
-
-			$('#sseToggle').change(function() { 
-				console.log('toggled!')
-				if ($(this).val() == 'on') {
-					sseListener.enableSSE(onSSERecieved)
-				} else {
-					sseListener.disableSSE()
-					$('#sseOutput').html('')
-				}
-			})
-		}
-
 		//* Registering the page inits
 		var pageinits = {
 			  'home'          : homePI
-			, 'notif'         : notifPI
 			, 'devMgmt'       : devMgmt.pageInit
 			, 'device'        : device.pageInit
 			, 'scheduler'     : scheduler.pageInit
@@ -75,5 +56,8 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', '
 				page.remove()
 			}
 		})
+
+		//* Open SSE Connection
+		sseListener.initDeviceStateListener()
 	})
 })

@@ -1,16 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>ghome</title>
-	<link rel="stylesheet" href="css/ghome.min.css">
-	<!--<link rel="stylesheet/less" type="text/css" href="css/ghome.less" />
-	<script src="js/vendor/less.min.js" type="text/javascript"></script>-->
-	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
-</head>
-<body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
-
+{{> header}}
 	<!-- Home -->
 	<div data-role="page" id="home">
 		<div data-theme="a" data-role="header" data-position="fixed" data-transition="none">
@@ -19,10 +7,17 @@
 		<!-- <p>&nbsp;Faits/en cours en gris, pas touchés en jaune.</p> -->
 		<div data-role="content">
 			<div id="quick-dashboard">
-				<span id="temp-in" class="{{COLOR_TEMP_IN}}-temp bold">{{IN_TEMP}} &deg;C</span> | 
-				<span id="temp-out" class="{{COLOR_TEMP_OUT}}-temp bold">{{OUT_TEMP}} &deg;C</span> | 
-				<span id="heating" class="mode-{{HEATING_STATE}} bold">{{HEATING_STATE}}</span> |
+				<span id="temp-in" data-role="ghome-state" data-device-id="{{temp_in_id}}" data-use-style="true" class="{{in_style}}">{{in_temp}}</span>
+				| 
+				<span id="temp-out" data-role="ghome-state" data-device-id="{{temp_out_id}}" data-use-style="true" class="{{out_style}}">{{out_temp}}</span> 
+				{{#HEATING_STATE}}
+				| 
+				<span id="heating" class="mode-{{HEATING_STATE}} bold">{{HEATING_STATE}}</span>
+				{{/HEATING_STATE}}
+				{{#CONSUMTION}}
+				|
 				<span id="consumtion">{{CONSUMTION}} kWh</span>
+				{{/CONSUMTION}}
 				<div id="weather">
 					{{#WEATHER}}
 					{{{wpic}}}
@@ -49,13 +44,12 @@
 				<li><a data-transition="slide" href="/?module=device_management">Gestion des équipements</a></li>
 				<!-- <li data-theme="f"><a data-transition="slide" href="#">Configurations</a></li> -->
 				<li><a data-ajax="false" href="/?module=stats">Statistiques</a></li>
-				<li><a data-transition="slide" href="/?module=spy">Mode Espion</a></li>
+				<li><a data-transition="slide" href="/?module=spy">Mode espion</a></li>
 				<!-- <li data-theme="f"><a data-transition="slide" href="#">Chauffage</a></li> -->
 				<!-- <li data-theme="f"><a data-transition="slide" href="#">Eclairage automatique</a></li> -->
 				<li><a data-transition="slide" href="/?module=scheduler">Planificateur</a></li>
 				<li><a data-transition="slide" href="/?module=threshold_list">Seuils</a></li>
+				<li><a data-transition="slide" href="/?module=getting_started">Guide de démarrage</a></li>
 			</ul>
 	</div>
-
-</body>
-</html>
+{{> footer}}
