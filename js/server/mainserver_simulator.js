@@ -4042,9 +4042,9 @@ function generateSimulations(){
 ////////////////////////////// Parameters ///////////////////////////////////////
 
 quantum_min = 5 //sec
-quantum_max = 7 //sec
-simultaneous_frames_min = 5 //nb. of frames
-simultaneous_frames_max = 8 //nb. of frames
+quantum_max = 10 //sec
+simultaneous_frames_min = 10 //nb. of frames
+simultaneous_frames_max = 20 //nb. of frames
 	
 
 console.log("Frames Simulator Started:")

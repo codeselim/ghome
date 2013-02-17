@@ -1,4 +1,3 @@
-
 "use strict"
 
 //* Server of the GHome application
