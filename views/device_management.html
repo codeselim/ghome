@@ -19,9 +19,9 @@
 				{{#device_types}}
 					<li data-role="list-divider">{{label}}</li>
 					{{#devices}}
-					<li><a data-transition="fade" href="/?module=device&amp;action=edit&amp;id={{id}}" class="deviceInfo">
-						<span class="deviceName">{{label}}</span>
-						<span class="deviceValue" data-role="ghome-state" data-device-id="{{id}}"> {{value}}</span>
+					<li><a data-transition="fade" href="/?module=device&amp;action=edit&amp;id={{id}}" class="itemInfo">
+						<span class="itemName">{{label}}</span>
+						<span class="itemValue" data-role="ghome-state" data-device-id="{{id}}"> {{value}}</span>
 					</a></li>
 					{{/devices}}
 				{{/device_types}}
