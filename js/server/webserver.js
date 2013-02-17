@@ -100,7 +100,7 @@ function gettingStartedRH (req, res, params, responseSender) {
 }
 
 function homeReqHandler(req, res, params, responseSender) {
-	if (get_shared_data("first_start")) {
+	if (get_shared_data("first_start") == '1') {
 		webRedirect301(res, "/?module=getting_started")
 	} else {
 		var wpic = ''
