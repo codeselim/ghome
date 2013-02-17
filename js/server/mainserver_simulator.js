@@ -1,29 +1,19 @@
 var net = require('net')	
 
-	quantum = 0
-	simultaneous_frames = 0	
+	quantum_min = 0
+	quantum_max = 0
+	simultaneous_frames = 0
+	simultaneous_frames_min = 0
+	simultaneous_frames_max = 0	
 	at_time = 0
 
 
 var localhost = new net.Socket()
 localhost.connect(8000, "localhost", function () { console.log("Simulator is connected to the local sensors_server.js port 8000") })
 
-function sendData(data) {
-	localhost.write(data);
-	localhost.end(data);
-}
 
 function generateSimulations(){
 	var frames = {}
-
-	// frames[1] = { "data" : "A55A0B07A623000D00054A7F00B6" , "type" : "luminosity" } 
-	// frames[2] = { "data" : "A55A0B07A82A000D00054A7F00BF" , "type" : "luminosity" } 
-	// frames[3] = { "data" : "A55A0B07AA47000D00054A7F00DE" , "type" : "luminosity" } 
-	// frames[4] = { "data" : "A55A0B0700005D080089337F00B2" , "type" : "temperature" }  
-	// frames[5] = { "data" : "A55A0B0700003608008933780084" , "type" : "temperature" } 
-	// frames[6] = { "data" : "A55A0B06000000090001B5960066" , "type" : "capteur contact 1" }
-	// frames[7] = { "data" : "A55A0B06000000080001B25E002A" , "type" : "capteur contact 2" }	
-	// frames[8] = { "data" : "A55A0B07052200480019337800A0" , "type" : "electricity 1" }
 
 	frames[1] = { "data" : "A55A0B07000052080089337900A0" , "type" : "Generic_frame_1" }
 	frames[2] = { "data" : "A55A0B07000052080089337A00A0" , "type" : "Generic_frame_2" }
@@ -4031,35 +4021,39 @@ function generateSimulations(){
 	var lastvalue  = 4000
 
 
-//var PLUG_SWITCH_ON_FRAME = 'A55A6B0555000000FF9F1E06304C'  // id FF9F1E06
-//var test_generated       = 'A55A6B0555000000FF9F1E07304C'
-
-
-	// sendData(PLUG_SWITCH_ON_FRAME)
-	// sendData(test_generated)
-	   //sendData('A55A0B07000052080089337800A0')  // je suis basé sur celui là   id: 00893378
-	   //sendData('A55A0B07000052080089337900A0')  // id 00893379  1st generic
-
-	  //sendData('A55A0B07000052080089431800A0')  // this will be the 4000th generic captor (8995608)10  => (894318)16
-	  //sendData('A55A0B07000052080089431600A0')
-	
+	var temp_quantum = generateRandomFromTo(quantum_min,quantum_max)*1000 /* millisec */
 	setInterval(function(){ 
-		console.log("Simultaneous frames:"+simultaneous_frames+" - Quantum:"+quantum+" >>> At time: "+(at_time/1000)+"sec.");
-		for(i = 0 ; i <  simultaneous_frames; i++){
-			var temp = Math.floor((Math.random()*lastvalue)+firstvalue);
-			localhost.write(frames[temp].data);
+		var temp_quantum = generateRandomFromTo(quantum_min,quantum_max)*1000 /* millisec */
+		var temp_simultaneous_frames = generateRandomFromTo(simultaneous_frames_min, simultaneous_frames_max) //nb frames
+		console.log("Simultaneous frames:"+temp_simultaneous_frames+" - Quantum:"+temp_quantum+" >>> At time: "+(at_time/1000)+"sec.");
+		for(i = 0 ; i < temp_simultaneous_frames ; i++){ 
+			var temp = Math.floor((Math.random()*lastvalue)+firstvalue); //select a frame from the 4000 Generic frames
+			localhost.write(frames[temp].data); //send the frames on continous connection
 			console.log('===> [SIMULATION_FRAME_SENT] : Type '+frames[temp].type)
-		}
-		at_time += quantum
+		}	
+		at_time += temp_quantum
 		console.log()
-	}, quantum);
+	},temp_quantum );
 
 
 }
 
 
-quantum = 1000
-simultaneous_frames = 100	
+////////////////////////////// Parameters ///////////////////////////////////////
+
+quantum_min = 5 //sec
+quantum_max = 7 //sec
+simultaneous_frames_min = 5 //nb. of frames
+simultaneous_frames_max = 8 //nb. of frames
+	
 
 console.log("Frames Simulator Started:")
 generateSimulations();
+
+
+/**
+ * This function allow us to generate numbers belonging to a specific interval [from , to]
+ */
+function generateRandomFromTo(from,to){
+    return Math.floor(Math.random()*(to-from+1)+from);
+}
