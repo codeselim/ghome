@@ -8,6 +8,7 @@ var qs 		    = require('querystring');
 var tpl       = require('./template_engine')
 var shared    = require('./shared_data')
 var get_shared_data = shared.get_shared_data
+var set_shared_data = shared.set_shared_data
 var sseSender = require('./sse_sender')
 var device    = require('./device_module')
 var scheduler = require('./scheduler_module')
@@ -90,6 +91,7 @@ function gettingStartedRH (req, res, params, responseSender) {
 	var p = ["first_start"]
 	params.db.update_query(q, p, function (err) {
 		console.log("GS", err)
+		set_shared_data("first_start", 0)
 		
 		var data = tpl.get_template_result("getting_started.html", {})
 		params['fileUrl'] = 'getting_started.html'
@@ -98,32 +100,33 @@ function gettingStartedRH (req, res, params, responseSender) {
 }
 
 function homeReqHandler(req, res, params, responseSender) {
-	if (get_shared_data("first_start") != 0) {
+	if (get_shared_data("first_start")) {
 		webRedirect301(res, "/?module=getting_started")
-	}
-	var wpic = ''
-	wutils.getWeatherFromCity(get_shared_data('weather_location'), function (wData) {
-		if ("weatherIconUrl" in wData) {
-			var url = wData.weatherIconUrl[0].value
-			wpic = '<img src="' + url + '" alt="' + escape(wData.weatherDesc[0].value) + '" />'
-		}
-		var inTempValue = shared.get_shared_data('IN_TEMP')
-		var outTempValue = shared.get_shared_data('OUT_TEMP')
-		var tempSensorType = shared.get_shared_data('TEMP_SENSOR_TYPE')
+	} else {
+		var wpic = ''
+		wutils.getWeatherFromCity(get_shared_data('weather_location'), function (wData) {
+			if ("weatherIconUrl" in wData) {
+				var url = wData.weatherIconUrl[0].value
+				wpic = '<img src="' + url + '" alt="' + escape(wData.weatherDesc[0].value) + '" />'
+			}
+			var inTempValue = shared.get_shared_data('IN_TEMP')
+			var outTempValue = shared.get_shared_data('OUT_TEMP')
+			var tempSensorType = shared.get_shared_data('TEMP_SENSOR_TYPE')
 
-		var templateData = {
-			  'in_temp'     : sutils.getDisplayableState(tempSensorType, inTempValue)
-			, 'in_style'    : sutils.getStateStyle(tempSensorType, inTempValue)
-			, 'out_temp'    : sutils.getDisplayableState(tempSensorType, inTempValue)
-			, 'out_style'   : sutils.getStateStyle(tempSensorType, inTempValue)
-			, 'temp_in_id'  : shared.get_shared_data('IN_TEMP_SENSOR_ID')
-			, 'temp_out_id' : shared.get_shared_data('OUT_TEMP_SENSOR_ID')
-			, 'WEATHER'     : {'wpic': wpic, 'temp': wData.temp_C, 'pressure': wData.pressure, 'humidity': wData.humidity, 'wind': wData.windspeedKmph}
-		}
-		var data = tpl.get_template_result("home.html", templateData)
-		params['fileUrl'] = 'home.html'
-		responseSender(req, res, params, data)
-	})
+			var templateData = {
+				  'in_temp'     : sutils.getDisplayableState(tempSensorType, inTempValue)
+				, 'in_style'    : sutils.getStateStyle(tempSensorType, inTempValue)
+				, 'out_temp'    : sutils.getDisplayableState(tempSensorType, inTempValue)
+				, 'out_style'   : sutils.getStateStyle(tempSensorType, inTempValue)
+				, 'temp_in_id'  : shared.get_shared_data('IN_TEMP_SENSOR_ID')
+				, 'temp_out_id' : shared.get_shared_data('OUT_TEMP_SENSOR_ID')
+				, 'WEATHER'     : {'wpic': wpic, 'temp': wData.temp_C, 'pressure': wData.pressure, 'humidity': wData.humidity, 'wind': wData.windspeedKmph}
+			}
+			var data = tpl.get_template_result("home.html", templateData)
+			params['fileUrl'] = 'home.html'
+			responseSender(req, res, params, data)
+		})
+	}
 }
 // @TODO: MOVE IN ANOTHER FILE END /////////////////////////////////////////////////////////////////
 
