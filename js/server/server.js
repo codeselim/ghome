@@ -1,3 +1,4 @@
+
 "use strict"
 
 //* Server of the GHome application
@@ -39,7 +40,7 @@ var web_serv = require('./webserver')
 var sensors_serv = require('./sensors_server')
 var android_notif_serv = require('./android_notif_server')
 var dbg = require('./debug')
-var sse_sender = require('./sse_sender')
+// var sse_sender = require('./sse_sender')
 var dbms = require('./dbms')
 var logger = require('./logger')
 var events_monitor = require('./events_monitor')
@@ -51,7 +52,8 @@ var stats_computer = require('./stats_computer')
 
 //*************** Constants **************
 var SENSORS_SERVER_PORT = 8000
-var WEB_SERVER_PORT = 80
+var WEB_SERVER_SECURED_PORT = 443
+var WEB_SERVER_UNSECURED_PORT = 80
 var ANDROID_NOTIF_SERVER_PORT = 4500
 //****************************************
 
@@ -110,8 +112,10 @@ function GLOBAL_INIT () {
 	var ip = utils.getLocalPublicIpAddress(["eth0", "p2p1"])
 	set_shared_data('LOCAL_SERVER_IP', ip)
 	set_shared_data('MAIN_SERVER_IP', "134.214.105.28")
-	set_shared_data('WEB_UI_HOME', 'http://' + ip + "/")
+	set_shared_data('WEB_UI_BASEURL', 'https://' + ip)
+	set_shared_data('WEB_UI_HOME', 'https://' + ip + "/")
 	set_shared_data('MAIN_SERVER_PORT', 5000)
+	set_shared_data('TEMP_SENSOR_TYPE', 1)
 	db = new dbms.Database()
 	console.log("Connecting to db...")
 	db.connect('dat', function () {
@@ -128,7 +132,7 @@ function GLOBAL_INIT () {
 				allowed_ids.push(rows[i].hardware_id)
 				software_ids[rows[i].hardware_id] = rows[i].id
 			}
-			
+
 			var q = "SELECT name, value FROM `" + t['set'] + "` "
 			db.select_query(q, null, function (err, rows) {
 				if (null != err) {
@@ -182,16 +186,17 @@ function start () {
 	console.log('Data initialized... Starting server components.')
 	device_communicator.start(db)
 	logger.start(db)
-	web_serv.start(db, WEB_SERVER_PORT)
+	web_serv.start(db, WEB_SERVER_SECURED_PORT, WEB_SERVER_UNSECURED_PORT)
 	events_monitor.start(db);
 	tasks_executor.start(db);
 	stats_computer.start(db);
 	spy.start(db);
 	android_notif_serv.start(ANDROID_NOTIF_SERVER_PORT, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Well, or test after changing it !) I don't know why, but it's working on port 5000 and not on port 3000 for instance....
-	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
+	// sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
+	// sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sensors_utils.notifyNewSensorState)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)
-	// sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, logger.insertLog)
+	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, logger.insertLog)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, events_monitor.handleEvent)
 	events_monitor.events.addListener(events_monitor.SENSOR_EVENT, tasks_executor.execute_task)
 	events_monitor.events.addListener(events_monitor.SENSOR_EVENT, spy.check_spy)
