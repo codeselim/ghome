@@ -94,7 +94,8 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 			, 'data'     : $.extend({'module' : 'task', 'action' : 'get_condition_types'},arg)
 		})
 		.done(function(data) {
-			populateSelectBox($('#condition'+ condId +' [name=condType]'), data, true, false, true)
+			console.log(data)
+			populateSelectBox($('#condition'+ condId +' [name=condType]'), data, true, false, true) // @TODO
 
 			if (condId === 'Evt') { //* Update the conditionEvt item too
 				var label = $('[name=evtSource]').find(':selected').html().replace(/&nbsp;/g, '')
@@ -200,28 +201,6 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 
 		$('.leftLink').parent().parent().parent().removeClass('ui-btn');
 		$('.leftLink').contents().unwrap();
-
-		//* WTF is this shit?
-		// $("form").validate({
-		// 		rules: {
-		// 				'device'          : {'required': true }
-		// 			, 'devAction'       : {'required': true }
-		// 			, 'trigger'         : {'required': true }
-		// 			, 'sensor'          : {'required': true }
-		// 			, 'threshold_type'  : {'required': true }
-		// 			, 'threshold_value' : {'required': true }
-		// 			, 'threshold_event' : {'required': true }
-		// 		} 
-		// 	, messages: {}
-		// 	, errorPlacement: function(error, element) {
-		// 		//* Needed to place the error message out of the select menu.
-		// 		if (element.is('select')) {
-		// 			error.insertAfter($(element).parent())
-		// 		} else {
-		// 			error.insertAfter(element)
-		// 		}
-		// 	}
-		// })
 
 		initCache(cache)
 		utils.initMessages()

@@ -82,14 +82,14 @@ function getEvtTypesBySourceType (db, sourceType, callback) {
 */
 function getCondTypesByEvtType (db, evtType, callback) {
 	var data = {}
-	var q = "SELECT etct.condition_type_id, ct.name " + 
+	var q = "SELECT etct.condition_type_id, ct.name, ct.input_type " + 
 			"FROM `" + t['etct'] + "` etct " +
 			"INNER JOIN `" + t['ct'] + "` ct ON (ct.id = etct.condition_type_id) " +
 			"WHERE etct.event_type_id = ?"
 	var p = [evtType]
 	db.select_query(q, p, function (err, rows) {
 		for(var i in rows) {
-			data[rows[i]['name']] = rows[i]['condition_type_id']
+			data[rows[i]['name']] = [rows[i]['condition_type_id'], rows[i]['input_type']]
 		}
 		callback(data)
 	})
