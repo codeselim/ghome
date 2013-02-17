@@ -17,6 +17,8 @@ var spy_webm  = require('./spy_web_module')
 var wutils    = require('./weather_utils')
 var sutils    = require('./sensors')
 var webdir = '../..'
+var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
+
 /**
  * Request handlers
  * Prototype: function(req, res, params, responseSender)
@@ -25,6 +27,7 @@ var webdir = '../..'
  */
 var requestHandlers = {
 	  'home'              : homeReqHandler
+	, 'getting_started': gettingStartedRH
 	, 'device_management' : device.devMgmtRequestHandler
 	, 'device'            : device.deviceRequestHandler
 	, 'spy'               : spy_webm.spyRequestHandler
@@ -82,7 +85,20 @@ function sendPlainHTML(fileName, args, path) {
 }
 
 // @TODO: MOVE IN ANOTHER FILE BEGIN ///////////////////////////////////////////////////////////////
+function gettingStartedRH (req, res, params, responseSender) {
+	var q = "UPDATE `" + t['set'] + "` SET value = 0 WHERE name = ?"
+	var p = ["first_start"]
+	params.db.update_query(q, p, function (err) {
+		var data = tpl.get_template_result("getting_started.html", {})
+		params['fileUrl'] = 'getting_started.html'
+		responseSender(req, res, params, data)
+	})
+}
+
 function homeReqHandler(req, res, params, responseSender) {
+	if (get_shared_data("first_start")) {
+		webRedirect301("/?module=getting_started")
+	}
 	var wpic = ''
 	wutils.getWeatherFromCity(get_shared_data('weather_location'), function (wData) {
 		if ("weatherIconUrl" in wData) {
@@ -145,9 +161,29 @@ function defaultReqHandler(req, res, params, responseSender) {
 	}
 }
 
+function webRedirect301 (res, urlToBeRedirectedTo) {
+	res.writeHead(301, 'Moved Permanently', {
+			// 'Cache-Control': 'public',
+			// 'Date': new Date().toGMTString(),
+			// 'Server': 'Node/' + process.version,
+			'Content-Length': '0',
+			'Connection': 'Close',
+			'Location': urlToBeRedirectedTo
+		});
+	res.end()
+}
 
-function start (db, port) {
+function start (db, secured_port, unsecured_port) {
 	console.log('Starting webserver')
+
+	var http = require('http')
+
+	//* Redirecting any http request to https
+	http.createServer(function (req, res) {
+		var redirect_url = get_shared_data('WEB_UI_BASEURL') + req.url
+		// console.log("Redirecting from http to https: " + redirect_url)
+		webRedirect301(res, redirect_url)
+	}).listen(unsecured_port);
 
 	var auth = require('http-auth')
 	var basic = auth({
@@ -206,7 +242,7 @@ function start (db, port) {
 				console.log(e)
 			}
 		})
-	}).listen(port)
+	}).listen(secured_port)
 }
 
 exports.start = start
