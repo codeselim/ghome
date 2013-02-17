@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>ghome</title>
-	<link rel="stylesheet" href="css/ghome.min.css">
-	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
-</head>
-<body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
-	<div data-role="page" id="device">
+{{> header}}	
+<div data-role="page" id="device">
 		<div data-theme="a" data-role="header" data-position="fixed">
 			<h3>Nouvel équipement</h3>
 			<a href="/?module=home" data-icon="home" data-iconpos="notext" >Accueil</a>
@@ -21,10 +12,10 @@
 			<ul data-role="listview" data-divider-theme="d" data-inset="true">
 					<li data-role="list-divider">Etat</li>
 					{{#hasActions}}
-					<li data-icon="gear"><a id="changeState">{{value}}</a></li>
+					<li data-icon="gear"><a id="changeState" data-role="ghome-state" data-device-id="{{device.id}}">{{value}}</a></li>
 					{{/hasActions}}
 					{{^hasActions}}
-					<li>{{value}}</li>
+					<li id="deviceState" data-role="ghome-state" data-device-id="{{device.id}}">{{value}}</li>
 					{{/hasActions}}
 			</ul>
 			{{/editMode}}
@@ -104,5 +95,4 @@
 			<!-- Content-End -->
 		</div>
 	</div>
-</body>
-</html>
+{{> footer}}

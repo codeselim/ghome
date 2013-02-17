@@ -36,11 +36,12 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 		function(err, rows) {
 			var thresholds = [];
 			for (var r in rows) {
-				thresholds.push(rows[r]["th.value"]);
+				thresholds.push(rows[r]["value"]);
 			}
 
 			for(var t in thresholds) {
 				var threshold = thresholds[t]
+				console.log("-------------------lastValues[idSensor] ",lastValues[idSensor], "threshold ",threshold, "value ", value)
 				if (lastValues[idSensor] < threshold && value > threshold) {
 					//tasks_executor.execute_task(1);
 					eventEmitter.emit(SENSOR_EVENT, 1, idSensor);
@@ -173,6 +174,10 @@ function handleEvent(frame_data) {
 			var sensor_id = rows[r].sensor_id
 			console.log("EM_TYPE SENSOR : " + sensor_type);
 			console.log("EM_VALUE_SENSOR : " + value);
+
+			// Notification to update the sensor's value
+			sensors_utils.notifyNewSensorState(sensor_id, sensor_type, value)
+
 			if (sensor_type in dictSensorEvent) {
 				console.log("EM_SEND EVENT")
 				dictSensorEvent[sensor_type](sensor_id, sensor_type, value)
