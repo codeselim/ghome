@@ -16,7 +16,6 @@ define(['jquery'], function($){
 			pair[1] = decodeURIComponent(pair[1])
 				// If first entry with this name
 			if (pair[1] != "") {
-				console.log(pair[0])
 				if (typeof query_string[pair[0]] === "undefined") {
 					query_string[pair[0]] = pair[1]
 					// If second entry with this name
@@ -32,6 +31,7 @@ define(['jquery'], function($){
 		return query_string
 	}
 
+	//* Wtf? why is it slower?
 	var getFieldsValues = function($nodes) {
 		var fields = {}
 		$nodes.each(function() {

@@ -97,7 +97,7 @@ function gettingStartedRH (req, res, params, responseSender) {
 
 function homeReqHandler(req, res, params, responseSender) {
 	if (get_shared_data("first_start")) {
-		webRedirect301("/?module=getting_started")
+		webRedirect301(res, "/?module=getting_started")
 	}
 	var wpic = ''
 	wutils.getWeatherFromCity(get_shared_data('weather_location'), function (wData) {
@@ -139,6 +139,7 @@ function homeReqHandler(req, res, params, responseSender) {
 */
 function defaultResponseSender(req, res, params, data) {
 	if (params.error404) {
+		res.writeHead(200, {'Content-Type': 'text/html'})
 		res.end(fs.readFileSync('../../views/404.html'))
 	} else {
 		res.writeHead(200, {'Content-Type': mime.lookup(params.fileUrl)})

@@ -1,15 +1,16 @@
 "use strict"
 
 define(['jquery', 'utils', 'jqvalidate'], function($,utils){
+	var cache = {}
 
-	var initCache = function(cache) {
+	var initCache = function() {
 		$.ajax({
 				'url'      : "/"
 			, 'dataType' : 'json'
 			, 'data'     : {'module' : 'task', 'action' : 'initCache'}
 		})
 		.done(function(data) {
-			$.extend(cache, data)
+			cache = data
 		})
 	}
 
@@ -95,7 +96,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		})
 		.done(function(data) {
 			console.log(data)
-			populateSelectBox($('#condition'+ condId +' [name=condType]'), data, true, false, true) // @TODO
+			populateSelectBox($('#condition'+ condId +' [name=condType]'), data, true, false, true)
 
 			if (condId === 'Evt') { //* Update the conditionEvt item too
 				var label = $('[name=evtSource]').find(':selected').html().replace(/&nbsp;/g, '')
@@ -111,6 +112,26 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		})
 	}
 
+	var changeInputType = function changeInputType(condId, type, values) {
+		var $condValueDiv = $('div[data-condition-id='+ condId +']')
+
+		//* Adding the right input type
+		switch(type){
+			case 'list':
+				$condValueDiv.html(cache.conditionListValueTemplate.replace(/@@condId@@/g, condId))
+				$condValueDiv.trigger('create')
+				populateSelectBox($('#condition'+ condId +' select[name=condValue]'), values, true)
+				break;
+			case 'free':
+				$condValueDiv.html(cache.conditionFreeValueTemplate.replace(/@@condId@@/g, condId))
+				$condValueDiv.trigger('create')
+				break;
+
+			default: //none
+				$condValueDiv.html('') //* It's now empty
+				break;
+		}
+	} 
 
 	/**
 	 * Uses the condition-id attribute of the element to edit the right condValue select list
@@ -118,7 +139,6 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 	var updateCondValue = function() {
 		// Grabbing the sensorType so that the server is able to determine which condition thresholds are available to us (as thresholds are set to sensor types)
 		var sensorType = $(this).parents('.conditionBlock').find('select.condSourceSelect').eq(0).find(':selected').eq(0).data('sensor-type')
-		console.log("sensorType=", sensorType)
 		var condType = $(this).val()
 		var condId = $(this).data('condition-id')
 
@@ -129,14 +149,10 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 				, 'data'     : {'module' : 'task', 'action' : 'get_condition_values', 'condType' : condType, 'sensorType': sensorType}
 			})
 			.done(function(data) {
-				if (data.type == "free") {
-					// @TODO Change the input to a free text input
-				} else if (data.type == "list") {
-					populateSelectBox($('#condition'+ condId +' [name=condValue]'), data.values, true)
-				}
+				changeInputType(condId, data.type, data.values)
 			})
 		} else {
-			populateSelectBox($('#condition'+ condId +' [name=condValue]'), {})
+			changeInputType(condId, 'none')
 		}
 	}
 
@@ -157,8 +173,16 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 			, cond: []
 		}
 
+		// console.log('------- Params ---------')
+		// $('[id^=condition]').each(function(){
+		// 	var cond = utils.queryStringToHash($.param($(this).find('select, input')))
+		// 	if (!$.isEmptyObject(cond)) {
+		// 		params.cond.push(cond)
+		// 	}
+		// })
+		// console.log('------- GetFields ---------')
 		$('[id^=condition]').each(function(){
-			var cond = utils.queryStringToHash($.param($(this).find('select')))
+			var cond = utils.getFieldsValues($(this).find('select, input'))
 			if (!$.isEmptyObject(cond)) {
 				params.cond.push(cond)
 			}
@@ -177,9 +201,9 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		})
 		.done(function(data) {
 			if (data.success) {
-				utils.addMessage('success', 'Ok! Vous allez être redirigé sur la liste des tâches.')
-				// window.location.href = '/?module=scheduler'
-				setTimeout('top.location.href = "/?module=scheduler"',2000)
+				// utils.addMessage('success', 'Ok! Vous allez être redirigé sur la liste des tâches.')
+				window.location.href = '/?module=scheduler&msg='+encodeURIComponent(data.msg)
+				// setTimeout('top.location.href = "/?module=scheduler"',2000)
 			} else {
 				utils.addMessage('error', 'Une erreur est survenue')
 			}
@@ -196,13 +220,9 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 
 	var taskPI = function taskPI() {
 		console.log('taskPI!')
-		var cache = {}
 		var conditionCount = 0
 
-		$('.leftLink').parent().parent().parent().removeClass('ui-btn');
-		$('.leftLink').contents().unwrap();
-
-		initCache(cache)
+		initCache()
 		utils.initMessages()
 		$('[name=aActor]').change(updateActionList)
 		$('[name=evtSource]').change(updateEvtTypeList)
@@ -219,9 +239,12 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 			//* Ask JQM to redraw the new elements
 			newCondition.trigger('create')
 			bigList.listview('refresh')
+
+			//* Removes the button style due to the split. Makes the item much thinner. Enable? @TODO
+			// $('.leftLink').parent().parent().parent().removeClass('ui-btn');
+			// $('.leftLink').contents().unwrap();
 		})
 
-		console.log('registering validation!')
 		$('form').validate({
 				rules: { 
 					  taskName: "required" 
@@ -237,14 +260,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 					, evtSource: "Veuillez sélectionner la source de l'évènement"
 					, evtType: "Veuillez sélectionner le type d'évènement"
 				}
-			, errorPlacement: function(error, element) {
-				//* Needed to place the error message out of the select menu.
-				if (element.is('select')) {
-					error.insertAfter($(element).parent())
-				} else {
-					error.insertAfter(element)
-				}
-			}
+			, errorPlacement: utils.errorPlacementFix
 			, submitHandler: submitNewTask
 		})
 	}

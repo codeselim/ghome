@@ -19,11 +19,11 @@ INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "sup�
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "inférieur au seuil", 7, "list");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "contact réalisé", 8, "none");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "contact non réalisé", 9, "none");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois =", 10, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine =", 11, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois =", 12, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure =", 13, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute =", 14, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois =", 10, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine =", 11, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois =", 12, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure =", 13, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute =", 14, "free");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois <", 15, "list");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine <", 16, "list");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois <", 17, "list");
@@ -181,8 +181,27 @@ INSERT INTO event_types VALUES (15, "Bouton interrupteur droit bas appuyé");
 -- Join tables data
 
 -- events to conditions mapping
+	-- temperature
 	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(1, 6); -- ascending threshold : >= threshold
 	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(2, 7);  -- descending threshold : <= threshold
+
+	-- time
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(9, 10);  -- changement de mois : mois =
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(5, 11);  -- changement de jour : jour de la semaine =
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(5, 12);  -- changement de jour : jour du mois =
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(6, 13);  -- changement d'heure : heure =
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(7, 14);  -- changement de minute : minute =
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(9, 15);  -- changement de mois : mois <
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(5, 16);  -- changement de jour : jour de la semaine <
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(5, 17);  -- changement de jour : jour du mois <
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(6, 18);  -- changement d'heure : heure <
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(7, 19);  -- changement de minute : minute <
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(9, 20);  -- changement de mois : mois >
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(5, 21);  -- changement de jour : jour de la semaine >
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(5, 22);  -- changement de jour : jour du mois >
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(6, 23);  -- changement d'heure : heure >
+	INSERT INTO `event_types_condition_types` (event_type_id, condition_type_id) VALUES(7, 24);  -- changement de minute : minute >
+
 
 -- sensors to events
 	--  temperature
