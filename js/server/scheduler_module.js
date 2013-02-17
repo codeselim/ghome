@@ -227,10 +227,18 @@ var taskRH  = function (req, res, params, responseSender) {
 		case 'initCache' : //* Returns the html for a condition, preloaded with the sensors list (more?)
 		{
 			getEvtSources(params.db, function (evtSources) {
-				var data = {'conditionTemplate' : tpl.get_template_result("new_device_templates.html", {
-					  'conditionTemplate' : true
-					, 'evtSourceTypes' : evtSources
-				})}
+				var data = {
+					  'conditionTemplate' : tpl.get_template_result("new_device_templates.html", {
+						  'conditionTemplate' : true
+						, 'evtSourceTypes' : evtSources
+						})
+					, 'conditionListValueTemplate' : tpl.get_template_result("new_device_templates.html", {
+						  'conditionListValueTemplate' : true
+						})
+					, 'conditionFreeValueTemplate' : tpl.get_template_result("new_device_templates.html", {
+						  'conditionFreeValueTemplate' : true
+						})
+					}
 				res.end(JSON.stringify(data))
 			})
 			break
@@ -238,8 +246,8 @@ var taskRH  = function (req, res, params, responseSender) {
 
 		case 'submit':
 		{
+			console.log("SCHMOD", params.query.data)
 			var formData = JSON.parse(params.query.data)
-			// console.log("SCHMOD", formData)
 
 			var q = "INSERT INTO `" + t['t'] + '` (name, action_type_id, target_id, event_type_id, origin_id) VALUES (?, ?, ?, ?, ?)'
 			var p = [formData.name, formData.act.aAction, formData.act.aActor, formData.evt.evtType, formData.evt.evtSource]
@@ -247,7 +255,7 @@ var taskRH  = function (req, res, params, responseSender) {
 			params.db.insert_query(q, p, function (err) {
 				if (null != err) {
 					console.error("SCHMOD", err)
-					res.end(JSON.stringify({success: false}))
+					res.end(JSON.stringify({success: false, msg: err}))
 				} else {
 					var taskId = this.lastID
 					var count = formData.cond.length
@@ -256,7 +264,7 @@ var taskRH  = function (req, res, params, responseSender) {
 						// When it reaches 0, then we're done and we can answer.
 						count--
 						if (0 == count) {
-							res.end(JSON.stringify({success: true}))
+							res.end(JSON.stringify({success: true, msg: 'La tâche a été ajoutée avec succès'}))
 						}
 					}
 					for(var i in formData.cond) {
@@ -341,6 +349,8 @@ var taskRH  = function (req, res, params, responseSender) {
 										tplData['actionValues'].push({label: i, id: actions[i], selected: sel}) // have to translate this very weird format of pushing data directly as a key, to a format usable in the templates
 									}
 									
+									console.log('SCHMOD', JSON.stringify(tplData))
+
 									var html = tpl.get_template_result("task.html", tplData)
 
 									params.fileUrl = 'task.html'

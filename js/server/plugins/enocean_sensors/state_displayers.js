@@ -3,7 +3,10 @@
 //* This file contains functions that translate raw state value to human readable sensors states
 
 function simpleTranslate (raw_value) {
-	return raw_value.toString()
+	if (raw_value) {
+		return raw_value.toString()
+	}
+	return 'Pas de donnée'
 }
 
 function toTemp (raw_value) {

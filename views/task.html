@@ -53,10 +53,10 @@
 					<li data-role="list-divider" role="heading">
 						Evénement
 					</li>
-					<li id="evtArgs">	
+					<li id="evtArgs">
 						<div class="ui-grid-a">
 							<div class="ui-block-a">
-								<select name="evtSource" 
+								<select name="evtSource">
 									<option value="">-- Source --</option>
 									{{#evtSourceTypes}}
 									<optgroup label="{{label}}">
@@ -86,7 +86,7 @@
 								<select name="condType" data-mini="true" data-condition-id="Evt" disabled>
 								</select>
 							</div>
-							<div class="ui-block-c">
+							<div class="ui-block-c" data-condition-id="Evt">
 								<select name="condValue" data-mini="true" data-condition-id="Evt" disabled>
 								</select>
 							</div>

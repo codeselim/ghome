@@ -20,8 +20,9 @@
 				</li>
 				<li data-role="list-divider">Liste des seuils</li>
 				{{#thresholds}}
-					<li><a data-transition="fade" href="/?module=threshold&amp;action=edit&amp;id={{id}}">
-						<span>{{thresholdName}}</span><span style="float: right; width: 30%; text-align:left"> {{value}}</span>
+					<li><a data-transition="fade" href="/?module=threshold&amp;action=edit&amp;id={{id}}" class="itemInfo">
+						<span class="itemValue"> {{value}}</span>
+						<span class="itemName">{{thresholdName}}</span>
 					</a></li>
 				{{/thresholds}}
 				{{^thresholds}}
