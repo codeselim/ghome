@@ -27,7 +27,7 @@ var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of 
  */
 var requestHandlers = {
 	  'home'              : homeReqHandler
-	, 'getting_started': gettingStartedRH
+	, 'getting_started'   : gettingStartedRH
 	, 'device_management' : device.devMgmtRequestHandler
 	, 'device'            : device.deviceRequestHandler
 	, 'spy'               : spy_webm.spyRequestHandler
@@ -89,6 +89,8 @@ function gettingStartedRH (req, res, params, responseSender) {
 	var q = "UPDATE `" + t['set'] + "` SET value = 0 WHERE name = ?"
 	var p = ["first_start"]
 	params.db.update_query(q, p, function (err) {
+		console.log("GS", err)
+		
 		var data = tpl.get_template_result("getting_started.html", {})
 		params['fileUrl'] = 'getting_started.html'
 		responseSender(req, res, params, data)
@@ -96,7 +98,7 @@ function gettingStartedRH (req, res, params, responseSender) {
 }
 
 function homeReqHandler(req, res, params, responseSender) {
-	if (get_shared_data("first_start")) {
+	if (get_shared_data("first_start") != 0) {
 		webRedirect301(res, "/?module=getting_started")
 	}
 	var wpic = ''

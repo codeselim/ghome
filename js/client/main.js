@@ -36,6 +36,7 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', '
 			, 'thresholdList' : threshold.listPageInit
 			, 'threshold'     : threshold.pageInit
 			, 'spy'           : spy.pageInit
+			, 'gettingStarted': function(){}
 		}
 
 		for(var id in pageinits) {
