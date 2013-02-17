@@ -168,8 +168,8 @@ function notifyNewSensorState(sensorid, sensortype, eventvalue) {
 	var addStyle = true
 	sseSender.sendSSE({
 		  'deviceId': sensorid
-		  , 'value': getDisplayableState(sensortype, value)
-		  , 'style': getStateStyle(sensortype, value)
+		  , 'value': getDisplayableState(sensortype, eventvalue)
+		  , 'style': getStateStyle(sensortype, eventvalue)
 		  , 'deviceType': sensortype
 	})
 }
