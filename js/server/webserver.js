@@ -1,12 +1,7 @@
 "use strict"
 
-<<<<<<< HEAD
-var sys = require('sys')
-var terminal = require('child_process').spawn('bash')
-var http      = require('http')
-=======
+
 var https      = require('https')
->>>>>>> master
 var fs        = require('fs')
 var mime      = require('mime')
 var qs 		    = require('querystring');
@@ -24,27 +19,9 @@ var spy_webm  = require('./spy_web_module')
 var wutils    = require('./weather_utils')
 var sutils    = require('./sensors')
 var webdir = '../..'
-<<<<<<< HEAD
 
-terminal.stdout.on('data', function (data) {
-
-	console.log('stdout: ' + data);
-
-});
-terminal.stderr.on('data', function (data) {
-  console.log('stderr: ' + data);
-});
-terminal.stdin.write('cd ' + __dirname+'\n');
-//terminal.stdin.end();
-
-terminal.on('exit', function (code) {
-        console.log('child process exited with code ' + code);
-});
-
-
-=======
 var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
->>>>>>> master
+
 
 /**
  * Request handlers
