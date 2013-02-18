@@ -178,7 +178,7 @@ var deviceTestRH = function (req, res, params, responseSender) {
 			var devId = parseInt(params.query.deviceId)
 			// Initialize the data structure allowing tests to shared data about this specific test (unique testid)
 			satr[testid] = {}
-			satr[testid]["deviceId"] = params.query.deviceId
+			satr[testid]["deviceId"] = devId
 			// In case if was already in memory, delete it:
 			/* A bit of explanation here :
 			 * In order to receive data from the device

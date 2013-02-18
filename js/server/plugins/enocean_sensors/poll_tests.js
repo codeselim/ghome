@@ -9,9 +9,12 @@ var satr = gsd('shared_among_tests_requests')
 var sutils = require('../../sensors')
 
 var simpleTeachIndDetection = function (req, res, params, testid) {
-	if (-1 != gsd('TEACH_IN_IDS').indexOf(satr['deviceId'])) {
-		res.end(JSON.stringify({status: 'ok', events: []})) // putting "events" empty array will trigger the test end, on the client
+	console.log("POLLT: Looking for devId=", satr[testid]['deviceId'], "in the teach-in table")
+	if (-1 != gsd('TEACH_IN_IDS').indexOf(parseInt(satr[testid]['deviceId']))) {
+		console.log("POLLT: IS OVER")
+		res.end(JSON.stringify({status: 'ok', message: "La trame de votre capteur a été détectée.", events: []})) // putting "events" empty array will trigger the test end, on the client
 	} else {
+		console.log("POLLT: NOT YET")
 		res.end(JSON.stringify({status: 'ok'})) // just saying hello
 	}
 }

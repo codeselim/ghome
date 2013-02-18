@@ -47,6 +47,7 @@ function start (db, web_serv, port, allowed_ids) {
 				buffer = buffer.substr(FRAME_SIZE, buffer.length) //* Crops the current buffer, we don't need the data from the previous frame anymore
 				var frame_data = decode(frame)
 				if (0x07 == frame_data.org) {// teach-in mode
+					console.log("SENSSERV: teach-in frame detected for id", frame_data.id, "registering it")
 					pushToTeachIn(frame_data.id)
 				}
 				if (-1 != allowed_ids.indexOf(frame_data.id)) {

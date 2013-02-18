@@ -11,18 +11,22 @@ var sutils = require('../../sensors')
 
 //* Action for device of type 2 
 start_tests[1] = function (req, res, params, testid) {
+	console.log("STARTT: Starting testid=", testid, "satr =", JSON.stringify(satr[testid]))
 	res.end(JSON.stringify({'testid': testid, hideafter: 1000, msg: "Veuillez maintenant appuyer sur le bouton LRN de votre capteur." }))
 }
 //* Action for device of type 2 
 start_tests[2] = function (req, res, params, testid) {
+	console.log("STARTT: Starting testid=", testid)
 	res.end(JSON.stringify({'testid': testid, hideafter: 1000, msg: "Veuillez maintenant appuyer sur le bouton LRN de votre capteur." }))
 }
 //* Action for device of type 2 
 start_tests[3] = function (req, res, params, testid) {
+	console.log("STARTT: Starting testid=", testid)
 	res.end(JSON.stringify({'testid': testid, hideafter: 1000, msg: "Veuillez maintenant appuyer sur le bouton LRN de votre capteur." }))
 }
 //* Action for device of type 2 
 start_tests[4] = function (req, res, params, testid) {
+	console.log("STARTT: Starting testid=", testid)
 	res.end(JSON.stringify({'testid': testid, hideafter: 1000, msg: "Veuillez maintenant appuyer sur le bouton LRN de votre capteur." }))
 }
 //* Action for device of type 5 : Power switch plug

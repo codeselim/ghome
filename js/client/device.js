@@ -20,6 +20,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 			if (Object.prototype.toString.call(data.events) === '[object Array]') {// When there is at least one event, then we consider things are validated (as we received an event!)
 				reqStatus.validated = true
 				reqStatus.events = data.events
+				reqStatus.message = data.message
 			}
 
 			if (! reqStatus.validated && countdown > 0) {
@@ -51,7 +52,11 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		//* We display the test results
 		if (reqStatus.validated) {
 			$.mobile.loading('hide')
-			$('#popupContent').html("Le test s'est terminé avec succès !")
+			if(reqStatus.message) {
+				$('#popupContent').html(reqStatus.message)
+			} else {
+				$('#popupContent').html("Le test s'est terminé avec succès !")
+			}
 			$('#popup').popup('open')	
 		} else {
 			$.mobile.loading('hide')
