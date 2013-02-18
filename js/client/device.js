@@ -178,10 +178,32 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		})
 		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
 	}
+
+	var deleteDevice = function deleteDevice() {
+		$.ajax({
+				'url'      : "/"
+			, 'dataType' : 'json'
+			, 'data'     : {
+					  'module':'device'
+					, 'action':'delete_device'
+					, 'deviceId': $('[name=id]').val()
+				}
+		})
+		.done(function(data) {
+			console.log(data)
+			if (data.success) {
+				window.location.href = '/?module=device_management&msg='+encodeURIComponent(data.msg)
+			} else {
+				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
+				$('#deletePopup').popup('close')	
+			}
+		})
+		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })	
+	}
 	
 	//*** Returned functions *************************************************************************
 	var pageInit = function pageInit() {
-		console.log('new device pageInit')
+		console.log('device pageInit')
 		utils.initMessages()
 
 		$("#mainForm").validate({
@@ -211,20 +233,23 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		})
 		
 		$("#testButton").on('click',function(){
-			console.log("There 1")
 			$("#mainForm").validate()
-			console.log("There 2")
 			if ($("#mainForm").valid()) {
-				console.log("There 3")
 				testDevice()
-			} else {
-				console.log("There 5")
 			}
 		})
 
 		$('a#changeState').click(function() {
 			$('#statePopup').popup('open')	
 		})
+
+		$('#deleteButton').click(function() {
+			$('#deletePopup').popup('open')	
+		})
+
+		$('#confirmDelete').click(deleteDevice)
+
+
 	}
 
 	return {
