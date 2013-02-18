@@ -8,14 +8,14 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		data.module = 'spy'
 
 		data.action = 'submit_parameters'
-
+		
 		$.ajax({
 			'url'      : "/"
 			, 'dataType' : 'json'
 			, 'data'     : data
 		})
 		.done(function(data) {
-			console.log(data)
+			
 			if (data.success) {
 				// utils.addMessage('success', 'TODO: retourner le nouvel id pour pouvoir passer en mode édition')
 				 window.location.href = '/?module=spy' //* Why reload entirely?
