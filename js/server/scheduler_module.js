@@ -23,6 +23,9 @@ var schedulerRH  = function (req, res, params, responseSender) {
 			console.error("An error occured while reading the list of tasks in the DB.", q)
 		} else {
 			tplData['tasks'] = sutils.generate_json_devices_list_from_sql_rows(rows)
+			if (params.query.msg) {
+				tplData.msg = decodeURIComponent(params.query.msg)
+			}
 			console.log(tplData)
 			var data = tpl.get_template_result("scheduler.html", tplData)
 			params.fileUrl = 'scheduler.html'

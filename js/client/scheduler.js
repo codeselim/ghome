@@ -192,7 +192,6 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 	}
 
 	var submitNewTask = function() {
-
 		console.log(getFormParams())
 		$.ajax({
 				'url'      : "/"
