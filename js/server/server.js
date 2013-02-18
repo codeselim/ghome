@@ -108,10 +108,12 @@ function GLOBAL_INIT () {
 	}
 	console.log("Starting Initializing data...")
 	var ip = utils.getLocalPublicIpAddress(["wlan0", "wlan1"])
+    console.log("Server is starting. With local IP=" + ip)
 	set_shared_data('LOCAL_SERVER_IP', ip)
 	set_shared_data('MAIN_SERVER_IP', "134.214.105.28")
 	set_shared_data('WEB_UI_BASEURL', 'https://' + ip)
-	set_shared_data('WEB_UI_HOME', 'https://' + ip + "/")
+    console.log("WeB_UI_BASEURL=", get_shared_data("WEB_UI_BASEURL"))
+	set_shared_data('WEB_UI_HOME', 'https://' + ip + "/?module=home")
 	set_shared_data('MAIN_SERVER_PORT', 5000)
 	set_shared_data('TEMP_SENSOR_TYPE', 1)
 	db = new dbms.Database()

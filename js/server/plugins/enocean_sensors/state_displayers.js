@@ -14,6 +14,9 @@ function toTemp (raw_value) {
 }
 
 function boolTranslator (raw_value) {
+	if (raw_value == '0') {
+		raw_value = 0
+	}
 	if (raw_value) {
 		return "ON"
 	} else {
@@ -61,7 +64,7 @@ sutils.addStateDisplayer(1, toTemp)
 sutils.addStateDisplayer(2, simpleTranslate)
 sutils.addStateDisplayer(3, boolTranslator)
 sutils.addStateDisplayer(4, boolTranslator)
-sutils.addStateDisplayer(5, boolTranslator)
+sutils.addStateDisplayer(5, boolTranslator) // electric switch plug
 sutils.addStateDisplayer(8, toSwitch)
 
 

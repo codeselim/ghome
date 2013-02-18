@@ -70,9 +70,17 @@ function getDeviceInfo (db, deviceid, callback) {
 var deviceRH = function (req, res, params, responseSender) {
 	switch (params.query.action) {
 		case 'change_device_state':
-			require('./device_communicator').sendToSensor(params.query.deviceId, params.query.newStateCode)
-			res.end(JSON.stringify({'success':true}))
-			break
+		{
+			var devId = parseInt(params.query.deviceId)
+			require('./device_communicator').sendToSensor(devId, params.query.newStateCode, function (devType, new_device_state) {
+				require('./logger').insertLogWithDevAndValue(devId, new_device_state, null)
+				get_shared_data('SENSORS_VALUES')[devId] = new_device_state
+				console.log("DEVMOD: Updating state (supposed the data was actually sent) to ", new_device_state)
+				sutils.notifyNewSensorState(devId, devType, new_device_state)
+				res.end(JSON.stringify({'success':true}))
+			})
+		}
+		break
 
 
 		case 'submit_new':
@@ -259,7 +267,8 @@ var deviceManagementRH  = function (req, res, params, responseSender) {
 							var typeId = deviceTypes[i].id
 							for(var j in deviceTypes[i].devices) {
 								var s = deviceTypes[i].devices[j]
-								deviceTypes[i].devices[j]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])	
+								deviceTypes[i].devices[j]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])
+								console.log("Value of sensor", s.id, "is", sensors_values[s.id])
 							}
 						}
 

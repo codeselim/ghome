@@ -24,7 +24,7 @@ var communicators = {
  * @param{string} message
  * @return{void} undefined
 */
-function sendToSensor (sensor_id, message) {
+function sendToSensor (sensor_id, message, callback) {
 	if (!started) {
 		notStarted()
 	};
@@ -33,7 +33,7 @@ function sendToSensor (sensor_id, message) {
 			var tid = rows[0].sensor_type_id
 
 			if (tid in communicators) {
-				communicators[tid](rows[0].hardware_id, message)
+				communicators[tid](rows[0].hardware_id, message, callback)
 			}
 		};
 	})
