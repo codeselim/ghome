@@ -1,7 +1,7 @@
 var streams = []
 
 function requestHandler(req, res, params, response_sender) {
-	console.log('New SSE connection')
+	// console.log('New SSE connection')
 	streams.push(res)
 	res.writeHead(200, {
 		'Content-Type': 'text/event-stream',
@@ -16,7 +16,7 @@ function requestHandler(req, res, params, response_sender) {
 
 //* @this the html.ServerRequest raising the error/close/end event */
 function shutdown () {
-	console.log('stream shutdown')
+	// console.log('stream shutdown')
 
 	var index = streams.indexOf(this)
 	if (index != -1) {
@@ -31,12 +31,12 @@ function shutdown () {
 function sendSSE(data) {
 	var i
 
-	console.log('to send', data)
+	// console.log('to send', data)
 	for (i = 0; i < streams.length; i++) {
 		streams[i].write('data: ' + JSON.stringify(data) + '\n\n')
 	}
 	if (i == 0) {
-		console.log('There is no GUI SSE opened connection')
+		// console.log('There is no GUI SSE opened connection')
 	}
 }
 

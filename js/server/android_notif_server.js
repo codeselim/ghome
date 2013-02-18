@@ -4,7 +4,7 @@
 
 var net = require("net")
 var get_shared_data = require("./shared_data").get_shared_data
-console.log("ANDRONOTIF: Starting Android Service server")
+// console.log("ANDRONOTIF: Starting Android Service server")
 var streamId = 0
 var streams = {}
 var server = null
@@ -22,11 +22,11 @@ function start (port, ip) {
 		stream.setEncoding("utf8");
 
 		stream.addListener("connect", function(){
-			console.log("ANDRONOTIF: New ANDROID server connection established (device number", myStreamId, ").")
+			// console.log("ANDRONOTIF: New ANDROID server connection established (device number", myStreamId, ").")
 		// Debug purpose : If you want to debug the notifications, uncomment that code
 		// 	var i = 0
 		// 	a = setInterval(function () {
-		// 		console.log("Sending a new notif", i++, "to Android device number", myStreamId)
+		// 		// console.log("Sending a new notif", i++, "to Android device number", myStreamId)
 		// 		try {
 		// 			stream.write(NOTIF_PREFIX + "Hi Android device "+ myStreamId + "!\r\n")
 		// 		} catch(e) {
@@ -37,7 +37,7 @@ function start (port, ip) {
 		});
 
 		function shutdown () {
-			console.log("ANDRONOTIF: Closing connection to Android device number", myStreamId)
+			// console.log("ANDRONOTIF: Closing connection to Android device number", myStreamId)
 			var stop = true
 			// clearInterval(a)
 			delete streams[myStreamId]
@@ -49,7 +49,7 @@ function start (port, ip) {
 
 		var buffer = ""
 		stream.addListener("data", function (data) {
-			console.log("ANDRONOTIF: " + new Date().toString() + "New data packet came in:", data)
+			// console.log("ANDRONOTIF: " + new Date().toString() + "New data packet came in:", data)
 			stream.write("ANDRONOTIF: " + new Date().toString() + ": ACK\r\n")
 		});
 	})

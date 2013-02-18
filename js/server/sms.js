@@ -17,10 +17,10 @@ var mailOptions = { //create the mail to send
 				
 smtpTransport.sendMail(mailOptions, function(error, response){
 					if(error){
-						console.log(error);
+						// console.log(error);
 					}else{
-						console.log("Message sent: " + response.message);
-						console.log(_text)
+						// console.log("Message sent: " + response.message);
+						// console.log(_text)
 					}
 				smtpTransport.close(); // shut down the connection pool, no more messages
 			})

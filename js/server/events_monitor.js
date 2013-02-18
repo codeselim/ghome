@@ -27,7 +27,7 @@ Date.prototype.getWeek = function() {
 
 
 function checkThresholds(idSensor, sensor_type_id, value) {
-	//console.log("ERROR WITH "+ lastValues);
+	//// console.log("ERROR WITH "+ lastValues);
 	db.select_query("SELECT th.value " +
 		"FROM `" +  tables['th'] + "` th " +
 		"INNER JOIN `"+ tables['thst'] + "` thst ON (thst.threshold_id = th.id) " +
@@ -41,7 +41,7 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 
 			for(var t in thresholds) {
 				var threshold = thresholds[t]
-				console.log("-------------------lastValues[idSensor] ",lastValues[idSensor], "threshold ",threshold, "value ", value)
+				// console.log("-------------------lastValues[idSensor] ",lastValues[idSensor], "threshold ",threshold, "value ", value)
 				if (lastValues[idSensor] < threshold && value > threshold) {
 					//tasks_executor.execute_task(1);
 					eventEmitter.emit(SENSOR_EVENT, 1, idSensor);
@@ -51,14 +51,14 @@ function checkThresholds(idSensor, sensor_type_id, value) {
 					eventEmitter.emit(SENSOR_EVENT, 2, idSensor);
 				}
 			}
-			//console.log("ERROR WITH "+ value);
+			//// console.log("ERROR WITH "+ value);
 			lastValues[idSensor] = value;
 	});
 }
 
 function sendTimeEvent() {
 	var currentTime = new Date();
-	//console.log("Minute changed = " + currentTime.getMinutes());
+	//// console.log("Minute changed = " + currentTime.getMinutes());
 	//db.query("SELECT id FROM event_types WHERE name = ?", "minute", sendEvent);
 	var lastExecutionStr = null;
 	var previousTime = null;
@@ -118,24 +118,24 @@ function sendTimeEvent() {
 /*
 	// Hour changed
 	if (currentTime.getHours() != previousTime.getHours()) {
-		console.log("Hour changed = " + currentTime.getHours());
+		// console.log("Hour changed = " + currentTime.getHours());
 		tasks_executor.execute_task(6);
 	}
 	// Day changed
 	if (currentTime.getDay() != previousTime.getDay()) {
-		console.log("Day changed = " + currentTime.getDay());
+		// console.log("Day changed = " + currentTime.getDay());
 		tasks_executor.execute_task(5);
 	}
 	// Week changed
 	if (currentTime.getDay() == 1 previousTime.getDay() == 0) {
-		console.log("Week changed");
+		// console.log("Week changed");
 		tasks_executor.execute_task(8);
 
 
 	}
 	// Month changed
 	if (currentTime.getMonth() != previousTime.getMonth() || currentTime.getFullYear() != previousTime.getFullYear()) {
-		console.log("Month changed");
+		// console.log("Month changed");
 		tasks_executor.execute_task(9);
 	}
 
@@ -150,36 +150,36 @@ function sendTimeEvent() {
 
 
 function start(database) {
-	console.log("EM_Starting events_monitor");
+	// console.log("EM_Starting events_monitor");
 	lastValues = shared_data.get_shared_data("SENSORS_VALUES");
 	db = database;
 	idTimer = setInterval(sendTimeEvent, 15000);
 }
 
 function handleEvent(frame_data) {
-	console.log("EM_Data received from : " + frame_data.id);
-	console.log("EM_Data : " + frame_data.data);
+	// console.log("EM_Data received from : " + frame_data.id);
+	// console.log("EM_Data : " + frame_data.data);
 
 	db.select_query("SELECT id AS sensor_id, sensor_type_id FROM `"+ tables['s'] +"` WHERE hardware_id = ?", [frame_data.id], function(err, rows) {
 
 	// For every type of the sensor (a sensor can have many types)
 
 	for (var r in rows) {
-			//console.log(rows[r]["sensors_types.name"]);
+			//// console.log(rows[r]["sensors_types.name"]);
 			//var sensor_type = rows[r]["sensors_types.name"];
 			//var sensor_type_id = rows[r]["sensors_types.id"];
 			// If sensor_type_id is associated with a function in dictSensorEvent
 			var sensor_type = rows[r].sensor_type_id
 			var value = sensors_utils.decode_data_byte(sensor_type, frame_data)
 			var sensor_id = rows[r].sensor_id
-			console.log("EM_TYPE SENSOR : " + sensor_type);
-			console.log("EM_VALUE_SENSOR : " + value);
+			// console.log("EM_TYPE SENSOR : " + sensor_type);
+			// console.log("EM_VALUE_SENSOR : " + value);
 
 			// Notification to update the sensor's value
 			sensors_utils.notifyNewSensorState(sensor_id, sensor_type, value)
 
 			if (sensor_type in dictSensorEvent) {
-				console.log("EM_SEND EVENT")
+				// console.log("EM_SEND EVENT")
 				dictSensorEvent[sensor_type](sensor_id, sensor_type, value)
 			}
 		}

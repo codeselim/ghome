@@ -9,7 +9,7 @@ var repeatQuery = function(db, query, parameters, callbackparam, successcallback
 	var nbqueries = parameters.length
 
 	var sync_queries = function(err){
-		console.log(nbqueries)
+		// console.log(nbqueries)
 		if (err == null) {
 			nbqueries-- 
 		} else {
@@ -25,12 +25,12 @@ var repeatQuery = function(db, query, parameters, callbackparam, successcallback
 		}
 	}
 
-	console.log('Parameters', parameters)
-	console.log('Query', query)
+	// console.log('Parameters', parameters)
+	// console.log('Query', query)
 	//* If the query object is an array, we run each query. Else, the one query will be used repeatedly.
 	if (Object.prototype.toString.call(query) === '[object Array]') {
 		if (nbqueries != query.length) {
-			console.log('The query and parameter arrays don\'t have the same length')
+			// console.log('The query and parameter arrays don\'t have the same length')
 			errorcallback(callbackparam)
 		} else {
 			for (var i=0; i < parameters.length; i++) {
@@ -55,19 +55,19 @@ var repeatQuery = function(db, query, parameters, callbackparam, successcallback
 var diff = function(referenceArray, newArray) {
 	// @TODO debug
 	//* Diff between the current entries and the submitted ones
-	console.log('=========================')
-	console.log('ref:',referenceArray)
-	console.log('-------------------------')
-	console.log('new:',newArray)
-	console.log('=========================')
+	// console.log('=========================')
+	// console.log('ref:',referenceArray)
+	// console.log('-------------------------')
+	// console.log('new:',newArray)
+	// console.log('=========================')
 
 	var added = []
 	var index
 
 	for (var i = 0; i < newArray.length; i++) {
-		console.log('looking for value: ', newArray[i])
+		// console.log('looking for value: ', newArray[i])
 		index = referenceArray.indexOf(newArray[i])
-		console.log('index:', index)
+		// console.log('index:', index)
 		if (index == -1) { // Not found, the value has been added
 			added.push(newArray[i])
 		} else {
@@ -77,15 +77,15 @@ var diff = function(referenceArray, newArray) {
 	}
 	//* referenceArray now contains only the removed values	
 
-	console.log(JSON.stringify({'added': added, 'removed': referenceArray}))
-	console.log('====================')
+	// console.log(JSON.stringify({'added': added, 'removed': referenceArray}))
+	// console.log('====================')
 
 	return {'added': added, 'removed': referenceArray}
 }
 
 var submit = function(req, res, params, newMode) {
 	var submitSuccess = function(callbackparam) {
-		console.log('success!')
+		// console.log('success!')
 		callbackparam.res.end(JSON.stringify({'success': true, 'msg' : 'Le nouvel équipement a été ajouté avec succès.'}))
 	}
 
@@ -97,9 +97,9 @@ var submit = function(req, res, params, newMode) {
 	try{
 		params.query.deviceTypes = JSON.parse(params.query.deviceTypesJSON)
 	} catch(err) {
-		console.log(err)
+		// console.log(err)
 	}
-	console.log(params.query)
+	// console.log(params.query)
 	if (!params.query.deviceTypes) {
 		res.end(JSON.stringify({'msg': 'Le seuil doit être lié à au moins un type de capteur', 'success': false}))
 	} else {
@@ -118,13 +118,13 @@ var submit = function(req, res, params, newMode) {
 
 			params.db.insert_query(q, p, function (err) {
 				if (null == err) {
-					console.log("Threshold inserted at index "+ this.lastID)
+					// console.log("Threshold inserted at index "+ this.lastID)
 					//* Preparing the queries
 					p.length = dtArray.length
 					for (var i = 0; i < p.length; i++) {
 						p[i] = [this.lastID, dtArray[i]]
 					}
-					console.log(p)
+					// console.log(p)
 					q = "INSERT INTO `" + t['thst'] + "` (threshold_id, sensor_type_id) VALUES (?, ?)"
 					repeatQuery(params.db, q,	p, {res:res}, submitSuccess, submitError)
 
@@ -174,9 +174,9 @@ var submit = function(req, res, params, newMode) {
 								j++
 							}
 							//* Diff between the current entries and the submitted ones
-							console.log('== query params =========')
-							console.log(p)
-							console.log('=========================')
+							// console.log('== query params =========')
+							// console.log(p)
+							// console.log('=========================')
 
 							//* Run the queries
 							repeatQuery(params.db, q,	p, {res:res}, submitSuccess, submitError)
@@ -193,7 +193,7 @@ var submit = function(req, res, params, newMode) {
 }
 
 var editRH = function (req, res, params, responseSender) {
-	console.log("QUERY : "+params.query)
+	// console.log("QUERY : "+params.query)
 	var data = {}
 	switch (params.query.action) {
 
@@ -203,7 +203,7 @@ var editRH = function (req, res, params, responseSender) {
 
 		case 'submit_edit':
 			submit(req, res, params, false)
-			console.log(params.query.value)
+			// console.log(params.query.value)
 			var q = "UPDATE `" + t['th'] + "` SET name=?, value=? WHERE id=?"
 			var p = [params.query.name, params.query.value, params.query.id]
 			params.db.update_query(q, p, function (err) {
@@ -231,7 +231,7 @@ var editRH = function (req, res, params, responseSender) {
 					params.db.select_query("SELECT st.id, st.name AS deviceType"+
 								" FROM "+t['thst']+" JOIN "+t['st']+" AS st ON sensor_type_id = st.id WHERE threshold_id = ?", 
 								params.query.id, function(err, rows) {
-						console.log(data.device_types)
+						// console.log(data.device_types)
 						for(var r in rows) {
 							rows[r].selected = true
 							data.device_types.push(rows[r])

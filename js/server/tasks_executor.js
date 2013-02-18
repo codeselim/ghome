@@ -9,7 +9,7 @@ var stats_computer = require('./stats_computer.js')
 
 function send_message(target, action){
 	db.select_query("SELECT message_to_sensor FROM actions_types WHERE id = ?", [action], function (err, rows) {
-		console.log("target :", target, "action :", action)
+		// console.log("target :", target, "action :", action)
 		for (var r in rows){
 			device_communicator.sendToSensor (target, rows[r]["message_to_sensor"]);
 		}
@@ -18,7 +18,7 @@ function send_message(target, action){
 
 function make_action(results,targets) { //this function will execute the actions of results to the correct target
 	 for (var r in results) {
-	 	console.log("task_executor : send message to ",targets[r], " with action ", results[r])
+	 	// console.log("task_executor : send message to ",targets[r], " with action ", results[r])
       send_message(targets[r], results[r]);
   } 
 }
@@ -39,9 +39,9 @@ function execute_task(event_id, origin_id) {//this function will search the good
 	var current_action = null;
 	var current_sensor_id = null;
 	var current_condition_id = null;
-	console.log("-----------------------------event id :-------------------------------------")
-	console.log(event_id)
-	console.log("origin_id", origin_id)
+	// console.log("-----------------------------event id :-------------------------------------")
+	// console.log(event_id)
+	// console.log("origin_id", origin_id)
 
 	//We get the action type id, the operator, the value to compare, the sensor_id and the target_id from the candidate actions (actions wich are in the right timer for being candidate)
 	db.select_query("SELECT action_type_id, operator, value_to_compare, sensor_id, target_id, c.id FROM Tasks AS t LEFT OUTER JOIN conditions AS c ON c.task_id = t.id LEFT OUTER JOIN condition_types AS ct ON ct.id = c.type_id WHERE event_type_id = ? AND origin_id = ?"
@@ -63,7 +63,7 @@ function execute_task(event_id, origin_id) {//this function will search the good
 					actions_target[rows[r]["action_type_id"]] = rows[r]["target_id"];
 				}
 				for (var r in rows){
-					console.log("operator :", rows[r]["operator"])
+					// console.log("operator :", rows[r]["operator"])
 					value = sensors_values[rows[r]["sensor_id"]];//we catch the value corresponding to the current sensor
 					current_action = rows[r]["action_type_id"]
 					current_sensor_id = rows[r]["sensor_id"]
@@ -96,10 +96,10 @@ function execute_task(event_id, origin_id) {//this function will search the good
 						}
 						break;
 						case 6 : // if operator = "passage de seuil haut"
-						console.log("PASSAGE SEUIL HAUT")
+						// console.log("PASSAGE SEUIL HAUT")
 						db.select_query("SELECT value FROM thresholds AS t INNER JOIN thresholds_sensor_types AS tst ON t.id = tst.threshold_id INNER JOIN sensors_types AS st ON st.id = tst.sensor_type_id INNER JOIN sensors AS s ON s.sensor_type_id = st.id INNER JOIN conditions AS c ON c.sensor_id = s.id WHERE c.sensor_id = ? AND c.id = ? AND t.id = ?",[current_sensor_id, current_condition_id, rows[r]["value_to_compare"]], function (rows, err){
 							for(var r in rows) {
-								console.log("CURRENT VALUE : ",rows[r]["value"], "SEUIL :",value)
+								// console.log("CURRENT VALUE : ",rows[r]["value"], "SEUIL :",value)
 								if(parseInt(rows[r]["value"]) < parseInt(value)){
 									actions_type[current_action] = false; //so we put the corresponding value to false = not executable
 								}
@@ -201,7 +201,7 @@ function execute_task(event_id, origin_id) {//this function will search the good
 					}
 				}
 				for (var i in actions_type){ // verification of the status of the actions_type_id
-					console.log(actions_type[i], i)
+					// console.log(actions_type[i], i)
 					if (actions_type[i] == true){ //if the action_type_id is still true, we can execute this action
 						results.push(i);
 						targets.push(actions_target[i]);

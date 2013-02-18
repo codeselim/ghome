@@ -9,7 +9,7 @@ var net = require('net')
 
 
 var localhost = new net.Socket()
-localhost.connect(8000, "localhost", function () { console.log("Simulator is connected to the local sensors_server.js port 8000") })
+localhost.connect(8000, "localhost", function () { // console.log("Simulator is connected to the local sensors_server.js port 8000") })
 
 
 function generateSimulations(){
@@ -4025,14 +4025,14 @@ function generateSimulations(){
 	setInterval(function(){ 
 		var temp_quantum = generateRandomFromTo(quantum_min,quantum_max)*1000 /* millisec */
 		var temp_simultaneous_frames = generateRandomFromTo(simultaneous_frames_min, simultaneous_frames_max) //nb frames
-		console.log("Simultaneous frames:"+temp_simultaneous_frames+" - Quantum:"+temp_quantum+" >>> At time: "+(at_time/1000)+"sec.");
+		// console.log("Simultaneous frames:"+temp_simultaneous_frames+" - Quantum:"+temp_quantum+" >>> At time: "+(at_time/1000)+"sec.");
 		for(i = 0 ; i < temp_simultaneous_frames ; i++){ 
 			var temp = Math.floor((Math.random()*lastvalue)+firstvalue); //select a frame from the 4000 Generic frames
 			localhost.write(frames[temp].data); //send the frames on continous connection
-			console.log('===> [SIMULATION_FRAME_SENT] : Type '+frames[temp].type)
+			// console.log('===> [SIMULATION_FRAME_SENT] : Type '+frames[temp].type)
 		}	
 		at_time += temp_quantum
-		console.log()
+		// console.log()
 	},temp_quantum );
 
 
@@ -4047,7 +4047,7 @@ simultaneous_frames_min = 10 //nb. of frames
 simultaneous_frames_max = 20 //nb. of frames
 	
 
-console.log("Frames Simulator Started:")
+// console.log("Frames Simulator Started:")
 generateSimulations();
 
 

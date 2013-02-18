@@ -45,7 +45,7 @@ function decode_frame (frame) {
  * @returns {value} the value detected by the sensor
 */
 function decode_data_byte (type_s, frame_data) {
-	console.log("ENTERING DECODE DATA BYTE")
+	// console.log("ENTERING DECODE DATA BYTE")
 	switch (type_s) {
 		case 1 ://temperature
 			var value = Math.abs((frame_data.data[2] * 40 /255) - 40 ) ;//temperature sensor
@@ -91,9 +91,9 @@ function check_frame_checksum (frame_data, framestr) {
 		s += parseIntFromHexSlice(framestr, i-1, 2)
 	};
 	// s = (frame_data.hseq_length + frame_data.org + frame_data.data[0] + frame_data.data[1] + frame_data.data[2] + frame_data.data[3] + frame_data.id + frame_data.status)
-	console.log("Sum:", s)
+	// console.log("Sum:", s)
 	var checksum = s & 0xFF 
-	console.log("Computed checksum:", checksum)
+	// console.log("Computed checksum:", checksum)
 	return (checksum == frame_data.checksum)
 
 }

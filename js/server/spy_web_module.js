@@ -6,21 +6,21 @@ var tpl = require('./template_engine')
 // 
 function errCallBack(err) {
 	if(err == null) {
-		console.log("Request went well")
+		// console.log("Request went well")
 	}
 	else {
-		console.log("Request error")
+		// console.log("Request error")
 	}
 }
 
 var EMAIL_FIELD_NAME = "mail d envoi"
 var spyRequestHandler = function(req, res, params, responseSender) {
-	console.log(params.query.action)
+	// console.log(params.query.action)
 	switch (params.query.action) {
 
 	case "submit_parameters":
-	console.log(params);
-	console.log("switchSpyMode :" + params.query.switchSpyMode)
+	// console.log(params);
+	// console.log("switchSpyMode :" + params.query.switchSpyMode)
 	// Can't use db.insert_query or select_query check with Théo
 	params.db.update_query("UPDATE settings SET value = ? WHERE name = ?", [params.query.switchSpyMode.toUpperCase(), "mode spy"], function(err) {
 		if (err != null) {
@@ -43,7 +43,7 @@ var spyRequestHandler = function(req, res, params, responseSender) {
 	break;
 
 	case "get_parameters":
-	console.log("GET_PARAMETERS QUERY")
+	// console.log("GET_PARAMETERS QUERY")
 	var dataResp = {}
 	params.db.select_query("SELECT value FROM settings WHERE name = ?",["mode spy"], function(err, rows) {
 		for(r in rows) {

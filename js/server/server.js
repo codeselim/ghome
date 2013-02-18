@@ -4,6 +4,7 @@
 //* Will be launching the network sensors server as well as the web server that deals with the different GUIs
 
 // ************ WARNING : KEEP THOSE LINES AT THE TOP, OR SOME DATA WILL BE UNDEFINED ! ***************
+// require('nodetime').profile()
 var shared = require('./shared_data')
 var utils = require('./utils')
 var get_shared_data = shared.get_shared_data
@@ -64,12 +65,12 @@ function frame_to_android_notif (frame_data) {
 function update_main_temperatures (frame_data) {
 	// Frame to be used as demo : A55A0B0700003608008933780084
 	if (frame_data.id == get_shared_data('OUT_TEMP_SENSOR_HID')) {
-		console.log('The sensor id of the received frame is the one of the main OUTSIDE temperature sensor. Updating the server in-memory value.')
+		// console.log('The sensor id of the received frame is the one of the main OUTSIDE temperature sensor. Updating the server in-memory value.')
 		var temp = require('./sensors').decode_data_byte(1 /* temperature */, frame_data).toFixed(1)
 		set_shared_data('OUT_TEMP', temp)
 	} 
 	if (frame_data.id == get_shared_data('IN_TEMP_SENSOR_HID')) {
-		console.log('The sensor id of the received frame is the one of the main INSIDE temperature sensor. Updating the server in-memory value.')
+		// console.log('The sensor id of the received frame is the one of the main INSIDE temperature sensor. Updating the server in-memory value.')
 		var temp = require('./sensors').decode_data_byte(1 /* temperature */, frame_data).toFixed(1)
 		set_shared_data('IN_TEMP', temp)
 	}
@@ -106,7 +107,7 @@ function GLOBAL_INIT () {
 		console.error("And the error is" + err)
 		process.exit()
 	}
-	console.log("Starting Initializing data...")
+	// console.log("Starting Initializing data...")
 	var ip = utils.getLocalPublicIpAddress(["wlan0", "wlan1"])
 	var ip = utils.getLocalPublicIpAddress(["eth0", "p2p1"])
 	set_shared_data('LOCAL_SERVER_IP', ip)
@@ -116,10 +117,10 @@ function GLOBAL_INIT () {
 	set_shared_data('MAIN_SERVER_PORT', 5000)
 	set_shared_data('TEMP_SENSOR_TYPE', 1)
 	db = new dbms.Database()
-	console.log("Connecting to db...")
+	// console.log("Connecting to db...")
 	db.connect('dat', function () {
-		console.log(db)
-		console.log("DB connected.")
+		// console.log(db)
+		// console.log("DB connected.")
 		set_shared_data('IN_TEMP', 0) // @TODO : Get the value from the database instead !
 		set_shared_data('OUT_TEMP', -2) // @TODO : Get the value from the database instead !
 		var q = "SELECT hardware_id, id FROM `" + t['s'] + "`"
@@ -172,7 +173,7 @@ function GLOBAL_INIT () {
 
 						sensors_values[rows[i].sid] = rows[i].value
 					}
-					console.log("Server startup states: " + JSON.stringify(sensors_values) + JSON.stringify(allowed_ids))
+					// console.log("Server startup states: " + JSON.stringify(sensors_values) + JSON.stringify(allowed_ids))
 					set_shared_data('SENSORS_VALUES', sensors_values) //* Will be updated by EventMonitor
 					start()
 				})
@@ -182,7 +183,7 @@ function GLOBAL_INIT () {
 }
 
 function start () {
-	console.log('Data initialized... Starting server components.')
+	// console.log('Data initialized... Starting server components.')
 	device_communicator.start(db)
 	logger.start(db)
 	web_serv.start(db, WEB_SERVER_SECURED_PORT, WEB_SERVER_UNSECURED_PORT)

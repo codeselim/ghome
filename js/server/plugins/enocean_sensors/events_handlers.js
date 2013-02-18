@@ -41,7 +41,7 @@ function preEvent(idSensor, sensor_type_id, value) {
 }
 
 function switchEvent(idSensor, sensor_type_id, value) {
-	console.log("VALUE SWITCH :", value)
+	// console.log("VALUE SWITCH :", value)
 	switch(value) {
 
 		case 1:

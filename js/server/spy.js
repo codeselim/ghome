@@ -52,7 +52,7 @@ function execute_spy(event_id, origin_id) {
 						var event_name = rows[r]["name"]
 						db.select_query("SELECT name FROM sensors WHERE id = ?",[origin_id], function (err, rows) {//search the name of the sensor responsible of the event
 							for (r in rows){
-								console.log("evenement de type ", event_name," arrivé au capteur ", rows[r]["name"]);
+								// console.log("evenement de type ", event_name," arrivé au capteur ", rows[r]["name"]);
 								db.insert_query("INSERT INTO `logs_spy` VALUES (null, " + origin_id + ", \'" + event_name + "\', datetime())", [], function (err, rows) {}) //insert into the DB the informations needed
 
 								var date = new Date();
@@ -61,9 +61,9 @@ function execute_spy(event_id, origin_id) {
 								// send mail with defined transport object
 								smtpTransport.sendMail(mailOptions, function(error, response){
 									if(error) {
-										console.log(error);
+										// console.log(error);
 									} else{
-										console.log("Message sent: " + response.message);
+										// console.log("Message sent: " + response.message);
 									}
 						    		smtpTransport.close(); // shut down the connection pool, no more messages
 								});

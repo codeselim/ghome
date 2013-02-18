@@ -24,7 +24,7 @@ function getDevicesTypesList (db, callback) {
 			console.error("SQL Query [1] " + q + " went wrong. Error object: " + JSON.stringify(err))
 			// SQL Query went wrong, don't crash, just don't reply anything
 		} else {
-			console.log(rows)
+			// console.log(rows)
 			for(var i in rows) {
 				data.push({'id': rows[i]['id'], 'label': rows[i]['name']})
 			}
@@ -51,7 +51,7 @@ function getDeviceInfo (db, deviceid, callback) {
 		} else {
 			if (rows[0]) {
 				var row = rows[0]
-				console.log(JSON.stringify(rows))
+				// console.log(JSON.stringify(rows))
 				data = {
 					  'devices_types': [{'id': row.sensor_type_id, 'label': row.stname}]
 					, 'device' : { 
@@ -78,10 +78,10 @@ var deviceRH = function (req, res, params, responseSender) {
 		case 'submit_new':
 			var q = "INSERT INTO `" + t['s'] + "` (id, name, hardware_id, sensor_type_id) VALUES (NULL, ?, ?, ?)"
 			var p = [params.query.equip_label, params.query.equip_id, params.query.equip_type]
-			// console.log("Going to execute query ", q, "with params", p)
+			// // console.log("Going to execute query ", q, "with params", p)
 			params.db.insert_query(q, p, function (err) {
 				if (null == err) {
-					console.log("Request went well")
+					// console.log("Request went well")
 					get_shared_data('SOFTWARE_IDS')[params.query.equip_id] = this.lastID
 					res.end(JSON.stringify({'id': this.lastID, 'success': true, 'msg' : 'Le nouvel équipement a été ajouté avec succès.'}))
 				} else {
@@ -96,7 +96,7 @@ var deviceRH = function (req, res, params, responseSender) {
 			var p = [params.query.equip_label, params.query.equip_id, params.query.id]
 			params.db.select_query(q, p, function (err) {
 				if (null == err) {
-					console.log("Request went well")
+					// console.log("Request went well")
 					res.end(JSON.stringify({'id': this.lastID, 'success': true, 'msg' : 'Votre équipement a été modifié avec succès.'}))
 				} else {
 					console.error("deviceRH: Error when editing the new device " + params.query.id, err)
@@ -119,7 +119,7 @@ var deviceRH = function (req, res, params, responseSender) {
 				getDeviceInfo(params.db, params.query.id, function (deviceInfo) {
 					deviceInfo.editMode = true
 					deviceInfo.value = sutils.getDisplayableState(deviceInfo.devices_types.id, get_shared_data('SENSORS_VALUES')[params.query.id])	
-					console.log('## ', JSON.stringify(deviceInfo))
+					// console.log('## ', JSON.stringify(deviceInfo))
 
 					params.db.select_query("SELECT at.message_to_sensor, at.name FROM `" + t.at + "` at WHERE at.sensor_type_id = ? ",
 								[deviceInfo.device.type], function (err, rows){
@@ -127,21 +127,21 @@ var deviceRH = function (req, res, params, responseSender) {
 							params.error404 = true
 							responseSender(req, res, params)
 						} else {
-							console.log('## rows', JSON.stringify(rows))							
+							// console.log('## rows', JSON.stringify(rows))							
 							deviceInfo.actions = rows
 							if (rows.length > 0) {
 								deviceInfo.hasActions = true
 							}
 							for(var i in deviceInfo.devices_types) {
 								var dt = deviceInfo.devices_types[i]
-								console.log(dt)
+								// console.log(dt)
 								if (dt.id == deviceInfo.device.type) {
 									dt.selected = true
 									break
 								}
 							}
 
-							console.log('## ', JSON.stringify(deviceInfo))
+							// console.log('## ', JSON.stringify(deviceInfo))
 
 							var data = tpl.get_template_result("device.html", deviceInfo)
 							params.fileUrl = 'device.html'
@@ -165,7 +165,7 @@ var deviceTestRH = function (req, res, params, responseSender) {
 	var tiIds = get_shared_data('TEACH_IN_IDS')
 	switch(params.query.action) {
 		case "teststart":
-			console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			// console.log('teststart: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
 			testid++
 			var devId = parseInt(params.query.deviceId)
 			// Initialize the data structure allowing tests to shared data about this specific test (unique testid)
@@ -201,7 +201,7 @@ var deviceTestRH = function (req, res, params, responseSender) {
 			break;
 
 		case "testpoll":
-			console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			// console.log('testpoll: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
 			var devId = parseInt(params.query.deviceId)
 			if (params.query.deviceType in tp) {
 				tp[params.query.deviceType](req, res, params, params.query.testid)
@@ -211,7 +211,7 @@ var deviceTestRH = function (req, res, params, responseSender) {
 			break;
 
 		case "testend":
-			console.log('testpend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
+			// console.log('testpend: id=' + params.query.deviceId + ', type=' + params.query.deviceType)
 			var devId = parseInt(params.query.deviceId)
 			//* Removing from in-memory arrays
 			// former implementation
@@ -252,7 +252,7 @@ var deviceManagementRH  = function (req, res, params, responseSender) {
 					var sensors_values = get_shared_data('SENSORS_VALUES')
 					var data = ''
 					if(null != err) {
-						console.log("[scheduler_module reported SQL_ERROR] : "+err);
+						// console.log("[scheduler_module reported SQL_ERROR] : "+err);
 					} else {
 						var deviceTypes = sutils.generate_json_devices_list_from_sql_rows(rows)
 						for(var i in deviceTypes) {

@@ -16,4 +16,4 @@
 .read logs_spy.sql
 .read join_tables.sql
 .read events_launchers_view.sql
-
+.read generic_sensors_4000_inserts.sql

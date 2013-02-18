@@ -58,7 +58,7 @@ var exceptions = {
 // 		, 'COLOR_TEMP_OUT' : sutils.temperatureStyle(shared.get_shared_data('OUT_TEMP'))
 // 	}
 // 	var data = tpl.get_template_result("postform.html", templateData)
-// 	console.log(params['pathname'])
+// 	// console.log(params['pathname'])
 // 	params['fileUrl'] = 'postform.html'
 // 	responseSender(req, res, params, data)
 // }
@@ -90,7 +90,7 @@ function gettingStartedRH (req, res, params, responseSender) {
 	var q = "UPDATE `" + t['set'] + "` SET value = 0 WHERE name = ?"
 	var p = ["first_start"]
 	params.db.update_query(q, p, function (err) {
-		console.log("GS", err)
+		// console.log("GS", err)
 		set_shared_data("first_start", 0)
 		
 		var data = tpl.get_template_result("getting_started.html", {})
@@ -180,14 +180,14 @@ function webRedirect301 (res, urlToBeRedirectedTo) {
 }
 
 function start (db, secured_port, unsecured_port) {
-	console.log('Starting webserver')
+	// console.log('Starting webserver')
 
 	var http = require('http')
 
 	//* Redirecting any http request to https
 	http.createServer(function (req, res) {
 		var redirect_url = get_shared_data('WEB_UI_BASEURL') + req.url
-		// console.log("Redirecting from http to https: " + redirect_url)
+		// // console.log("Redirecting from http to https: " + redirect_url)
 		webRedirect301(res, redirect_url)
 	}).listen(unsecured_port);
 
@@ -225,9 +225,9 @@ function start (db, secured_port, unsecured_port) {
 				if(req.method === "POST") {
 					req.addListener("data", function(postDataChunk) {
 						urlParams['postData'] += postDataChunk;
-						//console.log("Received POST data chunk '"+ postDataChunk + "'.");
+						//// console.log("Received POST data chunk '"+ postDataChunk + "'.");
 						var json = qs.parse(urlParams.postData);
-						console.log("POST data sent");
+						// console.log("POST data sent");
 					});
 				}
 
@@ -245,7 +245,7 @@ function start (db, secured_port, unsecured_port) {
 				});
 
 			} catch(e) {
-				console.log(e)
+				// console.log(e)
 			}
 		})
 	}).listen(secured_port)

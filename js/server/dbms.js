@@ -1,7 +1,7 @@
 "use strict"
 
 var sqlite3 = require('sqlite3').verbose();
-var DBG = true // @TODO set that to false before going to production
+var DBG =  false// @TODO set thai to false before going to production
 
 function Database() {
 	this.db = null
@@ -13,7 +13,7 @@ Database.prototype.connect = function(dbName, callback) {
 	this.db = new sqlite3.Database("../../sql/"+dbName+".db", callback);
 	if (DBG) {
 		this.db.on("trace", function (str) {
-			console.log("DBMS TRACE: ", str)
+			// console.log("DBMS TRACE: ", str)
 		})
 	};
 	this.select_query("PRAGMA foreign_keys = ON;", null, function () {})
@@ -50,7 +50,7 @@ Database.prototype.prepare_statement = function(query_str, parameters, callback_
 	this.db.serialize(function() {
 		try {
 			if (DBG) {
-				console.log("DBMS PREPARE: ", query_str, parameters)
+				// console.log("DBMS PREPARE: ", query_str, parameters)
 			};
 			var statement = self.db.prepare(query_str);
 			statement.on("error", function (err) {

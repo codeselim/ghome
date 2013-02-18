@@ -8,7 +8,7 @@ var SQL_TABLES_DIC = shared.get_shared_data('SQL_TABLES');
 function statsRH(req, res, params, responseSender){
 	//Gethering POST data
 	var postData = qs.parse(params.postData)
-	console.log(postData.datefrom+"  "+postData.dateto+" "+postData.typedestatistiques)
+	// console.log(postData.datefrom+"  "+postData.dateto+" "+postData.typedestatistiques)
 
 	var _datefrom = null
 	var _dateto = null
@@ -66,8 +66,8 @@ function statsRH(req, res, params, responseSender){
 					var maximum_data = [];
 					var average_data = [];
 					var minimum_data = [];
-					console.log("Temperature rows:",rows)
-					console.log(err)
+					// console.log("Temperature rows:",rows)
+					// console.log(err)
 					
 					var actions = '{'
 					if (rows.length > 0){
@@ -134,7 +134,7 @@ function statsRH(req, res, params, responseSender){
 			,ELECT_STAT: _electstats
 			}
 			var data = tpl.get_template_result("stats.html", templateData)
-			console.log(params['pathname'])
+			// console.log(params['pathname'])
 			params['fileUrl'] = 'stats.html'
 			responseSender(req, res, params, data)
          })  //end call back
@@ -152,8 +152,8 @@ function statsRH(req, res, params, responseSender){
 
 					var xaxis_data = [];
 					var sum_data = [];
-					console.log("aaaaaaaah",rows)
-					console.log(err)
+					// console.log("aaaaaaaah",rows)
+					// console.log(err)
 					
 					var actions = '{'
 					if (rows.length > 0){
@@ -215,7 +215,7 @@ function statsRH(req, res, params, responseSender){
 			,ELECT_STAT: _electstats
 			}
 			var data = tpl.get_template_result("stats.html", templateData)
-			console.log(params['pathname'])
+			// console.log(params['pathname'])
 			params['fileUrl'] = 'stats.html'
 			responseSender(req, res, params, data)
          })  //end call back
@@ -231,7 +231,7 @@ function statsRH(req, res, params, responseSender){
 			,ELECT_STAT: _electstats
 			}
 			var data = tpl.get_template_result("stats.html", templateData)
-			console.log(params['pathname'])
+			// console.log(params['pathname'])
 			params['fileUrl'] = 'stats.html'
 			responseSender(req, res, params, data)
 		break
@@ -296,7 +296,7 @@ function statsRH(req, res, params, responseSender){
 					"where sensors.sensor_type_id  = 5 and  "+
 					"strftime('%Y-%m-%d', logs.time) = date('now') and "+
 					"(strftime('%H',logs.time) = ' "+previous_hour+"') ;"			
-	db.select_query (query_str,null,function (err,rows){ console.log(err)})
+	db.select_query (query_str,null,function (err,rows){  console.log(err)})
  }
 
  /**
@@ -312,7 +312,7 @@ function statsRH(req, res, params, responseSender){
 				"from hour_stats  "+
 				"where sensor_type_id = 1 and "+
 				"strftime('%Y-%m-%d', time) =  strftime('%Y-%m-%d','now', '-1 day');"
-	db.select_query (query_str, null,function (err,rows){ console.log(err)})
+	db.select_query (query_str, null,function (err,rows){  console.log(err)})
  }
 
 
@@ -330,7 +330,7 @@ function statsRH(req, res, params, responseSender){
 				"from hour_stats  "+
 				"where sensor_type_id = 5 and "+
 				"strftime('%Y-%m-%d', time) =  strftime('%Y-%m-%d','now', '-1 day');"
-	db.select_query (query_str, null,function (err,rows){ console.log(err)})
+	db.select_query (query_str, null,function (err,rows){  console.log(err)})
  }
 
   /**
@@ -346,7 +346,7 @@ function statsRH(req, res, params, responseSender){
 				"from daily_stats  "+
 				"where sensor_type_id = 1 and "+
 				"strftime('%Y-%m', time) =  strftime('%Y-%m','now', '-1 month');"
-	db.select_query (query_str, null,function (err,rows){ console.log(err)})
+	db.select_query (query_str, null,function (err,rows){  console.log(err)})
  }
 
 
@@ -364,7 +364,7 @@ function statsRH(req, res, params, responseSender){
 				"from daily_stats  "+
 				"where sensor_type_id = 5 and "+
 				"strftime('%Y-%m', time) =  strftime('%Y-%m','now', '-1 month');"
-	db.select_query (query_str, null,function (err,rows){ console.log(err)})
+	db.select_query (query_str, null,function (err,rows){  console.log(err)})
  }
 
 
@@ -436,7 +436,7 @@ function statsRH(req, res, params, responseSender){
 // // function getData ( err, rows){
 // // 	var array = [] ;
 // // 	for (var r in rows) {
-// //     	//console.log(r.value);
+// //     	//// console.log(r.value);
 // //     	array.push(rows[r]);
 // //     }
 // // }

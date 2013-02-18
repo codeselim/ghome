@@ -28,7 +28,7 @@ poll_tests[4] = simpleTeachIndDetection
 //* Action for device of type 5 : Power switch plug
 poll_tests[5] = function (req, res, params, testid) {
 	var current = new Date()
-	console.log("We have been waiting for..." + (current - satr[testid]['start_time']) + "ms")
+	// console.log("We have been waiting for..." + (current - satr[testid]['start_time']) + "ms")
 	if (7000 <= (current - satr[testid]['start_time'])) {// If it's 7 seconds since we switched the plug ON, switch it on right now
 		deviceCommunicator.sendToSensor(params.query.deviceId, "OFF")
 		res.end(JSON.stringify({status: 'ok', events: []})) // putting "events" empty array will trigger the test end, on the client

@@ -42,9 +42,9 @@ function sendToSensor (sensor_id, message) {
 function simplisticCommunicator (sensor_id, message) {
 	var sock = new net.Socket()
 	sock.connect(get_shared_data('MAIN_SERVER_PORT'), get_shared_data('MAIN_SERVER_IP'), function () { 
-		console.log('Connection to main server established, going to send a message for a sensor', message)
+		// console.log('Connection to main server established, going to send a message for a sensor', message)
 		sock.write(message, null, function () {
-			console.log('Data sent to main server, disconnecting.')
+			// console.log('Data sent to main server, disconnecting.')
 			sock.close()
 		})
 	})
