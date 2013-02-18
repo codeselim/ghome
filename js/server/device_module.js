@@ -70,7 +70,6 @@ function getDeviceInfo (db, deviceid, callback) {
 var deviceRH = function (req, res, params, responseSender) {
 	switch (params.query.action) {
 		case 'change_device_state':
-		{
 			var devId = parseInt(params.query.deviceId)
 			require('./device_communicator').sendToSensor(devId, params.query.newStateCode, function (devType, new_device_state) {
 				require('./logger').insertLogWithDevAndValue(devId, new_device_state, null)
@@ -79,8 +78,7 @@ var deviceRH = function (req, res, params, responseSender) {
 				sutils.notifyNewSensorState(devId, devType, new_device_state)
 				res.end(JSON.stringify({'success':true}))
 			})
-		}
-		break
+			break
 
 
 		case 'submit_new':
@@ -111,7 +109,7 @@ var deviceRH = function (req, res, params, responseSender) {
 					res.end(JSON.stringify({'msg': err, 'success': false}))
 				}
 			})
-		break;
+			break
 
 		case 'new':
 			//* Loads required data and sends the filled template
@@ -162,6 +160,19 @@ var deviceRH = function (req, res, params, responseSender) {
 				responseSender(req, res, params)
 			}
 			break	
+
+		case 'delete_device':
+			if (params.query.deviceId) {
+				var err = null //@TODO +Théo: db callback
+				if (err == null) {
+					res.end(JSON.stringify({'msg': 'L\'équipement a été supprimé avec succès.', 'success': true}))
+				} else {
+					res.end(JSON.stringify({'msg': err, 'success': false}))
+				}
+			} else {
+				res.end(JSON.stringify({'msg': 'Une erreur est survenue. Ressayez plus tard.', 'success': false}))
+			}
+			break
 	}
 }
 
