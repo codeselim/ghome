@@ -108,7 +108,6 @@ function GLOBAL_INIT () {
 	}
 	console.log("Starting Initializing data...")
 	var ip = utils.getLocalPublicIpAddress(["wlan0", "wlan1"])
-	var ip = utils.getLocalPublicIpAddress(["eth0", "p2p1"])
 	set_shared_data('LOCAL_SERVER_IP', ip)
 	set_shared_data('MAIN_SERVER_IP', "134.214.105.28")
 	set_shared_data('WEB_UI_BASEURL', 'https://' + ip)
