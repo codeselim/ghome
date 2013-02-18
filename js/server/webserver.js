@@ -1,8 +1,12 @@
 "use strict"
 
+<<<<<<< HEAD
 var sys = require('sys')
 var terminal = require('child_process').spawn('bash')
 var http      = require('http')
+=======
+var https      = require('https')
+>>>>>>> master
 var fs        = require('fs')
 var mime      = require('mime')
 var qs 		    = require('querystring');
@@ -10,14 +14,17 @@ var qs 		    = require('querystring');
 var tpl       = require('./template_engine')
 var shared    = require('./shared_data')
 var get_shared_data = shared.get_shared_data
+var set_shared_data = shared.set_shared_data
 var sseSender = require('./sse_sender')
 var device    = require('./device_module')
 var scheduler = require('./scheduler_module')
 var stats_computer 	  	= require('./stats_computer')
 var threshold = require('./threshold_module')
-var spy_webm  = require('./spy_web_module');
+var spy_webm  = require('./spy_web_module')
 var wutils    = require('./weather_utils')
+var sutils    = require('./sensors')
 var webdir = '../..'
+<<<<<<< HEAD
 
 terminal.stdout.on('data', function (data) {
 
@@ -35,6 +42,9 @@ terminal.on('exit', function (code) {
 });
 
 
+=======
+var t = require('./shared_data').get_shared_data('SQL_TABLES') // Dictionary of the SQL tables names
+>>>>>>> master
 
 /**
  * Request handlers
@@ -44,6 +54,7 @@ terminal.on('exit', function (code) {
  */
 var requestHandlers = {
 	  'home'              : homeReqHandler
+	, 'getting_started'   : gettingStartedRH
 	, 'device_management' : device.devMgmtRequestHandler
 	, 'device'            : device.deviceRequestHandler
 	, 'spy'               : spy_webm.spyRequestHandler
@@ -52,31 +63,31 @@ var requestHandlers = {
 	, 'task'              : scheduler.taskRequestHandler
 	, 'threshold_list'    : threshold.thresholdListRequestHandler
 	, 'threshold'         : threshold.thresholdRequestHandler
-	// , 'app'               : defaultHtmlRequestHandler
 	, 'default'           : defaultReqHandler
-	, 'postform'		  : postformHandler //test post implementation selim 	
-	, 'stats'			  : stats_computer.statsRH	
+	// , 'postform'		      : postformHandler //test post implementation selim 	@TODO keep?
+	, 'stats'			        : stats_computer.statsRH
+	, 'sse'               : sseSender.requestHandler
 }
 
 /* Same format as the request handles dict. Exceptions for the default request handler*/
 var exceptions = {
-	'/sse' : sseSender.requestHandler
+	// '/sse' : sseSender.requestHandler
 }
 
 
-function postformHandler(req, res, params, responseSender){
-		var templateData = {
-		'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
-		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
-		, 'TEST_DATA'		 : params.postData
-		, 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
-		, 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
-	}
-	var data = tpl.get_template_result("postform.html", templateData)
-	console.log(params['pathname'])
-	params['fileUrl'] = 'postform.html'
-	responseSender(req, res, params, data)
-}
+// function postformHandler(req, res, params, responseSender){
+// 		var templateData = {
+// 		  'IN_TEMP'		     : shared.get_shared_data('IN_TEMP')
+// 		, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
+// 		, 'TEST_DATA'      : params.postData
+// 		, 'COLOR_TEMP_IN'  : sutils.temperatureStyle(shared.get_shared_data('IN_TEMP'))
+// 		, 'COLOR_TEMP_OUT' : sutils.temperatureStyle(shared.get_shared_data('OUT_TEMP'))
+// 	}
+// 	var data = tpl.get_template_result("postform.html", templateData)
+// 	console.log(params['pathname'])
+// 	params['fileUrl'] = 'postform.html'
+// 	responseSender(req, res, params, data)
+// }
 
 
 
@@ -102,90 +113,66 @@ function sendPlainHTML(fileName, args, path) {
 
 
 // @TODO: MOVE IN ANOTHER FILE BEGIN ///////////////////////////////////////////////////////////////
-function homeReqHandler(req, res, params, responseSender) {
-	// var wpic = ''
-	// wutils.getWeatherFromCity(get_shared_data('weather_location'), function (wData) {
-	// 	if ("weatherIconUrl" in wData) {
-	// 		var url = wData.weatherIconUrl[0].value
-	// 		wpic = '<img src="' + url + '" alt="' + escape(wData.weatherDesc[0].value) + '" />'
 
-	// 	}
-	console.log("QUERY ACTION : ",params.query.action)
-	if(params.query.action == 'restartServer') {
-		//"./kill.sh all  && ./launch.sh all"
-		//exec("ls -la", displayErrorBash);
-		//res.end(JSON.stringify({'success': true}))
-		console.log('Restarting Ghome server');
-
-		//terminal.stdin.write('./kill.sh all')
-
-		terminal.stdin.end();
-
-
-	}
-
-	else if(params.query.action == 'resetServer') {
-		//res.end(JSON.stringify({'success': true}))
-		console.log('Resetting Ghome server');
-		terminal.stdin.write('./kill.sh all  && ./launch.sh reset')
-		terminal.stdin.end();
-	}
-		var templateData = {
-			'IN_TEMP'		       : shared.get_shared_data('IN_TEMP')
-			, 'OUT_TEMP'	     : shared.get_shared_data('OUT_TEMP')
-			, 'COLOR_TEMP_IN'  : temp2color(shared.get_shared_data('IN_TEMP'))
-			, 'COLOR_TEMP_OUT' : temp2color(shared.get_shared_data('OUT_TEMP'))
-			// , 'WEATHER' : {'wpic': wpic, 'temp': wData.temp_C, 'pressure': wData.pressure, 'humidity': wData.humidity, 'wind': wData.windspeedKmph}
-		}
-		var data = tpl.get_template_result("home.html", templateData)
-		params['fileUrl'] = 'home.html'
+function gettingStartedRH (req, res, params, responseSender) {
+	var q = "UPDATE `" + t['set'] + "` SET value = 0 WHERE name = ?"
+	var p = ["first_start"]
+	params.db.update_query(q, p, function (err) {
+		console.log("GS", err)
+		set_shared_data("first_start", 0)
+		
+		var data = tpl.get_template_result("getting_started.html", {})
+		params['fileUrl'] = 'getting_started.html'
 		responseSender(req, res, params, data)
-	// })
+	})
 }
 
-/**  This function returns the CSS temperature color to be applied to a given
- * temperature depending on its value
- * For instance, -2 would be blue, 25 would be green, 32 would be red...
- * @param{int} temperature_value The temperature value (signed integer)
- * @return{string} Color name to be used in the CSS class ("{COLOR}-temp")
- */
-var temp2color = function(temperature_value) {
-	var color = ''
-	if (temperature_value >= 32) {
-		var color = 'red1'
-	} else if (temperature_value >= 25) {
-		var color = 'green3'
-	} else if (temperature_value >= 19) {
-		var color = 'green2'
-	} else if (temperature_value >= 10) {
-		var color = 'green1'
-	} else if (temperature_value >= 5) {
-		var color = 'blue1'
-	} else if (temperature_value >= 0) {
-		var color = 'blue2'
-	} else if (temperature_value >= -5) {
-		var color = 'blue3'
-	} else if (temperature_value <= -10) {
-		var color = 'blue4'
+function homeReqHandler(req, res, params, responseSender) {
+	if (get_shared_data("first_start") == '1') {
+		webRedirect301(res, "/?module=getting_started")
+	} else {
+		var wpic = ''
+		wutils.getWeatherFromCity(get_shared_data('weather_location'), function (wData) {
+			if ("weatherIconUrl" in wData) {
+				var url = wData.weatherIconUrl[0].value
+				wpic = '<img src="' + url + '" alt="' + escape(wData.weatherDesc[0].value) + '" />'
+			}
+			var inTempValue = shared.get_shared_data('IN_TEMP')
+			var outTempValue = shared.get_shared_data('OUT_TEMP')
+			var tempSensorType = shared.get_shared_data('TEMP_SENSOR_TYPE')
+
+			var templateData = {
+				  'in_temp'     : sutils.getDisplayableState(tempSensorType, inTempValue)
+				, 'in_style'    : sutils.getStateStyle(tempSensorType, inTempValue)
+				, 'out_temp'    : sutils.getDisplayableState(tempSensorType, inTempValue)
+				, 'out_style'   : sutils.getStateStyle(tempSensorType, inTempValue)
+				, 'temp_in_id'  : shared.get_shared_data('IN_TEMP_SENSOR_ID')
+				, 'temp_out_id' : shared.get_shared_data('OUT_TEMP_SENSOR_ID')
+				, 'WEATHER'     : {'wpic': wpic, 'temp': wData.temp_C, 'pressure': wData.pressure, 'humidity': wData.humidity, 'wind': wData.windspeedKmph}
+			}
+			var data = tpl.get_template_result("home.html", templateData)
+			params['fileUrl'] = 'home.html'
+			responseSender(req, res, params, data)
+		})
 	}
-	return color
 }
 // @TODO: MOVE IN ANOTHER FILE END /////////////////////////////////////////////////////////////////
 
 
 /**
  * defaultResponseSender is going to be the default callback of every requestHandler
- * It sets the HTTP status to OK 200 and sends the content to be returned to the browser client
+ * It sets the HTTPs status to OK 200 and sends the content to be returned to the browser client
  * using the default mime type found using the file extension
  * IF YOU WANT TO WRITE YOUR OWN Content-Type HEADER THEN JUST DON'T CALL THE CALLBACK...
- * @param{http.ServerRequest} original request from the browser client
- * @param{http.ServerResponse} response object to send to the browser client
+ * @param{https.ServerRequest} original request from the browser client
+ * @param{https.ServerResponse} response object to send to the browser client
  * @param{???} parameters defined by the webserver
  * @param{string or Buffer} data to be send to the browser client using res.end()
  * @return{undefined} undefined
 */
 function defaultResponseSender(req, res, params, data) {
 	if (params.error404) {
+		res.writeHead(200, {'Content-Type': 'text/html'})
 		res.end(fs.readFileSync('../../views/404.html'))
 	} else {
 		res.writeHead(200, {'Content-Type': mime.lookup(params.fileUrl)})
@@ -208,23 +195,49 @@ function defaultReqHandler(req, res, params, responseSender) {
 	}
 }
 
+function webRedirect301 (res, urlToBeRedirectedTo) {
+	res.writeHead(301, 'Moved Permanently', {
+			// 'Cache-Control': 'public',
+			// 'Date': new Date().toGMTString(),
+			// 'Server': 'Node/' + process.version,
+			'Content-Length': '0',
+			'Connection': 'Close',
+			'Location': urlToBeRedirectedTo
+		});
+	res.end()
+}
 
-function start (db, port) {
+function start (db, secured_port, unsecured_port) {
 	console.log('Starting webserver')
+
+	var http = require('http')
+
+	//* Redirecting any http request to https
+	http.createServer(function (req, res) {
+		var redirect_url = get_shared_data('WEB_UI_BASEURL') + req.url
+		// console.log("Redirecting from http to https: " + redirect_url)
+		webRedirect301(res, redirect_url)
+	}).listen(unsecured_port);
 
 	var auth = require('http-auth')
 	var basic = auth({
 		authRealm : "GHome Management Console.",
 		authFile : __dirname + '/users.htpasswd'
 	});
-
-	http.createServer(function (req, res) {
+	var SSLoptions = {
+		key:    fs.readFileSync('./server.key'),
+		cert:   fs.readFileSync('./server.crt'),
+		ca:     fs.readFileSync('./ca.crt'),
+		requestCert:        true,
+		rejectUnauthorized: false
+	};
+	https.createServer(SSLoptions, function (req, res) {
 
 		basic.apply(req, res, function (username) {
 
 			req.setEncoding("utf8"); 
 
-			//* Note : req is an instance of http.ServerRequest and res is an instance of http.ServerResponse
+			//* Note : req is an instance of https.ServerRequest and res is an instance of https.ServerResponse
 			try {
 				var urlParams = require('url').parse(req.url, true)
 				urlParams['postData'] = ''
@@ -263,7 +276,7 @@ function start (db, port) {
 				console.log(e)
 			}
 		})
-	}).listen(port)
+	}).listen(secured_port)
 }
 
 exports.start = start

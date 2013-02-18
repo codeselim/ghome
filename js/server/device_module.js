@@ -69,6 +69,20 @@ function getDeviceInfo (db, deviceid, callback) {
 
 var deviceRH = function (req, res, params, responseSender) {
 	switch (params.query.action) {
+		case 'change_device_state':
+		{
+			var devId = parseInt(params.query.deviceId)
+			require('./device_communicator').sendToSensor(devId, params.query.newStateCode, function (devType, new_device_state) {
+				require('./logger').insertLogWithDevAndValue(devId, new_device_state, null)
+				get_shared_data('SENSORS_VALUES')[devId] = new_device_state
+				console.log("DEVMOD: Updating state (supposed the data was actually sent) to ", new_device_state)
+				sutils.notifyNewSensorState(devId, devType, new_device_state)
+				res.end(JSON.stringify({'success':true}))
+			})
+		}
+		break
+
+
 		case 'submit_new':
 			var q = "INSERT INTO `" + t['s'] + "` (id, name, hardware_id, sensor_type_id) VALUES (NULL, ?, ?, ?)"
 			var p = [params.query.equip_label, params.query.equip_id, params.query.equip_type]
@@ -115,7 +129,7 @@ var deviceRH = function (req, res, params, responseSender) {
 					deviceInfo.value = sutils.getDisplayableState(deviceInfo.devices_types.id, get_shared_data('SENSORS_VALUES')[params.query.id])	
 					console.log('## ', JSON.stringify(deviceInfo))
 
-					params.db.select_query("SELECT at.id, at.name FROM `" + t.at + "` at WHERE at.sensor_type_id = ? ",
+					params.db.select_query("SELECT at.message_to_sensor, at.name FROM `" + t.at + "` at WHERE at.sensor_type_id = ? ",
 								[deviceInfo.device.type], function (err, rows){
 						if(err) {
 							params.error404 = true
@@ -164,6 +178,7 @@ var deviceTestRH = function (req, res, params, responseSender) {
 			var devId = parseInt(params.query.deviceId)
 			// Initialize the data structure allowing tests to shared data about this specific test (unique testid)
 			satr[testid] = {}
+			satr[testid]["deviceId"] = devId
 			// In case if was already in memory, delete it:
 			/* A bit of explanation here :
 			 * In order to receive data from the device
@@ -252,7 +267,8 @@ var deviceManagementRH  = function (req, res, params, responseSender) {
 							var typeId = deviceTypes[i].id
 							for(var j in deviceTypes[i].devices) {
 								var s = deviceTypes[i].devices[j]
-								deviceTypes[i].devices[j]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])	
+								deviceTypes[i].devices[j]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])
+								console.log("Value of sensor", s.id, "is", sensors_values[s.id])
 							}
 						}
 

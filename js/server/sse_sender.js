@@ -29,8 +29,9 @@ function shutdown () {
  * @param (Object) data: JS Object to send (will be stringified)
  */
 function sendSSE(data) {
-	console.log('to send', data)
 	var i
+
+	console.log('sendSSE: to send', data)
 	for (i = 0; i < streams.length; i++) {
 		streams[i].write('data: ' + JSON.stringify(data) + '\n\n')
 	}

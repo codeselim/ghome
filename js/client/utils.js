@@ -1,6 +1,7 @@
 "use strict"
 
-define(function(){
+define(['jquery'], function($){
+	//** Form values ********************************************************************************/
 	//* Returns JSON from a "aa=yy&bb=zz" string 
 	var queryStringToHash = function queryStringToHash  (query) {
 		if (!query) {
@@ -15,7 +16,6 @@ define(function(){
 			pair[1] = decodeURIComponent(pair[1])
 				// If first entry with this name
 			if (pair[1] != "") {
-				console.log(pair[0])
 				if (typeof query_string[pair[0]] === "undefined") {
 					query_string[pair[0]] = pair[1]
 					// If second entry with this name
@@ -31,6 +31,7 @@ define(function(){
 		return query_string
 	}
 
+	//* Wtf? why is it slower?
 	var getFieldsValues = function($nodes) {
 		var fields = {}
 		$nodes.each(function() {
@@ -54,8 +55,7 @@ define(function(){
 		return fields
 	}
 
-
-
+	//** Messages ***********************************************************************************/
 	var initMessages = function() {
 		var $msg = $('#messages')
 		if ($msg.find('li').length == 0) {
@@ -97,11 +97,22 @@ define(function(){
 		$msg.show()
 	}
 
+	//** Validation *********************************************************************************/
+	var errorPlacementFix = function(error, element) {
+		//* Needed to place the error message out of the select menu.
+		if (element.is('select')) {
+			error.insertAfter($(element).parent())
+		} else {
+			error.insertAfter(element)
+		}
+	}
+
 	return {
 		  queryStringToHash: queryStringToHash
 		, initMessages:initMessages
 		, removeMessage:removeMessage
 		, addMessage:addMessage
 		, getFieldsValues: getFieldsValues
+		, errorPlacementFix: errorPlacementFix
 	}
 })

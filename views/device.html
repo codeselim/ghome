@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>ghome</title>
-	<link rel="stylesheet" href="css/ghome.min.css">
-	<script data-main="js/client/main" src="js/vendor/require-jquery.js"></script>
-</head>
-<body style="visibility:hidden"> <!-- Will be displayed once JQM is loaded -->
-	<div data-role="page" id="device">
+{{> header}}	
+<div data-role="page" id="device">
 		<div data-theme="a" data-role="header" data-position="fixed">
 			<h3>Nouvel équipement</h3>
 			<a href="/?module=home" data-icon="home" data-iconpos="notext" >Accueil</a>
@@ -21,10 +12,10 @@
 			<ul data-role="listview" data-divider-theme="d" data-inset="true">
 					<li data-role="list-divider">Etat</li>
 					{{#hasActions}}
-					<li data-icon="gear"><a id="changeState">{{value}}</a></li>
+					<li data-icon="gear"><a id="changeState" data-role="ghome-state" data-device-id="{{device.id}}">{{value}}</a></li>
 					{{/hasActions}}
 					{{^hasActions}}
-					<li>{{value}}</li>
+					<li id="deviceState" data-role="ghome-state" data-device-id="{{device.id}}">{{value}}</li>
 					{{/hasActions}}
 			</ul>
 			{{/editMode}}
@@ -70,7 +61,7 @@
 
 				<ul data-role="listview" data-inset="true" id="messages"></ul>
 
-				<input type="button" value="Tester" id="test" name="test"/>
+				<input type="button" value="Tester" id="testButton" name="test"/>
 				<input type="submit" value="Valider" name="submit"/>
 			</form>
 
@@ -87,11 +78,11 @@
 				</div>
 				<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content">
 					<h3 class="ui-title">Veuillez sélectionner le nouvel état de l'équipement</h3>
-					<form action="/" id="actionForm">
-						<select name="stateSelect">
+					<form action="/" id="stateForm">
+						<select name="newState">
 							<option value="">-- Choisir une action --</option>
 							{{#actions}}
-							<option value="{{id}}">{{name}}</option>
+							<option value="{{message_to_sensor}}">{{name}}</option>
 							{{/actions}}
 						</select>
 						<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">Annuler</a>    
@@ -104,5 +95,4 @@
 			<!-- Content-End -->
 		</div>
 	</div>
-</body>
-</html>
+{{> footer}}

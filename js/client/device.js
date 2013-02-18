@@ -1,7 +1,7 @@
 "use strict"
 
 define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
-	// var progressbardiv = "<div style='width: 200px; opacity: .75' class='meter'><span style='width: 25%'></span></div>"
+	var progressbardiv = "<div style='width: 200px; opacity: .75' class='meter'><span style='width: 25%'></span></div>"
 
 	//*** Server Polling *****************************************************************************
 	var testid = null
@@ -20,6 +20,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 			if (Object.prototype.toString.call(data.events) === '[object Array]') {// When there is at least one event, then we consider things are validated (as we received an event!)
 				reqStatus.validated = true
 				reqStatus.events = data.events
+				reqStatus.message = data.message
 			}
 
 			if (! reqStatus.validated && countdown > 0) {
@@ -51,7 +52,11 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		//* We display the test results
 		if (reqStatus.validated) {
 			$.mobile.loading('hide')
-			$('#popupContent').html("Le test s'est terminé avec succès !")
+			if(reqStatus.message) {
+				$('#popupContent').html(reqStatus.message)
+			} else {
+				$('#popupContent').html("Le test s'est terminé avec succès !")
+			}
 			$('#popup').popup('open')	
 		} else {
 			$.mobile.loading('hide')
@@ -68,8 +73,11 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 	}
 
 	var testDevice = function testDevice() {
+		console.log("There4")
 		var deviceId = $('#equip_id').val()
+		console.log("equip_id=", deviceId)
 		var deviceType = $('#equip_type').val()
+		console.log("equip_type=", deviceType)
 		//* frame to send at each request. only the action will be changed.
 		var ajaxData = {
 			  'module'     : 'device_test'
@@ -78,15 +86,16 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 			, 'deviceType' : deviceType
 		}
 
-		
-		// $.mobile.loading( 'show', {html: progressbardiv})
+		$.mobile.loading( 'show', {html: progressbardiv})
 		$.ajax({
 						'url': "/"
 					, 'data': ajaxData
 					, 'dataType' : 'json'
 		})
 		.done(function(data) {
+			console.log("done() starting")
 			testid = data.testid
+			console.log("testid=", testid)
 			if (data.msg) {
 				$.mobile.loading('hide')
 				$('#popupContent').html(data.msg)
@@ -97,15 +106,18 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 						$('#popup').popup('close')
 						showLoading()
 					}, Math.abs(data.hideafter))
-				};
+				}
 			}
+			var pd = 1000
 			if (data.poll_delay) {
 				pd = Math.abs(data.poll_delay)
-				console.log("Starting poll in " + pd)
-				setTimeout(function() {
-					deviceInfoRequest(ajaxData, 1000, 180000, endTest)
-				}, pd);
-			}
+			} 
+
+			console.log("Starting poll in " + pd)
+			setTimeout(function() {
+				deviceInfoRequest(ajaxData, pd, 180000, endTest)
+			}, pd);
+			
 		})
 		.fail(function(jqXHR, textStatus) {
 			$.mobile.loading('hide')
@@ -142,13 +154,37 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 		})
 		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
 	}
+
+	var changeDeviceState = function() {
+		console.log($('[name=newState]').val())
+		$.ajax({
+				'url'      : "/"
+			, 'dataType' : 'json'
+			, 'data'     : {
+					  'module':'device'
+					, 'action':'change_device_state'
+					, 'newStateCode': $('[name=newState]').val()
+					, 'deviceId': $('[name=id]').val()
+				}
+		})
+		.done(function(data) {
+			console.log(data)
+			if (data.success) {
+				utils.addMessage('success', 'La requête a été envoyée à l\'équipemement')
+				$('#statePopup').popup('close')
+			} else {
+				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
+			}
+		})
+		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
+	}
 	
 	//*** Returned functions *************************************************************************
 	var pageInit = function pageInit() {
 		console.log('new device pageInit')
 		utils.initMessages()
 
-		$("form").validate({
+		$("#mainForm").validate({
 			  rules: { 
 					  equip_id: "required"
 					, equip_label: "required"
@@ -159,21 +195,30 @@ define(['jquery', 'utils', 'jqvalidate'], function($, utils) {
 					, equip_label: "Veuillez entrez un libellé pour l'équipemement à ajouter"
 					, equip_type: "Veuillez sélectionner le type d'équipement"
 				}
-			, errorPlacement: function(error, element) {
-				//* Needed to place the error message out of the select menu.
-				if (element.is('select')) {
-					error.insertAfter($(element).parent())
-				} else {
-					error.insertAfter(element)
-				}
-			}
+			, errorPlacement: utils.errorPlacementFix
 			, submitHandler: submitForm
 		})
+
+		$("#stateForm").validate({
+			  rules: { 
+					  newState: "required"
+				} 
+			, messages: { 
+					  newState: "Veuillez sélectionner l'état désiré de l'équipemement"
+				}
+			, errorPlacement: utils.errorPlacementFix
+			, submitHandler: changeDeviceState
+		})
 		
-		$("#test").on('click',function(){
-			$("#form").validate()
-			if ( $("#form").valid() ) {
+		$("#testButton").on('click',function(){
+			console.log("There 1")
+			$("#mainForm").validate()
+			console.log("There 2")
+			if ($("#mainForm").valid()) {
+				console.log("There 3")
 				testDevice()
+			} else {
+				console.log("There 5")
 			}
 		})
 

@@ -4,7 +4,9 @@
 
 //* States's displayers dictionary, used register them and to call them
 var stateDisplayers = {}
+var styleComputers = {}
 
+var sseSender = require('./sse_sender')
 /**
  * Function to parse a slice of the str as an hexadecimal number
  * @param {string} str The string to be considered (at least locally) as an hexadecimal number
@@ -104,6 +106,15 @@ function getDisplayableState (typeId, value) {
 		return 'Pas de donnée'
 	}
 }
+function getStateStyle (typeId, value) {
+	if (typeId in styleComputers) {
+		return styleComputers[typeId](value)
+	} else {
+		return null
+	}
+}
+
+
 
 /** Used to register a stateDisplayer. That is to say, a function that will, depending on the raw value from the device/sensor, return a state string that we can display to the user
  * @param{int} typeId
@@ -114,6 +125,17 @@ function addStateDisplayer (typeId, stateDisplayer) {
 		console.error("SENSORS: Error, trying to override an existing stateDisplayer")
 	} else {
 		stateDisplayers[typeId] = stateDisplayer
+	}
+}
+/** Used to register a styleComputer. That is to say, a function that will, depending on the raw value from the device/sensor, return a style used to render the value for the user
+ * @param{int} typeId
+ * @param{function} styleComputer
+*/
+function addStyleComputer (typeId, styleComputer) {
+	if (typeId in styleComputers) {
+		console.error("SENSORS: Error, trying to override an existing styleComputer")
+	} else {
+		styleComputers[typeId] = styleComputer
 	}
 }
 
@@ -142,6 +164,16 @@ function generate_json_get_actions_by_device_type(rows){
 	return actions
 }
 
+function notifyNewSensorState(sensorid, sensortype, eventvalue) {
+	var addStyle = true
+	sseSender.sendSSE({
+		  'deviceId': sensorid
+		  , 'value': getDisplayableState(sensortype, eventvalue)
+		  , 'style': getStateStyle(sensortype, eventvalue)
+		  , 'deviceType': sensortype
+	})
+}
+
 exports.decode_frame = decode_frame
 exports.check_frame_checksum = check_frame_checksum
 exports.decode_data_byte = decode_data_byte
@@ -149,3 +181,6 @@ exports.generate_json_devices_list_from_sql_rows = generate_json_devices_list_fr
 exports.generate_json_get_actions_by_device_type = generate_json_get_actions_by_device_type
 exports.getDisplayableState = getDisplayableState
 exports.addStateDisplayer = addStateDisplayer
+exports.getStateStyle = getStateStyle
+exports.addStyleComputer = addStyleComputer
+exports.notifyNewSensorState = notifyNewSensorState

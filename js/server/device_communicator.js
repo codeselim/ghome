@@ -24,19 +24,23 @@ var communicators = {
  * @param{string} message
  * @return{void} undefined
 */
-function sendToSensor (sensor_id, message) {
+function sendToSensor (sensor_id, message, callback) {
 	if (!started) {
 		notStarted()
 	};
-	db.select_query("SELECT sensor_type_id FROM `" + t['s'] + "` WHERE id = ?", [sensor_id], function (err, rows) {
+	db.select_query("SELECT sensor_type_id, hardware_id FROM `" + t['s'] + "` WHERE id = ?", [sensor_id], function (err, rows) {
 		if (null == err) {
 			var tid = rows[0].sensor_type_id
 
 			if (tid in communicators) {
-				communicators[tid](sensor_id, message)
+				sendToSensorWithDevType(rows[0].hardware_id, tid, message, callback)
 			}
 		};
 	})
+}
+
+function sendToSensorWithDevType (hardware_id, tid, message, callback) {
+	communicators[tid](hardware_id, message, callback)
 }
 
 function simplisticCommunicator (sensor_id, message) {
@@ -67,3 +71,4 @@ function addDeviceCommunicator (type_id, communicator) {
 exports.sendToSensor = sendToSensor
 exports.start = start
 exports.addDeviceCommunicator = addDeviceCommunicator
+exports.sendToSensorWithDevType = sendToSensorWithDevType

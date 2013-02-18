@@ -6,12 +6,18 @@ var device_communicator = require('./device_communicator.js')
 var get_shared_data = shared.get_shared_data
 var sensors_values = {}
 var stats_computer = require('./stats_computer.js')
+var sutils = require('./sensors')
 
 function send_message(target, action){
 	db.select_query("SELECT message_to_sensor FROM actions_types WHERE id = ?", [action], function (err, rows) {
 		console.log("target :", target, "action :", action)
 		for (var r in rows){
-			device_communicator.sendToSensor (target, rows[r]["message_to_sensor"]);
+			device_communicator.sendToSensor (target, rows[r]["message_to_sensor"], function (devType, new_device_state) {
+				require('./logger').insertLogWithDevAndValue(target, new_device_state, null)
+				get_shared_data('SENSORS_VALUES')[target] = new_device_state
+				console.log("TASKEXEC: Updating state (supposed the data was actually sent) to ", new_device_state)
+				sutils.notifyNewSensorState(target, null /* @TODO: Change that... in a way we know the device type */, new_device_state)
+			})
 		}
 	})
 }
@@ -96,8 +102,10 @@ function execute_task(event_id, origin_id) {//this function will search the good
 						}
 						break;
 						case 6 : // if operator = "passage de seuil haut"
+						console.log("PASSAGE SEUIL HAUT")
 						db.select_query("SELECT value FROM thresholds AS t INNER JOIN thresholds_sensor_types AS tst ON t.id = tst.threshold_id INNER JOIN sensors_types AS st ON st.id = tst.sensor_type_id INNER JOIN sensors AS s ON s.sensor_type_id = st.id INNER JOIN conditions AS c ON c.sensor_id = s.id WHERE c.sensor_id = ? AND c.id = ? AND t.id = ?",[current_sensor_id, current_condition_id, rows[r]["value_to_compare"]], function (rows, err){
 							for(var r in rows) {
+								console.log("CURRENT VALUE : ",rows[r]["value"], "SEUIL :",value)
 								if(parseInt(rows[r]["value"]) < parseInt(value)){
 									actions_type[current_action] = false; //so we put the corresponding value to false = not executable
 								}
