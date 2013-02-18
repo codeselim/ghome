@@ -9,6 +9,7 @@ CREATE TABLE `tasks` (
   
   FOREIGN KEY(event_type_id) REFERENCES event_types(id),
   FOREIGN KEY(action_type_id) REFERENCES actions_types(id),
-  FOREIGN KEY(target_id) REFERENCES sensors(id),
+  FOREIGN KEY(target_id) REFERENCES sensors(id) ON DELETE CASCADE,
+  FOREIGN KEY(origin_id) REFERENCES sensors(id) ON DELETE CASCADE,
   FOREIGN KEY(mode_id) REFERENCES modes(id)
 );

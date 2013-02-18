@@ -7,5 +7,5 @@ CREATE TABLE `conditions` (
 
   FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE,
   FOREIGN KEY(type_id) REFERENCES condition_types(id) ON DELETE CASCADE,
-  FOREIGN KEY(sensor_id) REFERENCES sensors(id)
+  FOREIGN KEY(sensor_id) REFERENCES sensors(id) -- No cascade here, else it would create multiple cascade paths for sensors deletion
 );

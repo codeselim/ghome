@@ -161,16 +161,22 @@ var deviceRH = function (req, res, params, responseSender) {
 			}
 			break	
 
-		case 'delete_device':
-			if (params.query.deviceId) {
-				var err = null //@TODO +Théo: db callback
-				if (err == null) {
-					res.end(JSON.stringify({'msg': 'L\'équipement a été supprimé avec succès.', 'success': true}))
+			case 'delete_device':
+			{
+				if (params.query.deviceId) {
+					var q = "DELETE FROM `" + t['s'] + "` WHERE id = ?"
+					var p = [parseInt(params.query.deviceId)]
+					params.db.update_query(q, p, function (err) {
+						if (null != err) {
+							console.error("DEVMOD: SQL ERROR ON DELETE" + err)
+							res.end(JSON.stringify({success: false, msg: "Une erreur est survenue durant la suppression."}))
+						} else {
+							res.end(JSON.stringify({success: true, msg: 'L\'équipement a été supprimé avec succès.'}))
+						}
+					})
 				} else {
-					res.end(JSON.stringify({'msg': err, 'success': false}))
+					res.end(JSON.stringify({'msg': 'Une erreur est survenue. Ressayez plus tard.', 'success': false}))
 				}
-			} else {
-				res.end(JSON.stringify({'msg': 'Une erreur est survenue. Ressayez plus tard.', 'success': false}))
 			}
 			break
 	}
