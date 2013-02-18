@@ -278,6 +278,21 @@ var taskRH  = function (req, res, params, responseSender) {
 		}
 			break
 
+		case 'remove':
+		{
+			var q = "DELETE FROM `" + t['t'] + "` WHERE id = ?"
+			var p = [params.query.id]
+			params.db.update_query(q, p, function (err) {
+				if (null != err) {
+					console.error("SCHMOD: SQL ERROR ON DELETE" + err)
+					res.end(JSON.stringify({success: false, msg: "Une erreur est survenue durant la suppression."}))
+				} else {
+					res.end(JSON.stringify({success: true, msg: 'La tâche a été ajoutée avec succès'}))
+				}
+			})
+		}
+		break
+
 		case 'edit': //@TODO: Finish and test that
 		{
 			console.log("SCHMOD: EDIT MODE")
@@ -298,6 +313,7 @@ var taskRH  = function (req, res, params, responseSender) {
 
 					getEvtSources(params.db, function (evtSources) {
 						var tplData = {
+							'taskId' : taskId,
 							 'actionDevices' : actionDevices,
 							 'evtSourceTypes' : evtSources,
 							 'editMode': true
