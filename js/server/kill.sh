@@ -3,9 +3,10 @@ case $1 in
 	# 	sudo echo "Blorg" > /dev/null 
 	# 	sudo kill -TERM `cat ./main_server.pid 2>/dev/null` 2>/dev/null && rm -f ./main_server.pid;;
 	redirect)
-		kill -TERM `cat ./redirect.pid 2>/dev/null` 2>/dev/null && rm -f ./redirect.pid;;
+		node_modules/forever/bin/forever stop redirect.js;;
 	all)
-		a=`./kill.sh redirect` 
-		# b=`./kill.sh main`;;
+	    node_modules/forever/bin/forever stop redirect.js
+	    sudo su -c 'node_modules/forever/bin/forever stop server.js';;
+	
 esac
 	

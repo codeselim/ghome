@@ -44,7 +44,7 @@ fi
 
 if [ "OK" = $r ]; then
 	echo "Launching redirect server..."
-	node_modules/forever/bin/forever start redirect.js >/dev/null 2>/dev/null & echo $! > ./redirect.pid
+	node_modules/forever/bin/forever start redirect.js
 fi
 
 if [ "OK" = $m ]; then
