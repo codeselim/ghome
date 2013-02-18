@@ -4,6 +4,7 @@
 		<div data-theme="a" data-role="header" data-position="fixed" data-transition="none">
 			<h3>ghome</h3>
 		</div>
+		<ul data-role="listview" data-position="fixed" data-inset="true" id="messages"></ul>
 		<!-- <p>&nbsp;Faits/en cours en gris, pas touchés en jaune.</p> -->
 		<div data-role="content">
 			<div id="quick-dashboard">
@@ -49,9 +50,11 @@
 				<!-- <li data-theme="f"><a data-transition="slide" href="#">Eclairage automatique</a></li> -->
 				<li><a data-transition="slide" href="/?module=scheduler">Planificateur</a></li>
 				<li><a data-transition="slide" href="/?module=threshold_list">Seuils</a></li>
-				<li><form><input type="button" value="Redémarrer le serveur" name="restartServer"></form></li>
-				<li><form><input type="button" value="Faire un reset du serveur" name="resetServer"></form></li>
+				<!--<li><form><input type="button" value="Faire un reset du serveur" name="resetServer"></form></li>-->
 				<li><a data-transition="slide" href="/?module=getting_started">Guide de démarrage</a></li>
+				<li><form><input type="button" value="Redémarrer le serveur" name="restartServer"></form></li>
+
 			</ul>
+
 	</div>
 {{> footer}}

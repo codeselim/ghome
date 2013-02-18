@@ -16,8 +16,8 @@ require.config({
 })
 
 
-require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'threshold', 'spy', 'jquerymobile'], 
-	function($, /*_,*/ sseListener, devMgmt, device, scheduler, threshold, spy) {
+require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', 'scheduler', 'threshold', 'spy', 'utils', 'jquerymobile'], 
+	function($, /*_,*/ sseListener, devMgmt, device, scheduler, threshold, spy, utils) {
 	$(function() {
 		//* Hides the body until JQM finishes applying styles
 		$('body').css('visibility', 'visible')
@@ -45,7 +45,10 @@ require(['jquery', /*'prejqm',*/ 'sseListener', 'device_management', 'device', '
 		.done(function(data) {
 			console.log(data)
 			if (data.success) {
-				window.location.href = '/?module=home'
+				//window.location.href = '/?module=home' 
+				//La ligne commentée affiche une erreur car le serveur n'a pas le temps
+				//de redémarrer avant le rafraichissement
+				utils.addMessage('success', 'Le serveur a bien été redémarré')
 			} else {
 				console.log(data.msg)
 				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)

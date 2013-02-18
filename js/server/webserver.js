@@ -108,6 +108,11 @@ function homeReqHandler(req, res, params, responseSender) {
 	if (get_shared_data("first_start") == '1') {
 		webRedirect301(res, "/?module=getting_started")
 	} else {
+
+		if(params.query.action == "restartServer") {
+			res.end(JSON.stringify({'success':true}))
+			process.exit()
+		}
 		var wpic = ''
 		wutils.getWeatherFromCity(get_shared_data('weather_location'), function (wData) {
 			if ("weatherIconUrl" in wData) {
