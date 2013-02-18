@@ -67,6 +67,7 @@ function execute_spy(event_id, origin_id) {
 									}
 						    		smtpTransport.close(); // shut down the connection pool, no more messages
 								});
+								require('./android_notif_server').push_android_notif("SpyMode: Capteur " + rows[r]["name"] + ", " + event_name + "à " + date, get_shared_data("WEB_UI_BASEURL" + "/?module=spy"))
 							}
 						});
 					}
