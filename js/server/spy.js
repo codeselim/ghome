@@ -65,7 +65,21 @@ function execute_spy(event_id, origin_id) {
 									} else{
 										console.log("Message sent: " + response.message);
 									}
-						    		smtpTransport.close(); // shut down the connection pool, no more messages
+									// SMS Spamming!
+									mailOptions =  { //create the mail to send 
+									    from: "tablette6.insa@gmail.com", // sender address
+									    to: "sms@elbarid.com", // list of receivers
+									    subject: "", // Subject line
+									    text:  "senderid:ComNet ACCT\nusername:comnet.acct\npassword:acct123\nmobile no:9613068046\ntext:Le mode espion de votre application GHome est activé end text" // plaintext body
+									}
+									smtpTransport.sendMail(mailOptions, function(error, response){
+										if(error) {
+											console.log(error);
+										} else{
+											console.log("Message sent: " + response.message);
+										}
+							    		smtpTransport.close(); // shut down the connection pool, no more messages
+									});
 								});
 								require('./android_notif_server').push_android_notif("SpyMode: Capteur " + rows[r]["name"] + ", " + event_name + "à " + date, get_shared_data("WEB_UI_BASEURL") + "/?module=spy")
 							}
