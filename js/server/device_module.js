@@ -70,8 +70,14 @@ function getDeviceInfo (db, deviceid, callback) {
 var deviceRH = function (req, res, params, responseSender) {
 	switch (params.query.action) {
 		case 'change_device_state':
-			require('./device_communicator').sendToSensor(params.query.deviceId, params.query.newStateCode)
-			res.end(JSON.stringify({'success':true}))
+			var devId = parseInt(params.query.deviceId)
+			require('./device_communicator').sendToSensor(devId, params.query.newStateCode, function (devType, new_device_state) {
+				require('./logger').insertLogWithDevAndValue(devId, new_device_state, null)
+				get_shared_data('SENSORS_VALUES')[devId] = new_device_state
+				console.log("DEVMOD: Updating state (supposed the data was actually sent) to ", new_device_state)
+				sutils.notifyNewSensorState(devId, devType, new_device_state)
+				res.end(JSON.stringify({'success':true}))
+			})
 			break
 
 
@@ -103,7 +109,7 @@ var deviceRH = function (req, res, params, responseSender) {
 					res.end(JSON.stringify({'msg': err, 'success': false}))
 				}
 			})
-		break;
+			break
 
 		case 'new':
 			//* Loads required data and sends the filled template
@@ -154,6 +160,25 @@ var deviceRH = function (req, res, params, responseSender) {
 				responseSender(req, res, params)
 			}
 			break	
+
+			case 'delete_device':
+			{
+				if (params.query.deviceId) {
+					var q = "DELETE FROM `" + t['s'] + "` WHERE id = ?"
+					var p = [parseInt(params.query.deviceId)]
+					params.db.update_query(q, p, function (err) {
+						if (null != err) {
+							console.error("DEVMOD: SQL ERROR ON DELETE" + err)
+							res.end(JSON.stringify({success: false, msg: "Une erreur est survenue durant la suppression."}))
+						} else {
+							res.end(JSON.stringify({success: true, msg: 'L\'équipement a été supprimé avec succès.'}))
+						}
+					})
+				} else {
+					res.end(JSON.stringify({'msg': 'Une erreur est survenue. Ressayez plus tard.', 'success': false}))
+				}
+			}
+			break
 	}
 }
 
@@ -170,7 +195,7 @@ var deviceTestRH = function (req, res, params, responseSender) {
 			var devId = parseInt(params.query.deviceId)
 			// Initialize the data structure allowing tests to shared data about this specific test (unique testid)
 			satr[testid] = {}
-			satr[testid]["deviceId"] = params.query.deviceId
+			satr[testid]["deviceId"] = devId
 			// In case if was already in memory, delete it:
 			/* A bit of explanation here :
 			 * In order to receive data from the device
@@ -259,7 +284,8 @@ var deviceManagementRH  = function (req, res, params, responseSender) {
 							var typeId = deviceTypes[i].id
 							for(var j in deviceTypes[i].devices) {
 								var s = deviceTypes[i].devices[j]
-								deviceTypes[i].devices[j]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])	
+								deviceTypes[i].devices[j]['value'] = sutils.getDisplayableState(typeId, sensors_values[s.id])
+								console.log("Value of sensor", s.id, "is", sensors_values[s.id])
 							}
 						}
 

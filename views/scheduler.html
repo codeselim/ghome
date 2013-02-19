@@ -6,6 +6,12 @@
 			<a href="/?module=home" data-icon="back" data-transition="slide" data-direction="reverse" data-iconpos="notext">Parent</a>
 		</div>
 		<div data-role="content">
+			<ul data-role="listview" data-inset="true" id="messages">
+				{{#msg}}
+					<li data-theme="g" data-icon="delete" ><a href="#"><span class="success">{{msg}}</span></a></li>
+				{{/msg}}
+			</ul>
+			
 			<ul data-role="listview" data-divider-theme="b" data-inset="true">
 				<li data-icon="plus">
 					<a data-transition="fade" href="/?module=task&amp;action=new"> Nouvelle tâche</a>

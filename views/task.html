@@ -6,11 +6,21 @@
 			<a href="/?module=scheduler" data-icon="back" data-iconpos="notext">Parent</a>
 		</div>
 		<div data-role="content">
+			{{#editMode}}
+			<ul data-role="listview" data-divider-theme="d" data-inset="true">
+				<li data-role="list-divider">Suppression</li>
+				<li data-icon="gear"><a id="deleteTask">Supprimer</a></li>
+			</ul>
+			{{/editMode}}
 			<form>
+				{{#editMode}}
+				<input type="hidden" id="taskId" value="{{taskId}}" />
+				{{/editMode}}
 				<ul data-role="listview" data-inset="true" data-divider-theme="d" data-split-icon="minus" data-split-theme="d" id="bigList">
 					<li data-role="list-divider" role="heading">
 						Nom de la tâche
 					</li>
+
 					<li id="nameArgs">
 						<div data-role="fieldcontain">
 				            <fieldset data-role="controlgroup">

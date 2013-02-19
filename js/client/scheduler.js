@@ -192,7 +192,6 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 	}
 
 	var submitNewTask = function() {
-
 		console.log(getFormParams())
 		$.ajax({
 				'url'      : "/"
@@ -215,6 +214,25 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 	//*** Returned functions *************************************************************************
 	var pageInit = function pageInit() {
 		console.log('scheduler pageInit')
+	}
+
+	var deleteReq = function () {
+		var aData = {
+			'url'      : "/"
+			, 'dataType' : 'json'
+			, 'data'     : {'module' : 'task', 'action' : 'remove', 'id': $("#taskId").val()}
+		}
+		$.ajax(aData)
+		.done(function(data) {
+			console.log(data)
+			if (data.success) {
+				window.location.href = '/?module=scheduler&msg='+encodeURIComponent(data.msg)
+			} else {
+				utils.addMessage('error', 'Une erreur est survenue: ' + data.msg)
+			}
+		})
+		.fail(function(a,status) { utils.addMessage('error', "Le formulaire n'a pas pu être envoyé") })
+
 	}
 
 
@@ -263,6 +281,8 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 			, errorPlacement: utils.errorPlacementFix
 			, submitHandler: submitNewTask
 		})
+
+		$('#deleteTask').click(deleteReq)
 	}
 
 

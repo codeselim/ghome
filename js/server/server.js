@@ -108,11 +108,12 @@ function GLOBAL_INIT () {
 	}
 	console.log("Starting Initializing data...")
 	var ip = utils.getLocalPublicIpAddress(["wlan0", "wlan1"])
-	var ip = utils.getLocalPublicIpAddress(["eth0", "p2p1"])
+    console.log("Server is starting. With local IP=" + ip)
 	set_shared_data('LOCAL_SERVER_IP', ip)
 	set_shared_data('MAIN_SERVER_IP', "134.214.105.28")
 	set_shared_data('WEB_UI_BASEURL', 'https://' + ip)
-	set_shared_data('WEB_UI_HOME', 'https://' + ip + "/")
+    console.log("WeB_UI_BASEURL=", get_shared_data("WEB_UI_BASEURL"))
+	set_shared_data('WEB_UI_HOME', 'https://' + ip + "/?module=home")
 	set_shared_data('MAIN_SERVER_PORT', 5000)
 	set_shared_data('TEMP_SENSOR_TYPE', 1)
 	db = new dbms.Database()
@@ -193,7 +194,7 @@ function start () {
 	android_notif_serv.start(ANDROID_NOTIF_SERVER_PORT, "0.0.0.0") // DO NOT CHANGE THIS PORT NUMBER (Well, or test after changing it !) I don't know why, but it's working on port 5000 and not on port 3000 for instance....
 	// sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sse_sender.sendSSE)
 	// sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, sensors_utils.notifyNewSensorState)
-	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
+	// sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, frame_to_android_notif)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, update_main_temperatures)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, logger.insertLog)
 	sensors_serv.events.addListener(sensors_serv.SENSOR_FRAME_EVENT, events_monitor.handleEvent)

@@ -6,12 +6,18 @@ var device_communicator = require('./device_communicator.js')
 var get_shared_data = shared.get_shared_data
 var sensors_values = {}
 var stats_computer = require('./stats_computer.js')
+var sutils = require('./sensors')
 
 function send_message(target, action){
 	db.select_query("SELECT message_to_sensor FROM actions_types WHERE id = ?", [action], function (err, rows) {
 		console.log("target :", target, "action :", action)
 		for (var r in rows){
-			device_communicator.sendToSensor (target, rows[r]["message_to_sensor"]);
+			device_communicator.sendToSensor (target, rows[r]["message_to_sensor"], function (devType, new_device_state) {
+				require('./logger').insertLogWithDevAndValue(target, new_device_state, null)
+				get_shared_data('SENSORS_VALUES')[target] = new_device_state
+				console.log("TASKEXEC: Updating state (supposed the data was actually sent) to ", new_device_state)
+				sutils.notifyNewSensorState(target, null /* @TODO: Change that... in a way we know the device type */, new_device_state)
+			})
 		}
 	})
 }

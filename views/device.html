@@ -61,14 +61,34 @@
 
 				<ul data-role="listview" data-inset="true" id="messages"></ul>
 
-				<input type="button" value="Tester" id="test" name="test"/>
-				<input type="submit" value="Valider" name="submit"/>
+				<input type="button" value="Tester" id="testButton" name="test">
+				<input type="submit" value="Valider" name="submit">
+				{{#editMode}}
+				<input type="button" value="Supprimer" id="deleteButton">
+				{{/editMode}}
 			</form>
 
 			<div data-role="popup" id="popup">
 				<a href="#" data-rel="back" data-role="button" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
 				<p id="popupContent">Oops</p>
 			</div>
+
+
+			{{#editMode}}
+			<div data-role="popup" id="deletePopup">
+				<div data-role="header" data-theme="a" class="ui-corner-top">
+					<h1>Suppression de l'équipement</h1>
+				</div>
+				<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content">
+					<h3 class="ui-title">Voulez-vous vraiment supprimer cet équipement?</h3>
+					<p>Cette opération n'est pas réversible</p>
+					
+						<a href="#" data-role="button" data-inline="true" data-rel="back" data-theme="c">Annuler</a>    
+						<input type="button" value="Supprimer" data-inline="true" id="confirmDelete" >
+					</form>
+				</div>
+			</div>
+			{{/editMode}}
 
 
 			{{#hasActions}}

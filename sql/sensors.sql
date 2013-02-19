@@ -7,3 +7,9 @@ CREATE TABLE `sensors` (
 );
 
 --INSERT INTO sensors VALUES (1, null, "Capteur logiciel temps", 5);
+
+CREATE TRIGGER cascade_sensor_deletion AFTER DELETE ON sensors 
+  FOR EACH ROW 
+  BEGIN
+    DELETE FROM conditions WHERE conditions.sensor_id = old.id;
+  END;
