@@ -161,13 +161,14 @@ function getCondValuesByCondTypeAndSensorType (db, condType, sensorType, callbac
 				p = [sensorType]
 				data['values'] = {}
 				db.select_query(q, p, function (err, rows) {
+						console.log("SCHMOD: rows:", JSON.stringify(rows))
 					if (null != err) {
 						console.log("SCHMOD: SQL ERROR", err)
 					} else {
 						for(var i in rows) {
 							data.values[rows[i]['name']] = rows[i]['id']
 						}
-						// console.log("SCHMOD: IS a list", JSON.stringify(data))
+						console.log("SCHMOD: IS a list", JSON.stringify(data))
 						callback(data)
 					}
 				})
