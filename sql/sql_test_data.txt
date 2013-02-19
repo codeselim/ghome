@@ -24,16 +24,16 @@ INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois =", 12, "free");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure =", 13, "free");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute =", 14, "free");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois <", 15, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine <", 16, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois <", 17, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure <", 18, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute <", 19, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois >", 20, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine >", 21, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois >", 22, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure >", 23, "list");
-INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute >", 24, "list");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois <", 15, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine <", 16, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois <", 17, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure <", 18, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute <", 19, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "mois >", 20, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour de la semaine >", 21, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "jour du mois >", 22, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "heure >", 23, "free");
+INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "minute >", 24, "free");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "présence détectée", 25, "none");
 INSERT INTO condition_types (id, name, operator, input_type) VALUES (null, "présence non-détectée", 26, "none");
 
