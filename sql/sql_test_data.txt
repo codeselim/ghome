@@ -222,6 +222,12 @@ INSERT INTO event_types VALUES (15, "Bouton interrupteur droit bas appuyé");
 	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(4, 4); -- contact
 	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(3, 4);  -- no contact
 
+	-- switch
+	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(12, 8); -- contact
+	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(13, 8); -- contact
+	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(14, 8); -- contact
+	INSERT INTO `sensor_types_event_types` (event_type_id, sensor_type_id) VALUES(15, 8); -- contact
+
 -- Auto populating a part of the stct table from events to condition mapping
 INSERT INTO `sensor_types_condition_types` (sensor_type_id, condition_type_id) 
 	SELECT sensor_type_id, condition_type_id 
