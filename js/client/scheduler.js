@@ -103,6 +103,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 				var key = $('[name=evtSource]').val()
 
 				populateSelectBox($('#conditionEvt [name=condSource]'), JSON.parse('{"' + label +'" : "' + key + '"}'), false, true)
+				$('#conditionEvt [name=condSource] option:selected').attr('data-sensor-type',$('[name=evtSource] option:selected').attr('data-sensor-type'))
 				if ($.isEmptyObject(data)) {
 					$('#conditionEvt').addClass('ui-screen-hidden')
 				} else {
@@ -118,8 +119,10 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 		//* Adding the right input type
 		switch(type){
 			case 'list':
+				console.log('list')
 				$condValueDiv.html(cache.conditionListValueTemplate.replace(/@@condId@@/g, condId))
 				$condValueDiv.trigger('create')
+				console.log(values)
 				populateSelectBox($('#condition'+ condId +' select[name=condValue]'), values, true)
 				break;
 			case 'free':
@@ -138,9 +141,17 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 	 */
 	var updateCondValue = function() {
 		// Grabbing the sensorType so that the server is able to determine which condition thresholds are available to us (as thresholds are set to sensor types)
-		var sensorType = $(this).parents('.conditionBlock').find('select.condSourceSelect').eq(0).find(':selected').eq(0).data('sensor-type')
+		var sensorType
+		if ($(this).parents('.conditionBlock').attr('id') === 'conditionEvt') {
+			sensorType = $('[name=evtSource] option:selected').data('sensor-type')
+		} else {
+			sensorType = $(this).parents('.conditionBlock').find('select.condSourceSelect').eq(0).find(':selected').eq(0).data('sensor-type')
+		}
+			// console.log('bleh', )
+		// var sensorType = $(this).parents('.conditionBlock').find('select.condSourceSelect').eq(0).find(':selected').eq(0).data('sensor-type')
 		var condType = $(this).val()
 		var condId = $(this).data('condition-id')
+		console.log(sensorType)
 
 		if (condType) {
 			$.ajax({
@@ -149,6 +160,7 @@ define(['jquery', 'utils', 'jqvalidate'], function($,utils){
 				, 'data'     : {'module' : 'task', 'action' : 'get_condition_values', 'condType' : condType, 'sensorType': sensorType}
 			})
 			.done(function(data) {
+				console.log(data)
 				changeInputType(condId, data.type, data.values)
 			})
 		} else {
